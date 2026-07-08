@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>FlyBridge Education</title>
+  <defs>
+    <linearGradient id="g" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#4da2ff" />
+      <stop offset="100%" stop-color="#06111f" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="#06111f" />
+  <path d="M18 20h28v6H25v8h17v6H25v12h-7V20Zm17 14h11v6H35z" fill="url(#g)" />
+</svg>

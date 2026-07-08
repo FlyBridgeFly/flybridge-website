@@ -1,0 +1,16 @@
+{
+  "name": "FlyBridge Education",
+  "short_name": "FlyBridge",
+  "description": "Cambridge-trained GCSE Science tuition with personalised support and structured progress tracking.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06111f",
+  "theme_color": "#06111f",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

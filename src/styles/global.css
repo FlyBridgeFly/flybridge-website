@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+:root {
+  --fb-bg: #06111f;
+  --fb-surface: rgba(255, 255, 255, 0.08);
+  --fb-surface-strong: rgba(255, 255, 255, 0.14);
+  --fb-border: rgba(148, 163, 184, 0.18);
+  --fb-text: #e5eefb;
+  --fb-muted: #9db0cb;
+  --fb-accent: #4da2ff;
+  --fb-accent-soft: #9dd0ff;
+  --fb-shell: #f5f7fb;
+  --fb-shell-strong: #ffffff;
+  --fb-ink: #0d1b2a;
+  --fb-ink-soft: #516276;
+  --fb-shadow: 0 30px 80px rgba(6, 17, 31, 0.16);
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+html {
+  background: var(--fb-shell);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(77, 162, 255, 0.18), transparent 26%),
+    radial-gradient(circle at top right, rgba(126, 178, 255, 0.12), transparent 24%),
+    linear-gradient(180deg, #f7faff 0%, #eef3fa 100%);
+  color: var(--fb-ink);
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+}
+
+main {
+  overflow: clip;
+}
+
+::selection {
+  background: rgba(77, 162, 255, 0.22);
+}
+
+@theme inline {
+  --color-fb-bg: var(--fb-bg);
+  --color-fb-surface: var(--fb-surface);
+  --color-fb-surface-strong: var(--fb-surface-strong);
+  --color-fb-border: var(--fb-border);
+  --color-fb-text: var(--fb-text);
+  --color-fb-muted: var(--fb-muted);
+  --color-fb-accent: var(--fb-accent);
+  --color-fb-accent-soft: var(--fb-accent-soft);
+  --color-fb-shell: var(--fb-shell);
+  --color-fb-shell-strong: var(--fb-shell-strong);
+  --color-fb-ink: var(--fb-ink);
+  --color-fb-ink-soft: var(--fb-ink-soft);
+  --shadow-fb: var(--fb-shadow);
+}
+
+@layer components {
+  .container-shell {
+    @apply mx-auto w-full max-w-7xl px-6 lg:px-8;
+  }
+
+  .section-shell {
+    @apply py-20 sm:py-24;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/75 px-4 py-2 text-xs font-semibold tracking-[0.22em] text-slate-600 uppercase shadow-sm backdrop-blur;
+  }
+
+  .card-panel {
+    @apply rounded-[2rem] border border-white/70 bg-white/[0.82] shadow-fb backdrop-blur-xl;
+  }
+
+  .dark-panel {
+    @apply rounded-[2rem] border border-white/10 bg-fb-bg text-fb-text shadow-fb;
+  }
+
+  .hero-glow {
+    background:
+      radial-gradient(circle at top, rgba(92, 164, 255, 0.28), transparent 46%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.68));
+  }
+
+  .section-grid {
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    background-position: center;
+    background-size: 48px 48px;
+  }
+
+  .cta-button {
+    @apply inline-flex items-center justify-center rounded-full bg-fb-bg px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-fb-accent focus:ring-offset-2;
+  }
+
+  .ghost-button {
+    @apply inline-flex items-center justify-center rounded-full border border-slate-200 bg-white/80 px-6 py-3 text-sm font-semibold text-fb-ink transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-fb-accent focus:ring-offset-2;
+  }
+
+  .nav-link {
+    @apply text-sm font-medium text-slate-600 transition hover:text-fb-ink;
+  }
+
+  .footer-link {
+    @apply text-sm text-slate-300 transition hover:text-white;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .mask-fade-bottom {
+    mask-image: linear-gradient(180deg, #000 85%, transparent);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 5s ease-in-out infinite;
+}

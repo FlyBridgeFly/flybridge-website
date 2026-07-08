@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site";
+---
+
+<BaseLayout
+  title="Student Hub"
+  description="Access FlyBridge lessons, homework, revision resources and Google Classroom from the Student Hub."
+  path="/student-hub"
+>
+  <section class="container-shell section-shell">
+    <div class="mx-auto max-w-4xl space-y-8 text-center">
+      <span class="eyebrow">Student Hub</span>
+      <div class="space-y-5">
+        <h1 class="text-5xl font-semibold tracking-tight text-fb-ink sm:text-6xl">Welcome back.</h1>
+        <p class="mx-auto max-w-2xl text-lg leading-8 text-fb-ink-soft">
+          Access your lessons, homework, revision resources and Google Classroom below.
+        </p>
+      </div>
+      <div class="card-panel p-8 sm:p-10">
+        <a class="cta-button w-full sm:w-auto" href={site.classroomHref} target="_blank" rel="noreferrer">Open Google Classroom</a>
+        <div class="mt-10 grid gap-6 rounded-[1.75rem] border border-slate-200/80 bg-slate-50/70 p-6 text-left sm:grid-cols-2">
+          <div>
+            <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Need help?</p>
+            <p class="mt-3 text-base leading-7 text-fb-ink-soft">If you are having trouble accessing lessons or homework, get in touch directly.</p>
+          </div>
+          <div class="space-y-5">
+            <div>
+              <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">WhatsApp</p>
+              <a class="mt-2 inline-block text-xl font-semibold text-fb-ink" href={site.whatsappHref} target="_blank" rel="noreferrer">{site.phone}</a>
+            </div>
+            <div>
+              <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Email</p>
+              <a class="mt-2 inline-block text-lg font-semibold text-fb-ink" href={`mailto:${site.email}`}>{site.email}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

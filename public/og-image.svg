@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#06111f" />
+      <stop offset="100%" stop-color="#10243b" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="#4da2ff" stop-opacity=".35" />
+      <stop offset="100%" stop-color="#4da2ff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#glow)" />
+  <rect x="72" y="76" width="1056" height="478" rx="36" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" />
+  <text x="120" y="186" fill="#9dd0ff" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="5">
+    FLYBRIDGE EDUCATION
+  </text>
+  <text x="120" y="290" fill="#ffffff" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="68" font-weight="700">
+    Cambridge-trained GCSE
+  </text>
+  <text x="120" y="372" fill="#ffffff" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="68" font-weight="700">
+    Science Tuition
+  </text>
+  <text x="120" y="448" fill="#d6e7fb" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="30">
+    Helping students bridge the gap to GCSE success.
+  </text>
+</svg>

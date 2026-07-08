@@ -1,0 +1,22 @@
+---
+interface Props {
+  subject: string;
+}
+
+const { subject } = Astro.props;
+
+const icons: Record<string, string> = {
+  Biology: "M20 36C28 28 30 19 24 12C17 13 11 18 10 26C9 31 12 35 20 36ZM22 14C22 22 18 27 12 31",
+  Chemistry: "M16 10V22L9 34C8 36 9 38 12 38H36C39 38 40 36 39 34L32 22V10M16 18H32",
+  Physics: "M24 10V38M10 24H38M14 14L34 34M34 14L14 34",
+  "Combined Science": "M13 14H35V34H13Z M18 18L30 30 M30 18L18 30"
+};
+
+const path = icons[subject] ?? icons["Combined Science"];
+---
+
+<div class="grid h-14 w-14 place-items-center rounded-2xl bg-slate-950 text-white shadow-lg shadow-slate-900/10">
+  <svg viewBox="0 0 48 48" class="h-7 w-7" fill="none" aria-hidden="true">
+    <path d={path} stroke="#9DD0FF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+</div>
