@@ -1,0 +1,61 @@
+---
+import { site } from "../data/site";
+
+interface Props {
+  title: string;
+  description: string;
+  active: "admin" | "tutor" | "parent" | "login";
+}
+
+const { title, description, active } = Astro.props;
+
+const navItems = [
+  { label: "Admin", href: "/admin", key: "admin" },
+  { label: "Tutor", href: "/tutor", key: "tutor" },
+  { label: "Parent Portal", href: "/parent-portal", key: "parent" }
+] as const;
+---
+
+<section class="container-shell pb-16 pt-8 sm:pt-10">
+  <div class="grid gap-8 xl:grid-cols-[280px_1fr]">
+    <aside class="card-panel h-fit p-6">
+      <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">FlyBridge reporting</p>
+      <h1 class="mt-3 text-2xl font-semibold tracking-tight text-fb-ink">{title}</h1>
+      <p class="mt-3 text-sm leading-7 text-fb-ink-soft">{description}</p>
+
+      <div class="mt-6 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-4">
+        <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Signed in as</p>
+        <p class="mt-3 text-lg font-semibold text-fb-ink" data-session-name>Loading...</p>
+        <p class="mt-1 text-sm text-fb-ink-soft" data-session-email></p>
+        <span class="mt-4 inline-flex rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold tracking-[0.16em] text-slate-500 uppercase" data-session-role>
+          Checking role
+        </span>
+      </div>
+
+      <nav class="mt-6 flex flex-col gap-2" aria-label="Portal">
+        {navItems.map((item) => (
+          <a
+            class:list={[
+              "rounded-[1.25rem] px-4 py-3 text-sm font-semibold transition",
+              active === item.key
+                ? "bg-fb-bg text-white"
+                : "border border-slate-200 bg-white text-fb-ink hover:border-slate-300"
+            ]}
+            href={item.href}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="mt-6 flex flex-col gap-3">
+        <a class="ghost-button justify-start" href={site.contactHref}>Contact FlyBridge</a>
+        <button class="cta-button justify-start" data-logout type="button">Sign out</button>
+      </div>
+    </aside>
+
+    <div class="space-y-8">
+      <slot />
+    </div>
+  </div>
+</section>

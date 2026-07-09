@@ -1,0 +1,47 @@
+---
+interface Props {
+  formId: string;
+  title?: string;
+}
+
+const { formId, title = "Create lesson report" } = Astro.props;
+---
+
+<form id={formId} class="card-panel p-7" data-lesson-report-form>
+  <div class="space-y-3">
+    <h2 class="text-2xl font-semibold tracking-tight text-fb-ink">{title}</h2>
+    <p class="text-sm leading-7 text-fb-ink-soft">Capture the core of the lesson, the follow-up work and the next step for the student.</p>
+  </div>
+  <div class="mt-6 grid gap-5 sm:grid-cols-2">
+    <label>
+      <span class="label-shell">Student</span>
+      <select class="input-shell" name="student-id" data-student-select></select>
+    </label>
+    <label>
+      <span class="label-shell">Lesson date</span>
+      <input class="input-shell" name="lesson-date" type="date" />
+    </label>
+    <label class="sm:col-span-2">
+      <span class="label-shell">Topic</span>
+      <input class="input-shell" name="topic" type="text" placeholder="For example: Bonding and structure" />
+    </label>
+    <label class="sm:col-span-2">
+      <span class="label-shell">Summary</span>
+      <textarea class="input-shell min-h-28 resize-y" name="summary" placeholder="What was covered and how did the student respond?"></textarea>
+    </label>
+    <label>
+      <span class="label-shell">Strengths noticed</span>
+      <textarea class="input-shell min-h-24 resize-y" name="strengths" placeholder="Confidence, recall, exam technique, etc."></textarea>
+    </label>
+    <label>
+      <span class="label-shell">Homework</span>
+      <textarea class="input-shell min-h-24 resize-y" name="homework" placeholder="Tasks to complete before the next lesson"></textarea>
+    </label>
+    <label class="sm:col-span-2">
+      <span class="label-shell">Next steps</span>
+      <textarea class="input-shell min-h-24 resize-y" name="next-steps" placeholder="What should happen next in the tuition plan?"></textarea>
+    </label>
+  </div>
+  <p class="mt-5 hidden text-sm font-medium" data-form-status></p>
+  <button class="cta-button mt-6" type="submit">Save lesson report</button>
+</form>

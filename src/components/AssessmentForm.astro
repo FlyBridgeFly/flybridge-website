@@ -1,0 +1,43 @@
+---
+interface Props {
+  formId: string;
+  title?: string;
+}
+
+const { formId, title = "Add assessment" } = Astro.props;
+---
+
+<form id={formId} class="card-panel p-7" data-assessment-form>
+  <div class="space-y-3">
+    <h2 class="text-2xl font-semibold tracking-tight text-fb-ink">{title}</h2>
+    <p class="text-sm leading-7 text-fb-ink-soft">Log checkpoints, mini-tests or formal assessments so parents can see measurable academic movement.</p>
+  </div>
+  <div class="mt-6 grid gap-5 sm:grid-cols-2">
+    <label>
+      <span class="label-shell">Student</span>
+      <select class="input-shell" name="student-id" data-student-select></select>
+    </label>
+    <label>
+      <span class="label-shell">Assessment date</span>
+      <input class="input-shell" name="assessment-date" type="date" />
+    </label>
+    <label class="sm:col-span-2">
+      <span class="label-shell">Assessment title</span>
+      <input class="input-shell" name="title" type="text" placeholder="For example: Chemistry retrieval quiz" />
+    </label>
+    <label>
+      <span class="label-shell">Score</span>
+      <input class="input-shell" name="score" type="number" min="0" step="0.1" placeholder="14" />
+    </label>
+    <label>
+      <span class="label-shell">Maximum score</span>
+      <input class="input-shell" name="max-score" type="number" min="0" step="0.1" placeholder="20" />
+    </label>
+    <label class="sm:col-span-2">
+      <span class="label-shell">Notes</span>
+      <textarea class="input-shell min-h-24 resize-y" name="notes" placeholder="Optional notes for context or interpretation"></textarea>
+    </label>
+  </div>
+  <p class="mt-5 hidden text-sm font-medium" data-form-status></p>
+  <button class="cta-button mt-6" type="submit">Save assessment</button>
+</form>

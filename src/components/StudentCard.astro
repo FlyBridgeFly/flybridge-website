@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  meta?: string;
+}
+
+const { title, subtitle, meta } = Astro.props;
+---
+
+<article class="card-panel p-6">
+  {meta && <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">{meta}</p>}
+  <h3 class="mt-2 text-2xl font-semibold text-fb-ink">{title}</h3>
+  {subtitle && <p class="mt-3 text-sm leading-7 text-fb-ink-soft">{subtitle}</p>}
+  <slot />
+</article>

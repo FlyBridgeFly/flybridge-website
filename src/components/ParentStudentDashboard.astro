@@ -1,0 +1,17 @@
+---
+interface Props {
+  containerId: string;
+}
+
+const { containerId } = Astro.props;
+---
+
+<section class="space-y-5">
+  <div class="space-y-2">
+    <h2 class="text-2xl font-semibold tracking-tight text-fb-ink">Linked students</h2>
+    <p class="text-sm leading-7 text-fb-ink-soft">Parents see only the students linked to their account through `parent_student_links`.</p>
+  </div>
+  <div class="space-y-6" id={containerId} data-parent-dashboard>
+    <article class="card-panel p-6 text-sm text-fb-ink-soft">Loading student reporting data...</article>
+  </div>
+</section>
