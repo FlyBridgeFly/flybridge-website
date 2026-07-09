@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import ContactMethods from "../components/ContactMethods.astro";
+import FormShell from "../components/FormShell.astro";
+import { site } from "../data/site";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: "Contact FlyBridge Education",
+  description: "Contact FlyBridge Education by WhatsApp, email or enquiry form.",
+  url: new URL("/contact", site.url).toString()
+};
+
+const fields = [
+  { label: "Parent name", name: "parent-name", placeholder: "Your full name" },
+  { label: "Student name", name: "student-name", placeholder: "Student's name" },
+  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com" },
+  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "07..." },
+  { label: "Message", name: "message", type: "textarea" as const, placeholder: "Tell us a little about the support you are looking for." }
+] as const;
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact FlyBridge Education by WhatsApp, email or enquiry form."
+  path="/contact"
+  schema={schema}
+>
+  <PageHero
+    eyebrow="Contact"
+    title="Talk to FlyBridge about tuition, assessments or next steps."
+    body="For many families, the quickest route is simply to send a message. The contact page brings together every easy way to get in touch."
+    primaryLabel="WhatsApp"
+    primaryHref={site.whatsappHref}
+    secondaryLabel="Book Assessment"
+    secondaryHref={site.assessmentHref}
+  />
+
+  <section class="container-shell section-shell pt-0">
+    <ContactMethods />
+  </section>
+
+  <section class="container-shell section-shell">
+    <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+      <div class="space-y-5">
+        <span class="eyebrow">Direct contact</span>
+        <h2 class="text-3xl font-semibold tracking-tight text-fb-ink sm:text-4xl">Choose the channel that feels easiest.</h2>
+        <div class="space-y-4 text-base leading-8 text-fb-ink-soft">
+          <p>WhatsApp: <a class="font-semibold text-fb-ink" href={site.whatsappHref} target="_blank" rel="noreferrer">{site.phone}</a></p>
+          <p>Email: <a class="font-semibold text-fb-ink" href={`mailto:${site.email}`}>{site.email}</a></p>
+        </div>
+      </div>
+      <FormShell
+        title="Contact form"
+        body="Use the form below if you would rather send a written enquiry. The current version is a placeholder interface that can be connected to your preferred form handling service later."
+        fields={fields}
+        submitLabel="Send enquiry"
+        helper="For immediate contact, WhatsApp or email is the fastest option while form handling is being connected."
+      />
+    </div>
+  </section>
+</BaseLayout>

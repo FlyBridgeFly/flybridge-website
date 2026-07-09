@@ -1,0 +1,142 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeading from "./SectionHeading.astro";
+import PricingCard from "./PricingCard.astro";
+import CtaBanner from "./CtaBanner.astro";
+import { examBoards, pricingFeatures, site } from "../data/site";
+
+interface SubjectPageData {
+  name: string;
+  slug: string;
+  navLabel: string;
+  summary: string;
+  hero: string;
+  coverage: readonly string[];
+  structure: readonly string[];
+}
+
+interface Props {
+  subject: SubjectPageData;
+}
+
+const { subject } = Astro.props;
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `${subject.navLabel} Tuition`,
+    description: subject.summary,
+    url: new URL(`/${subject.slug}`, site.url).toString()
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: `${subject.navLabel} tuition`,
+    provider: {
+      "@type": "EducationalOrganization",
+      name: site.name,
+      url: site.url
+    },
+    areaServed: "United Kingdom",
+    description: subject.summary
+  }
+];
+---
+
+<BaseLayout
+  title={`${subject.navLabel} Tuition`}
+  description={subject.summary}
+  path={`/${subject.slug}`}
+  schema={schema}
+>
+  <section class="container-shell pb-10 pt-10 sm:pb-14 sm:pt-14">
+    <div class="card-panel hero-glow overflow-hidden p-8 sm:p-10 lg:p-14">
+      <div class="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+        <div class="space-y-6">
+          <span class="eyebrow">{subject.navLabel}</span>
+          <h1 class="max-w-4xl text-balance text-5xl font-semibold tracking-tight text-fb-ink sm:text-6xl">{subject.name} tuition with greater clarity, structure and exam confidence.</h1>
+          <p class="max-w-2xl text-lg leading-8 text-fb-ink-soft">{subject.hero}</p>
+          <div class="flex flex-col gap-4 sm:flex-row">
+            <a class="cta-button" href={site.assessmentHref}>Book Free Assessment</a>
+            <a class="ghost-button" href={site.callbackHref}>Request a Callback</a>
+          </div>
+        </div>
+        <div class="rounded-[2rem] border border-white/75 bg-white/[0.86] p-6 shadow-fb">
+          <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Ideal for</p>
+          <p class="mt-4 text-xl font-semibold text-fb-ink">Students who want stronger understanding, better exam answers and more consistent science performance.</p>
+          <div class="mt-8 grid gap-3">
+            {subject.structure.slice(0, 3).map((item) => (
+              <div class="rounded-[1.25rem] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-fb-ink-soft">{item}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell pt-0">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div class="space-y-6">
+        <SectionHeading
+          eyebrow="What is covered"
+          title={`What students cover in GCSE ${subject.name}`}
+          body="Lessons are adapted to the student, but support typically includes the topics and exam demands most likely to unlock confident performance."
+        />
+        <div class="grid gap-4">
+          {subject.coverage.map((item) => (
+            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+          ))}
+        </div>
+      </div>
+      <div class="space-y-6">
+        <SectionHeading
+          eyebrow="Online structure"
+          title="How lessons are taught"
+          body="Sessions are designed to feel academically rigorous without becoming overwhelming."
+        />
+        <div class="grid gap-4">
+          {subject.structure.map((item) => (
+            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell">
+    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+      <div class="space-y-5">
+        <SectionHeading
+          eyebrow="Exam boards"
+          title="Support matched to GCSE specifications"
+          body="Teaching can be adapted to the student's course and exam board so revision and question practice stay relevant."
+        />
+        <div class="grid gap-3 sm:grid-cols-2">
+          {examBoards.map((board) => (
+            <div class="rounded-[1.5rem] border border-slate-200 bg-white/80 px-5 py-4 text-base font-medium text-fb-ink shadow-sm">
+              {board}
+            </div>
+          ))}
+        </div>
+      </div>
+      <PricingCard
+        price="£20"
+        ctaLabel="Book Free Assessment"
+        ctaHref={site.assessmentHref}
+        features={pricingFeatures}
+        note="Final tuition fees may vary depending on year group, lesson format and availability."
+      />
+    </div>
+  </section>
+
+  <CtaBanner
+    eyebrow="Next step"
+    title={`Book a free assessment for GCSE ${subject.name}`}
+    body="Start with a relaxed conversation about current performance, target grades and the type of support that would make the biggest difference."
+    actions={[
+      { label: "Book Free Assessment", href: site.assessmentHref },
+      { label: "Request a Callback", href: site.callbackHref, variant: "secondary" }
+    ]}
+  />
+</BaseLayout>

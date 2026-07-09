@@ -1,0 +1,11 @@
+---
+import SubjectPage from "../components/SubjectPage.astro";
+import { subjectPages } from "../data/site";
+
+const subject = subjectPages.find((item) => item.slug === "gcse-physics");
+if (!subject) {
+  throw new Error("GCSE Physics subject data not found.");
+}
+---
+
+<SubjectPage subject={subject} />

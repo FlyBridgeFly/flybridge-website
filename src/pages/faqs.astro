@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import FAQList from "../components/FAQList.astro";
+import CtaBanner from "../components/CtaBanner.astro";
+import { faqs, site } from "../data/site";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer
+    }
+  }))
+};
+---
+
+<BaseLayout
+  title="FAQs"
+  description="Frequently asked questions about FlyBridge Education, including lessons, pricing, progress tracking and free assessments."
+  path="/faqs"
+  schema={schema}
+>
+  <PageHero
+    eyebrow="FAQs"
+    title="Clear answers for parents before they book."
+    body="This page covers the questions families usually ask around lesson delivery, assessments, homework, pricing and ongoing support."
+    primaryLabel="Book Free Assessment"
+    primaryHref={site.assessmentHref}
+    secondaryLabel="Contact FlyBridge"
+    secondaryHref={site.contactHref}
+  />
+
+  <section class="container-shell section-shell pt-0">
+    <FAQList items={faqs} />
+  </section>
+
+  <CtaBanner
+    eyebrow="Still deciding?"
+    title="If your question is specific to your child, a callback may be the quickest route."
+    body="FlyBridge can talk through year group, confidence, current grades and the sort of support that would be most suitable."
+    actions={[
+      { label: "Request a Callback", href: site.callbackHref },
+      { label: "WhatsApp", href: site.whatsappHref, variant: "secondary" }
+    ]}
+  />
+</BaseLayout>

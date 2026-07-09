@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import CtaBanner from "../components/CtaBanner.astro";
+import { aboutSections, site } from "../data/site";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About FlyBridge Education",
+  description:
+    "Learn more about the Cambridge-trained background, teaching philosophy and mission behind FlyBridge Education.",
+  url: new URL("/about", site.url).toString()
+};
+---
+
+<BaseLayout
+  title="About"
+  description="Learn more about FlyBridge Education, including Cambridge training, teaching philosophy, experience and mission."
+  path="/about"
+  schema={schema}
+>
+  <PageHero
+    eyebrow="About FlyBridge"
+    title="A premium science tuition company built on academic depth, clear teaching and genuine care."
+    body="FlyBridge was created for families who want more than generic tutoring. The aim is to deliver carefully structured science support that feels credible, calm and effective."
+    primaryLabel="Book Free Assessment"
+    primaryHref={site.assessmentHref}
+    secondaryLabel="Request a Callback"
+    secondaryHref={site.callbackHref}
+  />
+
+  <section class="container-shell section-shell pt-0">
+    <SectionHeading
+      eyebrow="What shapes the approach"
+      title="Why FlyBridge teaches the way it does."
+      body="Every part of the experience is designed to help students feel more capable while giving parents confidence that progress is being built with intention."
+    />
+    <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      {aboutSections.map((section) => (
+        <article class="card-panel p-7">
+          <h2 class="text-xl font-semibold text-fb-ink">{section.title}</h2>
+          <p class="mt-3 text-base leading-7 text-fb-ink-soft">{section.body}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <CtaBanner
+    eyebrow="Next step"
+    title="If the teaching philosophy feels right, the best next step is a free assessment."
+    body="That first conversation helps parents understand how support would be tailored and whether FlyBridge is the right fit."
+    actions={[
+      { label: "Book Free Assessment", href: site.assessmentHref },
+      { label: "Contact FlyBridge", href: site.contactHref, variant: "secondary" }
+    ]}
+  />
+</BaseLayout>

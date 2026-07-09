@@ -1,0 +1,27 @@
+---
+import SubjectIcon from "./SubjectIcon.astro";
+
+interface Props {
+  subject: {
+    name: string;
+    navLabel: string;
+    slug: string;
+    summary: string;
+  };
+}
+
+const { subject } = Astro.props;
+---
+
+<article class="card-panel p-7 transition duration-300 hover:-translate-y-1">
+  <div class="flex items-start gap-5">
+    <SubjectIcon subject={subject.name} />
+    <div>
+      <h3 class="text-2xl font-semibold text-fb-ink">{subject.navLabel}</h3>
+      <p class="mt-3 text-base leading-7 text-fb-ink-soft">{subject.summary}</p>
+      <a class="mt-5 inline-flex text-sm font-semibold text-fb-ink underline decoration-slate-300 underline-offset-4 transition hover:decoration-fb-ink" href={`/${subject.slug}`}>
+        Explore subject
+      </a>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import FormShell from "../components/FormShell.astro";
+import ContactMethods from "../components/ContactMethods.astro";
+import { site } from "../data/site";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Request a Callback",
+  description: "Request a callback from FlyBridge Education to discuss GCSE science tuition.",
+  url: new URL("/request-callback", site.url).toString()
+};
+
+const fields = [
+  { label: "Parent name", name: "parent-name", placeholder: "Your full name" },
+  { label: "Student name", name: "student-name", placeholder: "Student's name" },
+  { label: "School", name: "school", placeholder: "Current school" },
+  { label: "Year group", name: "year-group", placeholder: "For example: Year 10" },
+  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to call" },
+  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com" },
+  { label: "Preferred callback time", name: "callback-time", placeholder: "After 6pm weekdays, Saturday morning, etc." },
+  { label: "Message", name: "message", type: "textarea" as const, placeholder: "Share any context that would help before the call." }
+] as const;
+---
+
+<BaseLayout
+  title="Request a Callback"
+  description="Request a callback from FlyBridge Education to discuss GCSE science tuition."
+  path="/request-callback"
+  schema={schema}
+>
+  <PageHero
+    eyebrow="Request a callback"
+    title="Prefer a conversation first? Request a callback and we will make the next step feel easy."
+    body="This page is designed for parents who want to talk through their child's situation before booking an assessment. Share a few details and FlyBridge can follow up with context in mind."
+    primaryLabel="Book Assessment Instead"
+    primaryHref={site.assessmentHref}
+    secondaryLabel="WhatsApp"
+    secondaryHref={site.whatsappHref}
+  />
+
+  <section class="container-shell section-shell pt-0">
+    <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+      <div class="space-y-6">
+        <span class="eyebrow">Reassuring first contact</span>
+        <h2 class="text-3xl font-semibold tracking-tight text-fb-ink sm:text-4xl">A callback is a good fit if you want advice before committing.</h2>
+        <p class="text-base leading-8 text-fb-ink-soft">
+          Many parents simply want to explain what is happening, ask a few practical questions and understand what kind of support would be most effective. That is exactly what this page is for.
+        </p>
+        <ContactMethods />
+      </div>
+      <FormShell
+        title="Callback request"
+        body="Complete the fields below so the call can be tailored to your child's needs. The form structure is ready and can be connected to live handling later."
+        fields={fields}
+        submitLabel="Request callback"
+        helper="Until live form handling is connected, WhatsApp or email is the fastest way to request a callback."
+      />
+    </div>
+  </section>
+</BaseLayout>

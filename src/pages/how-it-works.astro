@@ -1,0 +1,96 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBanner from "../components/CtaBanner.astro";
+import { assessmentFeatures, lessonFlow, progressTracking, site } from "../data/site";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "How FlyBridge Works",
+  description:
+    "Understand the FlyBridge process from free assessment through weekly online lessons and progress tracking.",
+  url: new URL("/how-it-works", site.url).toString()
+};
+---
+
+<BaseLayout
+  title="How It Works"
+  description="Understand the FlyBridge process from free assessment through weekly online lessons and progress tracking."
+  path="/how-it-works"
+  schema={schema}
+>
+  <PageHero
+    eyebrow="How it works"
+    title="A clear process from free assessment to steady GCSE science progress."
+    body="Families should not have to guess what happens next. FlyBridge is designed around clarity, structure and thoughtful communication at every stage."
+    primaryLabel="Book Free Assessment"
+    primaryHref={site.assessmentHref}
+    secondaryLabel="Request a Callback"
+    secondaryHref={site.callbackHref}
+  />
+
+  <section class="container-shell section-shell pt-0">
+    <div class="grid gap-10 lg:grid-cols-[0.78fr_1.22fr]">
+      <SectionHeading
+        eyebrow="Lesson journey"
+        title="What the process looks like in practice."
+        body="Each step is designed to reduce friction, make expectations clear and keep support aligned with the student's goals."
+      />
+      <div class="space-y-5">
+        {lessonFlow.map((step, index) => (
+          <div class="card-panel relative p-6 sm:p-7">
+            {index !== lessonFlow.length - 1 && <div class="absolute left-12 top-[4.5rem] h-[calc(100%-2.25rem)] w-px bg-slate-200"></div>}
+            <div class="flex gap-5">
+              <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-fb-bg text-sm font-semibold text-white">{index + 1}</div>
+              <div>
+                <h2 class="text-xl font-semibold text-fb-ink">{step.title}</h2>
+                <p class="mt-3 text-base leading-7 text-fb-ink-soft">{step.body}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell">
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div>
+        <SectionHeading
+          eyebrow="What happens in the free assessment"
+          title="A useful first conversation, not a sales pitch."
+          body="The aim is to understand what is going on beneath the surface so next steps can be recommended with confidence."
+        />
+        <div class="mt-8 grid gap-4">
+          {assessmentFeatures.map((item) => (
+            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <SectionHeading
+          eyebrow="Progress tracking"
+          title="How families stay informed"
+          body="Progress tracking is woven into the service so support remains visible rather than vague."
+        />
+        <div class="mt-8 grid gap-4">
+          {progressTracking.map((item) => (
+            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBanner
+    eyebrow="Ready to begin?"
+    title="Book the assessment and get clarity on the most effective next step."
+    body="Whether the priority is confidence, topic knowledge or exam technique, FlyBridge can help you identify the right starting point."
+    actions={[
+      { label: "Book Free Assessment", href: site.assessmentHref },
+      { label: "Contact FlyBridge", href: site.contactHref, variant: "secondary" }
+    ]}
+  />
+</BaseLayout>

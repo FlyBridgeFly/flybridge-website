@@ -1,0 +1,46 @@
+---
+interface Field {
+  label: string;
+  name: string;
+  type?: "text" | "email" | "tel" | "textarea";
+  placeholder: string;
+}
+
+interface Props {
+  title: string;
+  body: string;
+  fields: readonly Field[];
+  submitLabel: string;
+  helper: string;
+}
+
+const { title, body, fields, submitLabel, helper } = Astro.props;
+---
+
+<div class="card-panel p-8 sm:p-10">
+  <div class="space-y-4">
+    <h2 class="text-2xl font-semibold tracking-tight text-fb-ink">{title}</h2>
+    <p class="max-w-2xl text-base leading-7 text-fb-ink-soft">{body}</p>
+  </div>
+  <form class="mt-8 space-y-5" action="#" method="post" onsubmit="event.preventDefault()">
+    <div class="grid gap-5 sm:grid-cols-2">
+      {fields.map((field) =>
+        field.type === "textarea" ? (
+          <label class="sm:col-span-2">
+            <span class="label-shell">{field.label}</span>
+            <textarea class="input-shell min-h-36 resize-y" name={field.name} placeholder={field.placeholder}></textarea>
+          </label>
+        ) : (
+          <label>
+            <span class="label-shell">{field.label}</span>
+            <input class="input-shell" type={field.type ?? "text"} name={field.name} placeholder={field.placeholder} />
+          </label>
+        )
+      )}
+    </div>
+    <div class="rounded-[1.5rem] border border-sky-100 bg-sky-50 px-5 py-4 text-sm leading-6 text-slate-600">
+      {helper}
+    </div>
+    <button class="cta-button" type="submit">{submitLabel}</button>
+  </form>
+</div>

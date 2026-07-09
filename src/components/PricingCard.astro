@@ -1,0 +1,34 @@
+---
+interface Props {
+  title?: string;
+  price: string;
+  note?: string;
+  features: readonly string[];
+  ctaLabel: string;
+  ctaHref: string;
+}
+
+const {
+  title = "Starting from",
+  price,
+  note,
+  features,
+  ctaLabel,
+  ctaHref
+} = Astro.props;
+---
+
+<div class="card-panel p-8 sm:p-10">
+  <p class="text-sm font-semibold tracking-[0.22em] text-slate-500 uppercase">{title}</p>
+  <div class="mt-4 flex items-end gap-2">
+    <span class="text-5xl font-semibold tracking-tight text-fb-ink">{price}</span>
+    <span class="pb-2 text-lg text-fb-ink-soft">/hour</span>
+  </div>
+  <div class="mt-8 grid gap-3 text-base text-fb-ink">
+    {features.map((item) => (
+      <p>{item}</p>
+    ))}
+  </div>
+  <a class="cta-button mt-8" href={ctaHref}>{ctaLabel}</a>
+  {note && <p class="mt-5 text-sm leading-6 text-fb-ink-soft">{note}</p>}
+</div>

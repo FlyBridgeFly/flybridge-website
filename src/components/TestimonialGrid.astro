@@ -1,0 +1,21 @@
+---
+interface Item {
+  quote: string;
+  name: string;
+}
+
+interface Props {
+  items: readonly Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="grid gap-5 lg:grid-cols-3">
+  {items.map((item) => (
+    <article class="card-panel flex h-full flex-col justify-between p-7">
+      <p class="text-lg leading-8 text-fb-ink">“{item.quote}”</p>
+      <p class="mt-6 text-sm font-semibold tracking-[0.14em] text-slate-500 uppercase">{item.name}</p>
+    </article>
+  ))}
+</div>
