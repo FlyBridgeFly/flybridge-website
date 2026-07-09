@@ -29,6 +29,9 @@ const schema = {
     primaryHref={site.assessmentHref}
     secondaryLabel="Request a Callback"
     secondaryHref={site.callbackHref}
+    imageSrc={site.images.learningPath}
+    imageAlt="A learning path visual showing a structured route from assessment to progress."
+    imageBadge="A clear learning pathway"
   />
 
   <section class="container-shell section-shell pt-0">
@@ -56,7 +59,7 @@ const schema = {
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-10 lg:grid-cols-2">
+    <div class="grid gap-8 lg:grid-cols-2">
       <div>
         <SectionHeading
           eyebrow="What happens in the free assessment"
@@ -68,6 +71,15 @@ const schema = {
             <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
           ))}
         </div>
+        <div class="image-panel mt-6">
+          <img
+            src={site.images.assessmentReport}
+            alt="An assessment report image representing the FlyBridge assessment process."
+            class="h-[250px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       </div>
       <div>
         <SectionHeading
@@ -75,10 +87,19 @@ const schema = {
           title="How families stay informed"
           body="Progress tracking is woven into the service so support remains visible rather than vague."
         />
-        <div class="mt-8 grid gap-4">
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
           {progressTracking.map((item) => (
             <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
           ))}
+        </div>
+        <div class="image-panel mt-6">
+          <img
+            src={site.images.googleClassroom}
+            alt="Google Classroom resources organised neatly for GCSE science students."
+            class="h-[250px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
     </div>

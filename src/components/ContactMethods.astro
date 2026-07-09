@@ -20,7 +20,7 @@ const methods = [
 ] as const;
 ---
 
-<div class="grid gap-4 sm:grid-cols-3">
+<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
   {methods.map((method) => (
     <a class="card-panel p-6 transition duration-300 hover:-translate-y-1" href={method.href}>
       <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">{method.label}</p>

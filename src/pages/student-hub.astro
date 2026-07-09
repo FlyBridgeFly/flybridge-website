@@ -27,6 +27,9 @@ const schema = {
     primaryHref={site.classroomHref}
     secondaryLabel="Need help?"
     secondaryHref={site.contactHref}
+    imageSrc={site.images.googleClassroom}
+    imageAlt="Google Classroom resources laid out neatly for FlyBridge students."
+    imageBadge="Student learning hub"
   />
 
   <section class="container-shell section-shell pt-0">
@@ -39,7 +42,16 @@ const schema = {
         </p>
       </div>
       <div class="card-panel p-8 sm:p-10">
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+          <div class="image-panel">
+            <img
+              src={site.images.revisionNotebook}
+              alt="A revision notebook image representing homework and lesson follow-up."
+              class="h-full min-h-[240px] w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
             <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Lessons</p>
             <p class="mt-3 text-lg font-semibold text-fb-ink">Join live sessions and revisit key materials.</p>

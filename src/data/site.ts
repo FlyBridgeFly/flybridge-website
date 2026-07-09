@@ -11,7 +11,32 @@ export const site = {
   classroomHref: "https://classroom.google.com",
   callbackHref: "/request-callback",
   assessmentHref: "/book-assessment",
-  contactHref: "/contact"
+  contactHref: "/contact",
+  images: {
+    logo: "/images/logo.svg",
+    logoDark: "/images/logo-dark.svg",
+    logoLight: "/images/logo-light.svg",
+    logoMark: "/images/logo-mark.svg",
+    faviconSvg: "/images/favicon.svg",
+    favicon32: "/images/favicon-32.png",
+    favicon16: "/images/favicon-16.png",
+    appleTouchIcon: "/images/apple-touch-icon.png",
+    ogImage: "/images/og-image.png",
+    heroStudyDesk: "/images/hero-study-desk.webp",
+    assessmentReport: "/images/assessment-report.webp",
+    progressDashboard: "/images/progress-dashboard.webp",
+    googleClassroom: "/images/google-classroom.webp",
+    scienceIcons: "/images/science-icons.webp",
+    bridgeBlueprint: "/images/bridge-blueprint.webp",
+    learningPath: "/images/learning-path.webp",
+    reportCover: "/images/report-cover.webp",
+    revisionNotebook: "/images/revision-notebook.webp",
+    physicsTools: "/images/physics-tools.webp",
+    chemistryTools: "/images/chemistry-tools.webp",
+    biologyStudy: "/images/biology-study.webp",
+    consultancy: "/images/consultancy.webp",
+    workspace: "/images/workspace.webp"
+  }
 } as const;
 
 export const mainNavigation = [
@@ -240,6 +265,8 @@ export const subjectPages = [
       "Biology tuition focused on understanding key systems, applying knowledge clearly and answering longer questions with precision.",
     hero:
       "Build stronger recall, sharper exam answers and real confidence across the GCSE Biology course.",
+    image: site.images.biologyStudy,
+    imageAlt: "A focused GCSE Biology study setup with notes and science materials.",
     coverage: [
       "Cell biology, organisation and infection",
       "Bioenergetics, homeostasis and response",
@@ -261,6 +288,8 @@ export const subjectPages = [
       "Chemistry tuition that turns confusing topics into structured, manageable steps, especially for calculations and multi-stage ideas.",
     hero:
       "Gain clarity in chemistry with lessons that make difficult concepts feel teachable, logical and exam-ready.",
+    image: site.images.chemistryTools,
+    imageAlt: "Chemistry study tools arranged neatly on a desk for GCSE revision.",
     coverage: [
       "Atomic structure, bonding and the periodic table",
       "Quantitative chemistry and chemical changes",
@@ -282,6 +311,8 @@ export const subjectPages = [
       "Physics tuition for students who need stronger problem solving, better formula confidence and clearer conceptual understanding.",
     hero:
       "Develop a calmer, stronger approach to GCSE Physics with structured support for both maths and concepts.",
+    image: site.images.physicsTools,
+    imageAlt: "Physics revision tools and stationery laid out for focused study.",
     coverage: [
       "Energy, electricity and particle models",
       "Atomic structure, forces and motion",
@@ -303,6 +334,8 @@ export const subjectPages = [
       "Joined-up support across Biology, Chemistry and Physics for students studying Combined Science and needing coherent, balanced guidance.",
     hero:
       "Get structured support across the full Combined Science course without losing clarity between subjects.",
+    image: site.images.scienceIcons,
+    imageAlt: "A premium science-themed study image representing Combined Science support.",
     coverage: [
       "Core Biology, Chemistry and Physics topics across the combined specification",
       "Topic prioritisation based on the student's strongest and weakest areas",

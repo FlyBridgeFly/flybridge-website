@@ -73,6 +73,11 @@ const schema = [
     secondaryHref={site.callbackHref}
     tertiaryLabel="Student Hub"
     tertiaryHref="/student-hub"
+    imageSrc={site.images.heroStudyDesk}
+    imageAlt="A premium study desk setup representing focused GCSE science tuition."
+    imageLoading="eager"
+    imagePosition="center"
+    imageBadge="Cambridge-trained support"
   />
 
   <section class="container-shell section-shell pt-0">
@@ -103,20 +108,31 @@ const schema = [
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+    <div class="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
       <SectionHeading
         eyebrow="Meet your tutor"
         title="Academic depth, GCSE focus and a calm teaching style that helps students engage."
         body="FlyBridge is built around the idea that students learn best when teaching is both rigorous and reassuring. High standards matter, but so does the way they are delivered."
       />
-      <div class="card-panel p-8 sm:p-10">
-        <div class="grid gap-5 sm:grid-cols-3">
-          {tutorHighlights.map((item) => (
-            <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5">
-              <h3 class="text-lg font-semibold text-fb-ink">{item.title}</h3>
-              <p class="mt-3 text-sm leading-7 text-fb-ink-soft">{item.body}</p>
-            </div>
-          ))}
+      <div class="card-panel p-7 sm:p-8">
+        <div class="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+          <div class="image-panel">
+            <img
+              src={site.images.bridgeBlueprint}
+              alt="A premium bridge blueprint visual representing the FlyBridge mission and structure."
+              class="h-full min-h-[260px] w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="grid gap-5 sm:grid-cols-3 lg:grid-cols-1">
+            {tutorHighlights.map((item) => (
+              <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-5">
+                <h3 class="text-lg font-semibold text-fb-ink">{item.title}</h3>
+                <p class="mt-3 text-sm leading-7 text-fb-ink-soft">{item.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -131,13 +147,24 @@ const schema = [
           title="A simple, premium process that gives families clarity from the first conversation."
           body="The goal is to reduce uncertainty. Parents understand what the student needs, students know what to work on, and lessons stay focused."
         />
-        <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {flybridgeMethod.map((item) => (
-            <div class="rounded-[1.75rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
-              <h3 class="text-xl font-semibold text-white">{item.title}</h3>
-              <p class="mt-3 text-sm leading-7 text-slate-300">{item.body}</p>
-            </div>
-          ))}
+        <div class="mt-10 grid gap-5 md:grid-cols-[1.1fr_0.9fr] xl:grid-cols-[1.2fr_0.8fr]">
+          <div class="image-panel order-2 md:order-1">
+            <img
+              src={site.images.learningPath}
+              alt="A structured learning path visual representing the FlyBridge teaching method."
+              class="h-full min-h-[320px] w-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="order-1 grid gap-5 md:order-2 md:grid-cols-2">
+            {flybridgeMethod.map((item) => (
+              <div class="rounded-[1.75rem] border border-white/10 bg-white/[0.05] p-6 backdrop-blur">
+                <h3 class="text-xl font-semibold text-white">{item.title}</h3>
+                <p class="mt-3 text-sm leading-7 text-slate-300">{item.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -179,16 +206,27 @@ const schema = [
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+    <div class="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
       <SectionHeading
         eyebrow="Progress tracking"
         title="Parents can see how support is translating into real progress."
         body="FlyBridge is designed to feel transparent. Materials, homework, revision guidance and feedback are organised so improvement is easier to spot and sustain."
       />
-      <div class="grid gap-4 sm:grid-cols-2">
-        {progressTracking.map((item) => (
-          <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
-        ))}
+      <div class="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+        <div class="image-panel">
+          <img
+            src={site.images.progressDashboard}
+            alt="A progress dashboard visual representing tracked GCSE science progress."
+            class="h-full min-h-[300px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {progressTracking.map((item) => (
+            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+          ))}
+        </div>
       </div>
     </div>
   </section>
@@ -222,16 +260,27 @@ const schema = [
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+    <div class="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
       <SectionHeading
         eyebrow="Free assessment"
         title="A calm first step for parents who want clarity before committing."
         body="The assessment is designed to be genuinely useful. It helps identify where the student is now, what is holding them back and what support would make the biggest difference."
       />
-      <div class="grid gap-4 sm:grid-cols-2">
-        {assessmentFeatures.map((item) => (
-          <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
-        ))}
+      <div class="grid gap-5 lg:grid-cols-[1fr_0.9fr]">
+        <div class="grid gap-4 sm:grid-cols-2">
+          {assessmentFeatures.map((item) => (
+            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+          ))}
+        </div>
+        <div class="image-panel">
+          <img
+            src={site.images.assessmentReport}
+            alt="An assessment report visual representing FlyBridge's free assessment and reporting process."
+            class="h-full min-h-[280px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       </div>
     </div>
   </section>

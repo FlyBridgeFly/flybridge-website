@@ -11,6 +11,8 @@ interface SubjectPageData {
   navLabel: string;
   summary: string;
   hero: string;
+  image: string;
+  imageAlt: string;
   coverage: readonly string[];
   structure: readonly string[];
 }
@@ -62,13 +64,19 @@ const schema = [
             <a class="ghost-button" href={site.callbackHref}>Request a Callback</a>
           </div>
         </div>
-        <div class="rounded-[2rem] border border-white/75 bg-white/[0.86] p-6 shadow-fb">
-          <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Ideal for</p>
-          <p class="mt-4 text-xl font-semibold text-fb-ink">Students who want stronger understanding, better exam answers and more consistent science performance.</p>
-          <div class="mt-8 grid gap-3">
-            {subject.structure.slice(0, 3).map((item) => (
-              <div class="rounded-[1.25rem] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-fb-ink-soft">{item}</div>
-            ))}
+        <div class="image-panel relative">
+          <img
+            src={subject.image}
+            alt={subject.imageAlt}
+            class="h-[320px] w-full object-cover sm:h-[360px]"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-fb-bg/88 via-fb-bg/30 to-transparent p-6">
+            <div class="max-w-sm rounded-[1.35rem] border border-white/10 bg-fb-bg/78 px-4 py-4 text-white backdrop-blur">
+              <p class="text-xs font-semibold tracking-[0.2em] text-sky-200 uppercase">Ideal for</p>
+              <p class="mt-2 text-base font-semibold">Students who want stronger understanding, better exam answers and more consistent science performance.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -118,6 +126,15 @@ const schema = [
               {board}
             </div>
           ))}
+        </div>
+        <div class="image-panel mt-6">
+          <img
+            src={site.images.revisionNotebook}
+            alt="A revision notebook visual representing ongoing homework and science revision."
+            class="h-[240px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
       <PricingCard

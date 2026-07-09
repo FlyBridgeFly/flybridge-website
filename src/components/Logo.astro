@@ -1,9 +1,28 @@
-<a href="/" class="inline-flex items-center gap-3 text-fb-ink" aria-label="FlyBridge Education home">
-  <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-fb-bg text-sm font-semibold text-white shadow-lg shadow-slate-900/15">
-    FB
-  </span>
-  <span class="flex flex-col leading-none">
-    <span class="text-sm font-semibold tracking-[0.24em] text-slate-500 uppercase">FlyBridge</span>
-    <span class="text-base font-semibold text-fb-ink">Education</span>
-  </span>
+---
+import { site } from "../data/site";
+
+interface Props {
+  variant?: "default" | "light";
+}
+
+const { variant = "default" } = Astro.props;
+const logoSrc = variant === "light" ? site.images.logoLight : site.images.logo;
+const markSrc = site.images.logoMark;
+---
+
+<a href="/" class="inline-flex items-center gap-3" aria-label="FlyBridge Education home">
+  <img
+    src={markSrc}
+    alt=""
+    class="h-9 w-9 rounded-xl object-contain sm:hidden"
+    loading="eager"
+    decoding="async"
+  />
+  <img
+    src={logoSrc}
+    alt="FlyBridge Education"
+    class="hidden h-9 w-auto object-contain sm:block lg:h-10"
+    loading="eager"
+    decoding="async"
+  />
 </a>

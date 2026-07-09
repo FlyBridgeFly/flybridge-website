@@ -27,6 +27,9 @@ const schema = {
     primaryHref={site.whatsappHref}
     secondaryLabel="Request a Callback"
     secondaryHref={site.callbackHref}
+    imageSrc={site.images.assessmentReport}
+    imageAlt="A premium assessment report image representing the booking and assessment process."
+    imageBadge="Assessment overview"
   />
 
   <section class="container-shell section-shell pt-0">
@@ -59,6 +62,15 @@ const schema = {
         <div class="mt-8 flex flex-col gap-4 sm:flex-row">
           <a class="cta-button" href={site.whatsappHref}>WhatsApp</a>
           <a class="ghost-button" href={site.callbackHref}>Request a Callback</a>
+        </div>
+        <div class="image-panel mt-8">
+          <img
+            src={site.images.reportCover}
+            alt="A premium report cover image representing the clear written guidance parents can expect."
+            class="h-[220px] w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
     </div>
