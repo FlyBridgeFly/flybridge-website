@@ -39,20 +39,46 @@ export const site = {
   }
 } as const;
 
-export const mainNavigation = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Educational Consultancy", href: "/educational-consultancy" },
-  { label: "FAQs", href: "/faqs" },
-  { label: "Contact", href: "/contact" }
+export const headerNavigation = [
+  { label: "Home", href: "/" }
 ] as const;
 
-export const subjectNavigation = [
+export const scienceNavigation = [
   { label: "GCSE Biology", href: "/gcse-biology" },
   { label: "GCSE Chemistry", href: "/gcse-chemistry" },
   { label: "GCSE Physics", href: "/gcse-physics" },
   { label: "Combined Science", href: "/combined-science" }
+] as const;
+
+export const mathsNavigation = [
+  { label: "GCSE Maths", href: "/gcse-maths" },
+  { label: "Functional Skills Maths", href: "/functional-skills-maths" }
+] as const;
+
+export const languageNavigation = [
+  { label: "French", href: "/french" }
+] as const;
+
+export const courseNavigation = [
+  {
+    label: "Science",
+    items: scienceNavigation
+  },
+  {
+    label: "Maths",
+    items: mathsNavigation
+  },
+  {
+    label: "Languages",
+    items: languageNavigation
+  }
+] as const;
+
+export const portalNavigation = [
+  { label: "Parent Portal", href: "/parent-portal" },
+  { label: "Tutor Login", href: "/tutor" },
+  { label: "Admin Login", href: "/admin" },
+  { label: "Student Hub", href: "/student-hub" }
 ] as const;
 
 export const footerQuickLinks = [
@@ -61,15 +87,26 @@ export const footerQuickLinks = [
   { label: "How It Works", href: "/how-it-works" },
   { label: "Educational Consultancy", href: "/educational-consultancy" },
   { label: "FAQs", href: "/faqs" },
-  { label: "Contact", href: "/contact" }
-] as const;
-
-export const footerSupportLinks = [
-  { label: "Book Assessment", href: site.assessmentHref },
+  { label: "Contact", href: "/contact" },
   { label: "Request a Callback", href: site.callbackHref },
-  { label: "Student Hub", href: "/student-hub" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" }
+] as const;
+
+export const footerPortalLinks = [
+  { label: "Parent Portal", href: "/parent-portal" },
+  { label: "Tutor Login", href: "/tutor" },
+  { label: "Admin Login", href: "/admin" },
+  { label: "Student Hub", href: "/student-hub" },
+  { label: "Book Assessment", href: site.assessmentHref },
+  { label: "Request a Callback", href: site.callbackHref }
+] as const;
+
+export const footerServiceLinks = [
+  { label: "Science Tuition", href: "/gcse-biology" },
+  { label: "Maths Tuition", href: "/gcse-maths" },
+  { label: "French Tuition", href: "/french" },
+  { label: "Educational Consultancy", href: "/educational-consultancy" }
 ] as const;
 
 export const heroMetrics = [

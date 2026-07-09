@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBanner from "../components/CtaBanner.astro";
+import { site } from "../data/site";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Functional Skills Maths",
+  description: "Functional Skills Maths support from FlyBridge Education.",
+  url: new URL("/functional-skills-maths", site.url).toString()
+};
+---
+
+<BaseLayout
+  title="Functional Skills Maths"
+  description="Functional Skills Maths support from FlyBridge Education."
+  path="/functional-skills-maths"
+  schema={schema}
+>
+  <PageHero
+    eyebrow="Maths Tuition"
+    title="Functional Skills Maths support is being prepared."
+    body="This route is now live so the navigation is complete and future service information can be added without changing the header or footer structure again."
+    primaryLabel="Book Assessment"
+    primaryHref={site.assessmentHref}
+    secondaryLabel="Contact FlyBridge"
+    secondaryHref={site.contactHref}
+    imageSrc={site.images.reportCover}
+    imageAlt="A premium study materials image representing future Functional Skills Maths support."
+    imageBadge="Future offering"
+  />
+
+  <CtaBanner
+    eyebrow="Need help sooner?"
+    title="Get in touch if you want to discuss upcoming maths support."
+    body="FlyBridge can note interest now while the full Functional Skills Maths service page is being developed."
+    actions={[
+      { label: "Contact FlyBridge", href: site.contactHref },
+      { label: "Request a Callback", href: site.callbackHref, variant: "secondary" }
+    ]}
+  />
+</BaseLayout>

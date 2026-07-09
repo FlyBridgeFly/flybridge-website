@@ -1,22 +1,57 @@
 ---
 import Logo from "./Logo.astro";
-import { mainNavigation, site, subjectNavigation } from "../data/site";
+import { courseNavigation, headerNavigation, portalNavigation, site } from "../data/site";
 ---
 
 <header class="sticky top-0 z-50 px-4 pt-3 sm:px-6 lg:px-8">
   <div id="site-header" class="mx-auto w-full max-w-7xl rounded-[1.75rem] border border-transparent px-4 py-3 transition duration-300 sm:px-5">
     <div class="flex items-center justify-between gap-4">
       <Logo />
-      <nav class="hidden items-center gap-3 xl:flex 2xl:gap-4" aria-label="Primary">
-        {mainNavigation.map((item) => (
+      <nav class="hidden items-center gap-3 xl:flex" aria-label="Primary">
+        {headerNavigation.map((item) => (
           <a class="nav-link" href={item.href}>{item.label}</a>
         ))}
+        <details class="group relative">
+          <summary class="nav-link flex cursor-pointer list-none items-center gap-2 rounded-full px-3 py-2">
+            Courses
+            <svg viewBox="0 0 20 20" class="h-4 w-4 transition group-open:rotate-180" fill="none" aria-hidden="true">
+              <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </summary>
+          <div class="absolute left-1/2 top-[3.25rem] z-20 w-[38rem] -translate-x-1/2 rounded-[1.5rem] border border-white/70 bg-white/[0.96] p-5 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+            <div class="grid gap-5 md:grid-cols-3">
+              {courseNavigation.map((group) => (
+                <div class="space-y-3">
+                  <p class="px-3 text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">{group.label}</p>
+                  <div class="space-y-1">
+                    {group.items.map((item) => (
+                      <a class="block rounded-[1rem] px-3 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href={item.href}>
+                        {item.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </details>
+        <details class="group relative">
+          <summary class="nav-link flex cursor-pointer list-none items-center gap-2 rounded-full px-3 py-2">
+            Portal
+            <svg viewBox="0 0 20 20" class="h-4 w-4 transition group-open:rotate-180" fill="none" aria-hidden="true">
+              <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </summary>
+          <div class="absolute left-1/2 top-[3.25rem] z-20 w-72 -translate-x-1/2 rounded-[1.5rem] border border-white/70 bg-white/[0.96] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+            {portalNavigation.map((item) => (
+              <a class="block rounded-[1rem] px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href={item.href}>
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </details>
       </nav>
       <div class="flex items-center gap-3">
-        <div class="hidden xl:flex xl:items-center xl:gap-3">
-          <a class="nav-link" href={site.callbackHref}>Request a Callback</a>
-          <a class="nav-link" href="/student-hub">Student Hub</a>
-        </div>
         <a class="cta-button px-5 py-2.5 text-sm" href={site.assessmentHref}>Book Assessment</a>
         <details class="group relative xl:hidden">
           <summary class="grid h-11 w-11 cursor-pointer list-none place-items-center rounded-full border border-slate-200 bg-white/80 text-fb-ink backdrop-blur">
@@ -27,29 +62,53 @@ import { mainNavigation, site, subjectNavigation } from "../data/site";
               <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
             </svg>
           </summary>
-          <nav class="absolute right-0 top-14 flex w-72 flex-col gap-1 rounded-[1.5rem] border border-white/70 bg-white/[0.92] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl" aria-label="Mobile">
-            {mainNavigation.map((item) => (
+          <nav class="absolute right-0 top-14 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-1 rounded-[1.5rem] border border-white/70 bg-white/[0.96] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl" aria-label="Mobile">
+            {headerNavigation.map((item) => (
               <a class="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href={item.href}>{item.label}</a>
             ))}
-            <div class="my-2 border-t border-slate-200"></div>
-            {subjectNavigation.map((item) => (
-              <a class="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href={item.href}>{item.label}</a>
-            ))}
-            <div class="my-2 border-t border-slate-200"></div>
-            <a class="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/student-hub">Student Hub</a>
-            <a class="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href={site.callbackHref}>Request a Callback</a>
+            <details class="rounded-[1.25rem] border border-slate-200 bg-slate-50/80">
+              <summary class="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-fb-ink">
+                Courses
+                <svg viewBox="0 0 20 20" class="h-4 w-4 transition" fill="none" aria-hidden="true">
+                  <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </summary>
+              <div class="space-y-3 px-3 pb-3">
+                {courseNavigation.map((group) => (
+                  <details class="rounded-[1rem] border border-slate-200 bg-white">
+                    <summary class="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium text-slate-700">
+                      {group.label}
+                      <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" aria-hidden="true">
+                        <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </svg>
+                    </summary>
+                    <div class="space-y-1 px-2 pb-2">
+                      {group.items.map((item) => (
+                        <a class="block rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href={item.href}>{item.label}</a>
+                      ))}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </details>
+            <details class="rounded-[1.25rem] border border-slate-200 bg-slate-50/80">
+              <summary class="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-fb-ink">
+                Portal
+                <svg viewBox="0 0 20 20" class="h-4 w-4 transition" fill="none" aria-hidden="true">
+                  <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </summary>
+              <div class="space-y-1 px-3 pb-3">
+                {portalNavigation.map((item) => (
+                  <a class="block rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href={item.href}>{item.label}</a>
+                ))}
+              </div>
+            </details>
             <a class="mt-1 rounded-2xl bg-fb-bg px-4 py-3 text-center text-sm font-semibold text-white" href={site.assessmentHref}>Book Assessment</a>
           </nav>
         </details>
       </div>
     </div>
-    <nav class="hidden 2xl:mt-4 2xl:flex 2xl:flex-wrap 2xl:items-center 2xl:gap-3" aria-label="Subjects">
-      {subjectNavigation.map((item) => (
-        <a class="rounded-full border border-slate-200/80 bg-white/65 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-slate-600 uppercase transition hover:border-slate-300 hover:text-fb-ink" href={item.href}>
-          {item.label}
-        </a>
-      ))}
-    </nav>
   </div>
 </header>
 
