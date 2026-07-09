@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="img" aria-labelledby="title desc">
+  <title id="title">Assessment report illustration</title>
+  <desc id="desc">A premium assessment panel showing scores, feedback and progress indicators.</desc>
+  <defs>
+    <linearGradient id="assessment-bg" x1="10%" y1="2%" x2="90%" y2="100%">
+      <stop offset="0%" stop-color="#071422" />
+      <stop offset="55%" stop-color="#10243b" />
+      <stop offset="100%" stop-color="#17385f" />
+    </linearGradient>
+    <linearGradient id="assessment-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a8d8ff" />
+      <stop offset="55%" stop-color="#4da2ff" />
+      <stop offset="100%" stop-color="#1f74ee" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="640" rx="42" fill="url(#assessment-bg)" />
+  <circle cx="675" cy="120" r="96" fill="#4da2ff" opacity=".12" />
+  <rect x="122" y="92" width="370" height="456" rx="30" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.18)" />
+  <rect x="164" y="132" width="136" height="14" rx="7" fill="#9fd3ff" />
+  <rect x="164" y="164" width="250" height="12" rx="6" fill="#dcecff" opacity=".8" />
+  <rect x="164" y="200" width="286" height="132" rx="22" fill="rgba(6,17,31,0.5)" stroke="rgba(255,255,255,0.08)" />
+  <circle cx="246" cy="266" r="46" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="12" />
+  <path d="M246 220a46 46 0 1 1-32.5 13.5" fill="none" stroke="url(#assessment-accent)" stroke-linecap="round" stroke-width="12" />
+  <text x="222" y="275" fill="#ffffff" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="28" font-weight="800">84%</text>
+  <rect x="322" y="236" width="90" height="12" rx="6" fill="#dcecff" opacity=".82" />
+  <rect x="322" y="262" width="112" height="12" rx="6" fill="#4da2ff" opacity=".9" />
+  <rect x="322" y="288" width="76" height="12" rx="6" fill="#dcecff" opacity=".38" />
+  <rect x="164" y="364" width="286" height="16" rx="8" fill="#dcecff" opacity=".22" />
+  <rect x="164" y="396" width="226" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="164" y="427" width="248" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="164" y="458" width="184" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="510" y="170" width="182" height="148" rx="26" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" />
+  <rect x="542" y="210" width="44" height="72" rx="14" fill="#4da2ff" />
+  <rect x="600" y="194" width="44" height="88" rx="14" fill="#8fd1ff" opacity=".82" />
+  <rect x="658" y="232" width="12" height="50" rx="6" fill="#dcecff" opacity=".72" />
+  <rect x="486" y="352" width="230" height="146" rx="26" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" />
+  <path d="M528 458c36-30 69-45 100-45 30 0 54 12 72 36" fill="none" stroke="url(#assessment-accent)" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" />
+  <circle cx="528" cy="458" r="8" fill="#9fd3ff" />
+  <circle cx="628" cy="413" r="8" fill="#9fd3ff" />
+  <circle cx="700" cy="449" r="8" fill="#9fd3ff" />
+</svg>

@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import ContactMethods from "../components/ContactMethods.astro";
+import SectionHeading from "../components/SectionHeading.astro";
 import { site } from "../data/site";
 
 const schema = {
@@ -33,48 +34,54 @@ const schema = {
   />
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-10 lg:grid-cols-[0.82fr_1.18fr]">
-      <div class="space-y-5">
-        <span class="eyebrow">Learning access</span>
-        <h2 class="text-3xl font-semibold tracking-tight text-fb-ink sm:text-4xl">Everything students need in one organised place.</h2>
-        <p class="text-base leading-8 text-fb-ink-soft">
-          Google Classroom is the main hub for lesson links, homework, revision resources and feedback. If anything is unclear, support is easy to reach.
-        </p>
+    <div class="grid gap-6 lg:grid-cols-[0.82fr_1.18fr]">
+      <div class="space-y-4">
+        <SectionHeading
+          eyebrow="Learning access"
+          title="Everything students need in one organised place."
+          body="Google Classroom is the main hub for lesson links, homework, revision resources and feedback. If anything is unclear, support is easy to reach."
+        />
+        <div class="surface-note-sky">
+          Students use Google Classroom for the working side of tuition. Parents use the FlyBridge Portal for progress summaries, assessment updates and next steps.
+        </div>
       </div>
-      <div class="card-panel p-8 sm:p-10">
+      <div class="card-panel p-5 sm:p-6">
         <div class="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
           <div class="image-panel">
             <img
               src={site.images.revisionNotebook}
               alt="A revision notebook image representing homework and lesson follow-up."
-              class="h-full min-h-[240px] w-full object-cover"
+              class="h-full min-h-[200px] w-full object-cover sm:min-h-[220px]"
               loading="lazy"
               decoding="async"
             />
           </div>
-          <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
+          <div class="rounded-[1.15rem] border border-slate-200 bg-slate-50 p-4">
             <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Lessons</p>
-            <p class="mt-3 text-lg font-semibold text-fb-ink">Join live sessions and revisit key materials.</p>
+            <p class="mt-2 text-base font-semibold text-fb-ink sm:text-lg">Join live sessions and revisit key materials.</p>
           </div>
-          <div class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+          <div class="rounded-[1.15rem] border border-slate-200 bg-white p-4">
             <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Homework</p>
-            <p class="mt-3 text-lg font-semibold text-fb-ink">Stay on top of weekly tasks and revision work.</p>
+            <p class="mt-2 text-base font-semibold text-fb-ink sm:text-lg">Stay on top of weekly tasks and revision work.</p>
           </div>
         </div>
-        <a class="cta-button mt-8 w-full sm:w-auto" href={site.classroomHref} target="_blank" rel="noreferrer">Open Google Classroom</a>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          <a class="cta-button w-full" href={site.classroomHref} target="_blank" rel="noreferrer">Open Google Classroom</a>
+          <a class="ghost-button w-full" href="/parent-portal">Parent Portal</a>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="container-shell section-shell">
-    <div class="space-y-5">
-      <span class="eyebrow">Need help?</span>
-      <h2 class="text-3xl font-semibold tracking-tight text-fb-ink sm:text-4xl">Support is close by if students or parents need assistance.</h2>
-      <p class="max-w-2xl text-base leading-8 text-fb-ink-soft">
-        If there is an issue with classroom access, homework or lesson information, get in touch directly.
-      </p>
+    <div class="space-y-4">
+      <SectionHeading
+        eyebrow="Need help?"
+        title="Support is close by if students or parents need assistance."
+        body="If there is an issue with classroom access, homework or lesson information, get in touch directly."
+      />
     </div>
-    <div class="mt-10">
+    <div class="mt-8">
       <ContactMethods />
     </div>
   </section>

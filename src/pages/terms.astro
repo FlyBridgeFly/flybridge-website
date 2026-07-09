@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PolicyPage from "../components/PolicyPage.astro";
 import { site } from "../data/site";
 ---
 
@@ -8,45 +9,44 @@ import { site } from "../data/site";
   description="Terms and conditions for FlyBridge Education tuition services and website use."
   path="/terms"
 >
-  <section class="container-shell section-shell">
-    <div class="mx-auto max-w-4xl card-panel p-8 sm:p-10 lg:p-14">
-      <span class="eyebrow">Terms</span>
-      <h1 class="mt-6 text-4xl font-semibold tracking-tight text-fb-ink sm:text-5xl">Terms and Conditions</h1>
-      <div class="mt-8 space-y-8 text-base leading-8 text-fb-ink-soft">
-        <p>
-          These terms govern the use of the FlyBridge Education website and any tuition services arranged through the business.
-        </p>
-        <div>
-          <h2 class="text-xl font-semibold text-fb-ink">Tuition arrangements</h2>
-          <p class="mt-3">
-            Lesson scheduling, format and final tuition fees are confirmed after assessment and depend on student needs, availability and delivery format.
-          </p>
-        </div>
-        <div>
-          <h2 class="text-xl font-semibold text-fb-ink">Student responsibilities</h2>
-          <p class="mt-3">
-            Students are expected to attend lessons punctually, participate respectfully and complete assigned work where possible to support consistent progress.
-          </p>
-        </div>
-        <div>
-          <h2 class="text-xl font-semibold text-fb-ink">Resources and materials</h2>
-          <p class="mt-3">
-            Learning materials shared through lessons or Google Classroom are provided for enrolled students and should not be redistributed without permission.
-          </p>
-        </div>
-        <div>
-          <h2 class="text-xl font-semibold text-fb-ink">Website use</h2>
-          <p class="mt-3">
-            Website content is provided for general information and may be updated at any time to reflect current services, policies or availability.
-          </p>
-        </div>
-        <div>
-          <h2 class="text-xl font-semibold text-fb-ink">Contact</h2>
-          <p class="mt-3">
-            For questions about these terms, email <a class="font-medium text-fb-ink" href={`mailto:${site.email}`}>{site.email}</a>.
-          </p>
-        </div>
-      </div>
+  <PolicyPage
+    eyebrow="Terms"
+    title="Terms and Conditions"
+    updatedLabel="Last updated July 9, 2026"
+    note="Final lesson arrangements, fees and scheduling are always confirmed directly with families after assessment so the plan matches the student’s needs and availability."
+  >
+    <p>
+      These terms govern the use of the FlyBridge Education website and any tuition services arranged through the business.
+    </p>
+    <div>
+      <h2>Tuition arrangements</h2>
+      <p>
+        Lesson scheduling, format and final tuition fees are confirmed after assessment and depend on student needs, availability and delivery format.
+      </p>
     </div>
-  </section>
+    <div>
+      <h2>Student responsibilities</h2>
+      <p>
+        Students are expected to attend lessons punctually, participate respectfully and complete assigned work where possible to support consistent progress.
+      </p>
+    </div>
+    <div>
+      <h2>Resources and materials</h2>
+      <p>
+        Learning materials shared through lessons or Google Classroom are provided for enrolled students and should not be redistributed without permission.
+      </p>
+    </div>
+    <div>
+      <h2>Website use</h2>
+      <p>
+        Website content is provided for general information and may be updated at any time to reflect current services, policies or availability.
+      </p>
+    </div>
+    <div>
+      <h2>Contact</h2>
+      <p>
+        For questions about these terms, email <a class="font-medium text-fb-ink" href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+    </div>
+  </PolicyPage>
 </BaseLayout>

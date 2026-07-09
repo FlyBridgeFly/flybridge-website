@@ -52,30 +52,35 @@ const schema = [
   path={`/${subject.slug}`}
   schema={schema}
 >
-  <section class="container-shell pb-10 pt-10 sm:pb-14 sm:pt-14">
-    <div class="card-panel hero-glow overflow-hidden p-8 sm:p-10 lg:p-14">
-      <div class="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-        <div class="space-y-6">
+  <section class="container-shell pb-6 pt-4 sm:pb-8 sm:pt-6">
+    <div class="card-panel hero-glow overflow-hidden p-5 sm:p-7 lg:p-8">
+      <div class="grid gap-6 lg:grid-cols-[1fr_0.92fr] lg:items-center lg:gap-8">
+        <div class="space-y-4">
           <span class="eyebrow">{subject.navLabel}</span>
-          <h1 class="max-w-4xl text-balance text-5xl font-semibold tracking-tight text-fb-ink sm:text-6xl">{subject.name} tuition with greater clarity, structure and exam confidence.</h1>
-          <p class="max-w-2xl text-lg leading-8 text-fb-ink-soft">{subject.hero}</p>
-          <div class="flex flex-col gap-4 sm:flex-row">
-            <a class="cta-button" href={site.assessmentHref}>Book Free Assessment</a>
-            <a class="ghost-button" href={site.callbackHref}>Request a Callback</a>
+          <h1 class="max-w-4xl text-balance text-[2.1rem] font-semibold tracking-tight text-fb-ink sm:text-[2.8rem] lg:text-[3.15rem] lg:leading-[1.04]">{subject.name} tuition with greater clarity, structure and exam confidence.</h1>
+          <p class="max-w-2xl body-copy sm:text-base">{subject.hero}</p>
+          <div class="grid gap-2 sm:grid-cols-3">
+            <span class="mini-chip">Free assessment first</span>
+            <span class="mini-chip">Parent reporting included</span>
+            <span class="mini-chip">Google Classroom support</span>
+          </div>
+          <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <a class="cta-button w-full sm:w-auto" href={site.assessmentHref}>Book Free Assessment</a>
+            <a class="ghost-button w-full sm:w-auto" href={site.callbackHref}>Request a Callback</a>
           </div>
         </div>
         <div class="image-panel relative">
           <img
             src={subject.image}
             alt={subject.imageAlt}
-            class="h-[320px] w-full object-cover sm:h-[360px]"
+            class="h-[220px] w-full object-cover sm:h-[280px] lg:h-[320px]"
             loading="eager"
             decoding="async"
           />
-          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-fb-bg/88 via-fb-bg/30 to-transparent p-6">
-            <div class="max-w-sm rounded-[1.35rem] border border-white/10 bg-fb-bg/78 px-4 py-4 text-white backdrop-blur">
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-fb-bg/88 via-fb-bg/30 to-transparent p-4 sm:p-5">
+            <div class="max-w-sm rounded-[1.15rem] border border-white/10 bg-fb-bg/78 px-4 py-3.5 text-white backdrop-blur">
               <p class="text-xs font-semibold tracking-[0.2em] text-sky-200 uppercase">Ideal for</p>
-              <p class="mt-2 text-base font-semibold">Students who want stronger understanding, better exam answers and more consistent science performance.</p>
+              <p class="mt-2 text-sm font-semibold sm:text-base">Students who want stronger understanding, better exam answers and more consistent science performance.</p>
             </div>
           </div>
         </div>
@@ -84,7 +89,7 @@ const schema = [
   </section>
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-10 lg:grid-cols-2">
+    <div class="grid gap-6 lg:grid-cols-2">
       <div class="space-y-6">
         <SectionHeading
           eyebrow="What is covered"
@@ -93,7 +98,7 @@ const schema = [
         />
         <div class="grid gap-4">
           {subject.coverage.map((item) => (
-            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+            <div class="card-panel px-5 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
         </div>
       </div>
@@ -105,15 +110,21 @@ const schema = [
         />
         <div class="grid gap-4">
           {subject.structure.map((item) => (
-            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+            <div class="card-panel px-5 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
         </div>
       </div>
     </div>
   </section>
 
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="surface-note-sky">
+      FlyBridge lessons and homework are organised through Google Classroom, while parent reporting stays visible through the FlyBridge Portal with lesson summaries, assessment progress and next-step guidance.
+    </div>
+  </section>
+
   <section class="container-shell section-shell">
-    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
       <div class="space-y-5">
         <SectionHeading
           eyebrow="Exam boards"
@@ -122,16 +133,16 @@ const schema = [
         />
         <div class="grid gap-3 sm:grid-cols-2">
           {examBoards.map((board) => (
-            <div class="rounded-[1.5rem] border border-slate-200 bg-white/80 px-5 py-4 text-base font-medium text-fb-ink shadow-sm">
+            <div class="rounded-[1.15rem] border border-slate-200 bg-white/80 px-4 py-3.5 text-sm font-medium text-fb-ink shadow-sm sm:text-base">
               {board}
             </div>
           ))}
         </div>
-        <div class="image-panel mt-6">
+        <div class="image-panel mt-4">
           <img
             src={site.images.revisionNotebook}
             alt="A revision notebook visual representing ongoing homework and science revision."
-            class="h-[240px] w-full object-cover"
+            class="h-[210px] w-full object-cover sm:h-[230px]"
             loading="lazy"
             decoding="async"
           />

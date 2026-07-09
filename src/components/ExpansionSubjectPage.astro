@@ -1,0 +1,153 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "./PageHero.astro";
+import SectionHeading from "./SectionHeading.astro";
+import PricingCard from "./PricingCard.astro";
+import CtaBanner from "./CtaBanner.astro";
+import { pricingFeatures, site } from "../data/site";
+
+interface ExpansionSubjectPageData {
+  name: string;
+  slug: string;
+  eyebrow: string;
+  navLabel: string;
+  summary: string;
+  heroTitle: string;
+  heroBody: string;
+  image: string;
+  imageAlt: string;
+  imageBadge: string;
+  coverageHeading: string;
+  coverageBody: string;
+  coverage: readonly string[];
+  structureHeading: string;
+  structureBody: string;
+  structure: readonly string[];
+  boardsHeading: string;
+  boardsBody: string;
+  boards: readonly string[];
+  ctaTitle: string;
+  ctaBody: string;
+}
+
+interface Props {
+  subject: ExpansionSubjectPageData;
+}
+
+const { subject } = Astro.props;
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: subject.navLabel,
+    description: subject.summary,
+    url: new URL(`/${subject.slug}`, site.url).toString()
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: subject.navLabel,
+    provider: {
+      "@type": "EducationalOrganization",
+      name: site.name,
+      url: site.url
+    },
+    areaServed: "United Kingdom",
+    description: subject.summary
+  }
+];
+---
+
+<BaseLayout
+  title={subject.navLabel}
+  description={subject.summary}
+  path={`/${subject.slug}`}
+  schema={schema}
+>
+  <PageHero
+    eyebrow={subject.eyebrow}
+    title={subject.heroTitle}
+    body={subject.heroBody}
+    primaryLabel="Book Free Assessment"
+    primaryHref={site.assessmentHref}
+    secondaryLabel="Request a Callback"
+    secondaryHref={site.callbackHref}
+    imageSrc={subject.image}
+    imageAlt={subject.imageAlt}
+    imageBadge={subject.imageBadge}
+  />
+
+  <section class="container-shell section-shell pt-0">
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div class="space-y-6">
+        <SectionHeading
+          eyebrow="What support focuses on"
+          title={subject.coverageHeading}
+          body={subject.coverageBody}
+        />
+        <div class="grid gap-4">
+          {subject.coverage.map((item) => (
+            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
+          ))}
+        </div>
+      </div>
+      <div class="space-y-6">
+        <SectionHeading
+          eyebrow="Lesson structure"
+          title={subject.structureHeading}
+          body={subject.structureBody}
+        />
+        <div class="grid gap-4">
+          {subject.structure.map((item) => (
+            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="surface-note-sky">
+      The wider FlyBridge experience stays consistent here too: structured teaching for students, Google Classroom for day-to-day learning materials, and a calmer parent-facing portal for progress visibility where relevant.
+    </div>
+  </section>
+
+  <section class="container-shell section-shell">
+    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+      <div class="space-y-6">
+        <SectionHeading
+          eyebrow="Who it suits"
+          title={subject.boardsHeading}
+          body={subject.boardsBody}
+        />
+        <div class="grid gap-3 sm:grid-cols-2">
+          {subject.boards.map((item) => (
+            <div class="rounded-[1.15rem] border border-slate-200 bg-white/80 px-4 py-3.5 text-sm font-medium text-fb-ink shadow-sm sm:text-base">
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <PricingCard
+        title="Starting from"
+        price="£20"
+        ctaLabel="Book Free Assessment"
+        ctaHref={site.assessmentHref}
+        features={pricingFeatures}
+        note="Final tuition fees may vary depending on lesson format, year group, level of support needed and availability."
+      />
+    </div>
+  </section>
+
+  <CtaBanner
+    eyebrow="Next step"
+    title={subject.ctaTitle}
+    body={subject.ctaBody}
+    actions={[
+      { label: "Book Free Assessment", href: site.assessmentHref },
+      { label: "Contact FlyBridge", href: site.contactHref, variant: "secondary" }
+    ]}
+  />
+</BaseLayout>

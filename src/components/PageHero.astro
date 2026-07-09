@@ -14,6 +14,7 @@ interface Props {
   imageLoading?: "eager" | "lazy";
   imagePosition?: string;
   imageBadge?: string;
+  supportPoints?: string[];
 }
 
 const {
@@ -30,44 +31,54 @@ const {
   imageAlt,
   imageLoading = "lazy",
   imagePosition = "center",
-  imageBadge
+  imageBadge,
+  supportPoints = []
 } = Astro.props;
 ---
 
-<section class="container-shell pb-10 pt-6 sm:pb-12 sm:pt-8">
-  <div class="card-panel hero-glow overflow-hidden p-6 sm:p-8 lg:p-10">
-    <div class="grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
-      <div class="space-y-6">
+<section class="container-shell pb-5 pt-4 sm:pb-7 sm:pt-5">
+  <div class="card-panel hero-glow overflow-hidden p-5 sm:p-6 lg:p-7">
+    <div class="grid gap-5 lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:gap-7">
+      <div class="space-y-3.5">
         {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-        <div class="space-y-4">
-          <h1 class="max-w-4xl text-balance text-4xl font-semibold tracking-tight text-fb-ink sm:text-5xl lg:text-[3.8rem] lg:leading-[1.02]">{title}</h1>
-          <p class="max-w-2xl text-base leading-7 text-fb-ink-soft sm:text-lg sm:leading-8">{body}</p>
+        <div class="space-y-2.5">
+          <h1 class="max-w-4xl text-balance text-[2.05rem] font-semibold tracking-tight text-fb-ink sm:text-[2.7rem] lg:text-[3.05rem] lg:leading-[1.05]">{title}</h1>
+          <p class="max-w-2xl body-copy sm:text-base">{body}</p>
         </div>
-        <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-          <a class="cta-button" href={primaryHref}>{primaryLabel}</a>
-          {secondaryLabel && secondaryHref && <a class="ghost-button" href={secondaryHref}>{secondaryLabel}</a>}
-          {tertiaryLabel && tertiaryHref && <a class="ghost-button" href={tertiaryHref}>{tertiaryLabel}</a>}
+        {supportPoints.length > 0 && (
+          <div class="grid gap-2 sm:grid-cols-3">
+            {supportPoints.map((point) => (
+              <div class="rounded-[0.95rem] border border-slate-200/80 bg-white/75 px-3.5 py-2.5 text-[11px] font-semibold tracking-[0.15em] text-slate-600 uppercase shadow-sm">
+                {point}
+              </div>
+            ))}
+          </div>
+        )}
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <a class="cta-button w-full sm:w-auto" href={primaryHref}>{primaryLabel}</a>
+          {secondaryLabel && secondaryHref && <a class="ghost-button w-full sm:w-auto" href={secondaryHref}>{secondaryLabel}</a>}
+          {tertiaryLabel && tertiaryHref && <a class="ghost-button w-full sm:w-auto" href={tertiaryHref}>{tertiaryLabel}</a>}
         </div>
       </div>
-      <div class="relative min-h-[250px]">
-        <div class="absolute inset-x-8 top-6 h-28 rounded-full bg-sky-200/55 blur-3xl"></div>
-        <div class="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/80 shadow-fb">
+      <div class="relative min-h-[210px]">
+        <div class="absolute inset-x-8 top-6 h-20 rounded-full bg-sky-200/55 blur-3xl"></div>
+        <div class="relative overflow-hidden rounded-[1.35rem] border border-white/80 bg-white/80 shadow-fb">
           {imageSrc ? (
             <img
               src={imageSrc}
               alt={imageAlt ?? ""}
-              class="h-[260px] w-full object-cover sm:h-[320px] lg:h-[360px]"
+              class="h-[210px] w-full object-cover sm:h-[255px] lg:h-[300px]"
               style={`object-position:${imagePosition}`}
               loading={imageLoading}
               decoding="async"
             />
           ) : (
-            <div class="section-grid h-[260px] bg-white/55 sm:h-[320px] lg:h-[360px]"></div>
+            <div class="section-grid h-[210px] bg-white/55 sm:h-[255px] lg:h-[300px]"></div>
           )}
-          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-fb-bg/88 via-fb-bg/25 to-transparent p-5 sm:p-6">
-            <div class="max-w-sm rounded-[1.35rem] border border-white/10 bg-fb-bg/78 px-4 py-4 text-white backdrop-blur">
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-fb-bg/90 via-fb-bg/30 to-transparent p-4 sm:p-5">
+            <div class="max-w-sm rounded-[1.15rem] border border-white/10 bg-fb-bg/80 px-4 py-3.5 text-white backdrop-blur">
               <p class="text-xs font-semibold tracking-[0.2em] text-sky-200 uppercase">{imageBadge ?? "Parent confidence"}</p>
-              <p class="mt-2 text-base font-semibold sm:text-lg">Clear plans. Calm teaching. Measurable progress.</p>
+              <p class="mt-2 text-sm font-semibold sm:text-base">Clear plans. Calm teaching. Measurable progress.</p>
             </div>
           </div>
         </div>

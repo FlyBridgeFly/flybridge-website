@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import ContactMethods from "../components/ContactMethods.astro";
 import FormShell from "../components/FormShell.astro";
+import SectionHeading from "../components/SectionHeading.astro";
 import { site } from "../data/site";
 
 const schema = {
@@ -14,11 +15,43 @@ const schema = {
 };
 
 const fields = [
-  { label: "Parent name", name: "parent-name", placeholder: "Your full name" },
+  { label: "Parent name", name: "parent-name", placeholder: "Your full name", required: true, autocomplete: "name" },
   { label: "Student name", name: "student-name", placeholder: "Student's name" },
-  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com" },
-  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "07..." },
-  { label: "Message", name: "message", type: "textarea" as const, placeholder: "Tell us a little about the support you are looking for." }
+  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com", required: true, autocomplete: "email" },
+  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "07...", autocomplete: "tel" },
+  { label: "Message", name: "message", type: "textarea" as const, placeholder: "Tell us a little about the support you are looking for.", required: true, helper: "A short summary of the subject, year group and current concern is enough." }
+] as const;
+
+const contactMethods = [
+  {
+    label: "WhatsApp",
+    value: site.phone,
+    href: site.whatsappHref,
+    hint: "Quickest route for a fast reply"
+  },
+  {
+    label: "Email",
+    value: site.email,
+    href: `mailto:${site.email}`,
+    hint: "Useful when you want to explain the situation in more detail"
+  },
+  {
+    label: "Book Assessment",
+    value: "Start with a free assessment",
+    href: site.assessmentHref,
+    hint: "Best if you already know you want subject-specific support"
+  }
+] as const;
+
+const trustPoints = [
+  {
+    title: "Simple first contact",
+    body: "A short message is enough. Parents do not need to prepare a long enquiry to get a useful reply."
+  },
+  {
+    title: "Whichever channel suits you",
+    body: "Use WhatsApp for speed or email if you want to share more context before FlyBridge responds."
+  }
 ] as const;
 ---
 
@@ -42,25 +75,33 @@ const fields = [
   />
 
   <section class="container-shell section-shell pt-0">
-    <ContactMethods />
+    <ContactMethods methods={contactMethods} />
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
-      <div class="space-y-5">
-        <span class="eyebrow">Direct contact</span>
-        <h2 class="text-3xl font-semibold tracking-tight text-fb-ink sm:text-4xl">Choose the channel that feels easiest.</h2>
-        <div class="space-y-4 text-base leading-8 text-fb-ink-soft">
+    <div class="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+      <div class="space-y-4">
+        <SectionHeading
+          eyebrow="Direct contact"
+          title="Choose the channel that feels easiest."
+          body="For many parents, a quick message is the best first step. Use whichever route feels simplest and FlyBridge can guide the next move."
+        />
+        <div class="space-y-3 text-sm leading-7 text-fb-ink-soft sm:text-base">
           <p>WhatsApp: <a class="font-semibold text-fb-ink" href={site.whatsappHref} target="_blank" rel="noreferrer">{site.phone}</a></p>
           <p>Email: <a class="font-semibold text-fb-ink" href={`mailto:${site.email}`}>{site.email}</a></p>
         </div>
       </div>
       <FormShell
         title="Contact form"
-        body="Use the form below if you would rather send a written enquiry. The current version is a placeholder interface that can be connected to your preferred form handling service later."
+        body="Use the form below if you would rather send a written enquiry. When you submit, FlyBridge will open a pre-filled email draft so you can send the message immediately."
         fields={fields}
         submitLabel="Send enquiry"
-        helper="For immediate contact, WhatsApp or email is the fastest option while form handling is being connected."
+        helper="This keeps the site fully static while still giving parents a reliable next step. For the fastest response, WhatsApp remains the quickest route."
+        subject="FlyBridge website enquiry"
+        recipientEmail={site.email}
+        secondaryLabel="WhatsApp FlyBridge"
+        secondaryHref={site.whatsappHref}
+        trustPoints={trustPoints}
       />
     </div>
   </section>

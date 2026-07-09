@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import FormShell from "../components/FormShell.astro";
 import ContactMethods from "../components/ContactMethods.astro";
+import SectionHeading from "../components/SectionHeading.astro";
 import { site } from "../data/site";
 
 const schema = {
@@ -14,14 +15,46 @@ const schema = {
 };
 
 const fields = [
-  { label: "Parent name", name: "parent-name", placeholder: "Your full name" },
-  { label: "Student name", name: "student-name", placeholder: "Student's name" },
+  { label: "Parent name", name: "parent-name", placeholder: "Your full name", required: true, autocomplete: "name" },
+  { label: "Student name", name: "student-name", placeholder: "Student's name", required: true },
   { label: "School", name: "school", placeholder: "Current school" },
   { label: "Year group", name: "year-group", placeholder: "For example: Year 10" },
-  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to call" },
-  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com" },
-  { label: "Preferred callback time", name: "callback-time", placeholder: "After 6pm weekdays, Saturday morning, etc." },
-  { label: "Message", name: "message", type: "textarea" as const, placeholder: "Share any context that would help before the call." }
+  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to call", required: true, autocomplete: "tel" },
+  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com", required: true, autocomplete: "email" },
+  { label: "Preferred callback time", name: "callback-time", placeholder: "After 6pm weekdays, Saturday morning, etc.", required: true },
+  { label: "Message", name: "message", type: "textarea" as const, placeholder: "Share any context that would help before the call.", helper: "Include current grades, confidence concerns, or any timetable constraints if helpful." }
+] as const;
+
+const callbackMethods = [
+  {
+    label: "WhatsApp",
+    value: site.phone,
+    href: site.whatsappHref,
+    hint: "Ideal if you want a quick reply first"
+  },
+  {
+    label: "Email",
+    value: site.email,
+    href: `mailto:${site.email}`,
+    hint: "Helpful if you want to give a little more background"
+  },
+  {
+    label: "Book Assessment",
+    value: "Prefer to book directly instead",
+    href: site.assessmentHref,
+    hint: "A good fit if you already know you want the assessment"
+  }
+] as const;
+
+const trustPoints = [
+  {
+    title: "Advice before commitment",
+    body: "This route is designed for parents who want to talk things through before deciding on lessons."
+  },
+  {
+    title: "Context matters",
+    body: "Share the concern briefly and FlyBridge can call back with a clearer understanding of what may help."
+  }
 ] as const;
 ---
 
@@ -45,21 +78,26 @@ const fields = [
   />
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
-      <div class="space-y-6">
-        <span class="eyebrow">Reassuring first contact</span>
-        <h2 class="text-3xl font-semibold tracking-tight text-fb-ink sm:text-4xl">A callback is a good fit if you want advice before committing.</h2>
-        <p class="text-base leading-8 text-fb-ink-soft">
-          Many parents simply want to explain what is happening, ask a few practical questions and understand what kind of support would be most effective. That is exactly what this page is for.
-        </p>
-        <ContactMethods />
+    <div class="grid gap-6 lg:grid-cols-[0.82fr_1.18fr]">
+      <div class="space-y-4">
+        <SectionHeading
+          eyebrow="Reassuring first contact"
+          title="A callback is a good fit if you want advice before committing."
+          body="Many parents simply want to explain what is happening, ask a few practical questions and understand what kind of support would be most effective. That is exactly what this page is for."
+        />
+        <ContactMethods methods={callbackMethods} />
       </div>
       <FormShell
         title="Callback request"
-        body="Complete the fields below so the call can be tailored to your child's needs. The form structure is ready and can be connected to live handling later."
+        body="Complete the fields below and FlyBridge will open a pre-filled email draft so you can send the callback request immediately with the right context."
         fields={fields}
         submitLabel="Request callback"
-        helper="Until live form handling is connected, WhatsApp or email is the fastest way to request a callback."
+        helper="Submitting this form opens your email app with the enquiry already written out. If you prefer, you can also WhatsApp FlyBridge directly."
+        subject="FlyBridge callback request"
+        recipientEmail={site.email}
+        secondaryLabel="WhatsApp FlyBridge"
+        secondaryHref={site.whatsappHref}
+        trustPoints={trustPoints}
       />
     </div>
   </section>

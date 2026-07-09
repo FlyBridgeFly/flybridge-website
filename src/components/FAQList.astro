@@ -13,16 +13,16 @@ const { items } = Astro.props;
 
 <div class="space-y-4">
   {items.map((faq) => (
-    <details class="card-panel group p-6">
-      <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-lg font-semibold text-fb-ink">
-        {faq.question}
-        <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500 transition group-open:rotate-45">
+    <details class="card-panel group min-w-0 p-5 transition duration-200 open:border-sky-100 open:bg-sky-50/35 sm:p-6">
+      <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-base font-semibold text-fb-ink sm:text-lg">
+        <span class="min-w-0 text-balance">{faq.question}</span>
+        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500 transition group-open:rotate-45 group-open:bg-white">
           <svg viewBox="0 0 20 20" class="h-4 w-4" fill="currentColor" aria-hidden="true">
             <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"></path>
           </svg>
         </span>
       </summary>
-      <p class="mt-4 max-w-3xl text-base leading-7 text-fb-ink-soft">{faq.answer}</p>
+      <p class="mt-3 max-w-3xl text-sm leading-6 text-fb-ink-soft sm:text-base sm:leading-7">{faq.answer}</p>
     </details>
   ))}
 </div>

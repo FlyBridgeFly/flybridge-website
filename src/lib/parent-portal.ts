@@ -6,7 +6,11 @@ import {
 } from "./portal-client";
 
 export async function bootstrapParentPortal() {
-  const { profile } = await guardPage(["admin", "parent"]);
+  const { profile } = await guardPage(["parent"], {
+    adminRedirectHome: "/admin",
+    adminRedirectMessage: "This account uses the Admin Dashboard.",
+    unauthorizedMessage: "Your account is signed in, but parent-only reporting is available from the Parent Portal."
+  });
   const container = document.querySelector<HTMLElement>("[data-parent-dashboard]");
   const studentCount = document.querySelector<HTMLElement>("[data-parent-student-count]");
   if (!container) return;

@@ -1,44 +1,12 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHero from "../components/PageHero.astro";
-import CtaBanner from "../components/CtaBanner.astro";
-import { site } from "../data/site";
+import ExpansionSubjectPage from "../components/ExpansionSubjectPage.astro";
+import { expansionSubjectPages } from "../data/site";
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  name: "GCSE Maths Tuition",
-  description: "Premium GCSE Maths tuition from FlyBridge Education.",
-  url: new URL("/gcse-maths", site.url).toString()
-};
+const subject = expansionSubjectPages.find((item) => item.slug === "gcse-maths");
+
+if (!subject) {
+  throw new Error("GCSE Maths page data not found.");
+}
 ---
 
-<BaseLayout
-  title="GCSE Maths Tuition"
-  description="Premium GCSE Maths tuition from FlyBridge Education."
-  path="/gcse-maths"
-  schema={schema}
->
-  <PageHero
-    eyebrow="Maths Tuition"
-    title="GCSE Maths tuition is coming soon."
-    body="FlyBridge is expanding into premium maths support with the same calm structure, academic clarity and parent communication used across the wider tuition offering."
-    primaryLabel="Book Assessment"
-    primaryHref={site.assessmentHref}
-    secondaryLabel="Contact FlyBridge"
-    secondaryHref={site.contactHref}
-    imageSrc={site.images.workspace}
-    imageAlt="A refined study workspace representing upcoming GCSE Maths tuition."
-    imageBadge="New service"
-  />
-
-  <CtaBanner
-    eyebrow="Coming soon"
-    title="Enquire now if you would like early updates on FlyBridge maths support."
-    body="The page is intentionally lightweight for now, but the route is ready and can be expanded into a full premium subject page later."
-    actions={[
-      { label: "Book Assessment", href: site.assessmentHref },
-      { label: "Request a Callback", href: site.callbackHref, variant: "secondary" }
-    ]}
-  />
-</BaseLayout>
+<ExpansionSubjectPage subject={subject} />

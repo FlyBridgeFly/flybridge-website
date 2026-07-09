@@ -1,20 +1,25 @@
 import {
   createAssessmentRecord,
   createLessonReport,
-  fetchAllStudents,
   fetchAssignedStudentsForTutor,
   fetchStudentContent,
   fillStudentSelects,
   fillTargetEditor,
+  getFriendlyErrorMessage,
   guardPage,
   readFormValues,
   renderStudentCards,
   saveTargetRecord,
+  setStudentSelection,
   setStatusMessage
 } from "./portal-client";
 
 export async function bootstrapTutorDashboard() {
-  const { profile } = await guardPage(["admin", "tutor"]);
+  const { profile } = await guardPage(["tutor"], {
+    adminRedirectHome: "/admin",
+    adminRedirectMessage: "This account uses the Admin Dashboard.",
+    unauthorizedMessage: "Your account is signed in, but tutor-only tools are available from the Tutor Dashboard."
+  });
 
   const studentsContainer = document.querySelector<HTMLElement>("[data-tutor-students]");
   const targetEditor = document.querySelector<HTMLElement>("[data-target-editor]");
@@ -24,11 +29,19 @@ export async function bootstrapTutorDashboard() {
   const studentCount = document.querySelector<HTMLElement>("[data-student-count]");
 
   async function refresh() {
-    const students = profile.role === "admin" ? await fetchAllStudents() : await fetchAssignedStudentsForTutor(profile.id);
+    const students = await fetchAssignedStudentsForTutor(profile.id);
     fillStudentSelects(students);
 
     if (studentsContainer) {
       renderStudentCards(studentsContainer, students);
+      studentsContainer.querySelectorAll<HTMLElement>("[data-student-fill]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const studentId = button.dataset.studentId;
+          if (!studentId) return;
+          setStudentSelection(studentId);
+          lessonReportForm?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
     }
 
     if (studentCount) {
@@ -81,7 +94,7 @@ export async function bootstrapTutorDashboard() {
       setStatusMessage(status, "success", "Lesson report saved.");
       await refresh();
     } catch (error) {
-      setStatusMessage(status, "error", error instanceof Error ? error.message : "Unable to save lesson report.");
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to save lesson report."));
     }
   });
 
@@ -103,7 +116,7 @@ export async function bootstrapTutorDashboard() {
       setStatusMessage(status, "success", "Assessment saved.");
       await refresh();
     } catch (error) {
-      setStatusMessage(status, "error", error instanceof Error ? error.message : "Unable to save assessment.");
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to save assessment."));
     }
   });
 
@@ -127,7 +140,7 @@ export async function bootstrapTutorDashboard() {
       setStatusMessage(status, "success", "Target saved.");
       await refresh();
     } catch (error) {
-      setStatusMessage(status, "error", error instanceof Error ? error.message : "Unable to save target.");
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to save target."));
     }
   });
 }

@@ -7,6 +7,10 @@ export interface ProfileRow {
   email?: string | null;
   full_name?: string | null;
   role?: ProfileRole | null;
+  must_change_password?: boolean | null;
+  temporary_password_created_at?: string | null;
+  last_login_at?: string | null;
+  status?: string | null;
   created_at?: string | null;
   [key: string]: unknown;
 }
@@ -19,6 +23,10 @@ export interface StudentRow {
   year_group?: string | null;
   school?: string | null;
   notes?: string | null;
+  progress_status?: string | null;
+  progress_status_note?: string | null;
+  recall_average?: number | string | null;
+  active?: boolean | null;
   created_at?: string | null;
   [key: string]: unknown;
 }

@@ -3,7 +3,7 @@ export const site = {
   shortName: "FlyBridge",
   tagline: "Helping students bridge the gap to GCSE success.",
   description:
-    "Cambridge-trained GCSE Science tuition for ambitious students aiming for Grades 7-9 through engaging online lessons, structured progress tracking and personalised support.",
+    "Cambridge-trained GCSE Science tuition for ambitious students aiming for Grades 7-9, with free assessment, structured parent reporting and personalised online support.",
   url: "https://flybridgeeducation.co.uk",
   email: "admin@flybridgeeducation.co.uk",
   phone: "07729 467146",
@@ -14,28 +14,25 @@ export const site = {
   contactHref: "/contact",
   images: {
     logo: "/images/logo.svg",
-    logoDark: "/images/logo-dark.svg",
     logoLight: "/images/logo-light.svg",
     logoMark: "/images/logo-mark.svg",
     faviconSvg: "/images/favicon.svg",
-    favicon32: "/images/favicon-32.png",
-    favicon16: "/images/favicon-16.png",
-    appleTouchIcon: "/images/apple-touch-icon.png",
-    ogImage: "/images/og-image.png",
-    heroStudyDesk: "/images/hero-study-desk.webp",
-    assessmentReport: "/images/assessment-report.webp",
-    progressDashboard: "/images/progress-dashboard.webp",
-    googleClassroom: "/images/google-classroom.webp",
-    scienceIcons: "/images/science-icons.webp",
-    bridgeBlueprint: "/images/bridge-blueprint.webp",
-    learningPath: "/images/learning-path.webp",
-    reportCover: "/images/report-cover.webp",
-    revisionNotebook: "/images/revision-notebook.webp",
-    physicsTools: "/images/physics-tools.webp",
-    chemistryTools: "/images/chemistry-tools.webp",
-    biologyStudy: "/images/biology-study.webp",
-    consultancy: "/images/consultancy.webp",
-    workspace: "/images/workspace.webp"
+    appleTouchIcon: "/images/favicon.svg",
+    ogImage: "/images/og-image.svg",
+    heroStudyDesk: "/images/hero-study-desk.svg",
+    assessmentReport: "/images/assessment-report.svg",
+    progressDashboard: "/images/progress-dashboard.svg",
+    googleClassroom: "/images/google-classroom.svg",
+    scienceIcons: "/images/science-icons.svg",
+    bridgeBlueprint: "/images/bridge-blueprint.svg",
+    learningPath: "/images/learning-path.svg",
+    reportCover: "/images/report-cover.svg",
+    revisionNotebook: "/images/revision-notebook.svg",
+    physicsTools: "/images/science-icons.svg",
+    chemistryTools: "/images/science-icons.svg",
+    biologyStudy: "/images/science-icons.svg",
+    consultancy: "/images/consultancy.svg",
+    workspace: "/images/workspace.svg"
   }
 } as const;
 
@@ -77,7 +74,6 @@ export const courseNavigation = [
 export const portalNavigation = [
   { label: "Parent Portal", href: "/parent-portal" },
   { label: "Tutor Login", href: "/tutor" },
-  { label: "Admin Login", href: "/admin" },
   { label: "Student Hub", href: "/student-hub" }
 ] as const;
 
@@ -85,7 +81,6 @@ export const footerQuickLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "How It Works", href: "/how-it-works" },
-  { label: "Educational Consultancy", href: "/educational-consultancy" },
   { label: "FAQs", href: "/faqs" },
   { label: "Contact", href: "/contact" },
   { label: "Request a Callback", href: site.callbackHref },
@@ -96,10 +91,8 @@ export const footerQuickLinks = [
 export const footerPortalLinks = [
   { label: "Parent Portal", href: "/parent-portal" },
   { label: "Tutor Login", href: "/tutor" },
-  { label: "Admin Login", href: "/admin" },
   { label: "Student Hub", href: "/student-hub" },
-  { label: "Book Assessment", href: site.assessmentHref },
-  { label: "Request a Callback", href: site.callbackHref }
+  { label: "Book Assessment", href: site.assessmentHref }
 ] as const;
 
 export const footerServiceLinks = [
@@ -111,17 +104,23 @@ export const footerServiceLinks = [
 
 export const heroMetrics = [
   {
-    value: "Cambridge",
-    label: "Academic training paired with calm, structured GCSE teaching."
+    value: "Free assessment",
+    label: "Assessment-first onboarding so families get a clear recommendation before committing."
   },
   {
-    value: "7-9",
-    label: "A clear pathway for students aiming to push into top grades."
+    value: "Parent portal",
+    label: "Parent reporting after lessons, assessments and targets in one calm place."
   },
   {
-    value: "Weekly",
-    label: "Ongoing homework, revision guidance and progress feedback."
+    value: "Weekly support",
+    label: "Google Classroom delivery, homework, revision guidance and steady progress feedback."
   }
+] as const;
+
+export const heroSupportPoints = [
+  "Cambridge-trained GCSE Science tuition",
+  "Free assessment before lessons begin",
+  "Parent reporting built into the service"
 ] as const;
 
 export const parentReasons = [
@@ -209,6 +208,26 @@ export const progressTracking = [
   "A calmer, more confident approach to science study"
 ] as const;
 
+export const parentPortalFeatures = [
+  "Lesson summaries after every session",
+  "Strengths and confidence gains spotted in the lesson",
+  "Homework and revision priorities",
+  "Assessment scores and checkpoint trends",
+  "Current targets and what success looks like",
+  "Clear next steps so parents know where support is heading"
+] as const;
+
+export const platformSplit = [
+  {
+    title: "Google Classroom for learning",
+    body: "Resources, homework, revision files and lesson materials are organised inside Google Classroom so students always know where to work."
+  },
+  {
+    title: "FlyBridge Portal for parent updates",
+    body: "Parents get a calmer reporting view focused on lesson summaries, strengths, homework, targets and assessment progress without needing to chase for updates."
+  }
+] as const;
+
 export const assessmentFeatures = [
   "Discuss current grades, confidence and priorities",
   "Identify topic gaps and exam technique issues",
@@ -221,24 +240,6 @@ export const pricingFeatures = [
   "Online delivery with flexible scheduling options",
   "One-to-one or small-group recommendations where suitable",
   "Homework, revision resources and lesson follow-up included"
-] as const;
-
-export const testimonials = [
-  {
-    quote:
-      "Placeholder testimonial: we wanted someone academically strong but also patient enough to build confidence. FlyBridge gave us both.",
-    name: "Parent of a Year 10 student"
-  },
-  {
-    quote:
-      "Placeholder testimonial: the lessons feel organised, calm and high quality. My daughter finally understands how to answer science questions properly.",
-    name: "Parent of a Year 11 student"
-  },
-  {
-    quote:
-      "Placeholder testimonial: the progress tracking and Google Classroom setup made it much easier for us to stay involved without hovering.",
-    name: "Parent of a Combined Science student"
-  }
 ] as const;
 
 export const aboutSections = [
@@ -385,6 +386,126 @@ export const subjectPages = [
       "Exam practice that strengthens both recall and application",
       "Homework and feedback organised clearly through Google Classroom"
     ]
+  }
+] as const;
+
+export const expansionSubjectPages = [
+  {
+    name: "GCSE Maths",
+    slug: "gcse-maths",
+    eyebrow: "Maths Tuition",
+    navLabel: "GCSE Maths",
+    summary:
+      "Premium GCSE Maths tuition from FlyBridge Education, with clear explanations, steady confidence-building and structured parent communication.",
+    heroTitle: "GCSE Maths support with the same calm structure and parent clarity as the wider FlyBridge experience.",
+    heroBody:
+      "FlyBridge maths support is designed for families who want organised teaching, careful explanation and a premium experience that keeps both students and parents confident about the next step.",
+    image: site.images.workspace,
+    imageAlt: "A refined study workspace representing structured GCSE Maths tuition.",
+    imageBadge: "Clear, structured maths support",
+    coverageHeading: "What maths support focuses on",
+    coverageBody:
+      "Lessons are shaped around the student's current working level, but support often centres on the patterns that most affect GCSE Maths confidence and marks.",
+    coverage: [
+      "Number fluency, algebra and proportional reasoning",
+      "Geometry, graphs, statistics and calculator confidence",
+      "Problem solving with clear method-building rather than guesswork",
+      "Exam technique for showing working accurately and staying calm under time pressure"
+    ],
+    structureHeading: "How lessons are structured",
+    structureBody:
+      "The aim is to make maths feel more manageable, more logical and more consistent from one week to the next.",
+    structure: [
+      "Step-by-step modelling before independent practice",
+      "Targeted question sequences that build confidence gradually",
+      "Homework and revision follow-up through a clear weekly rhythm",
+      "Parent-facing updates that explain what is improving and what still needs attention"
+    ],
+    boardsHeading: "Suitable for",
+    boardsBody:
+      "GCSE Maths support is intended for students who need stronger foundations, cleaner working and greater confidence across the course.",
+    boards: ["Foundation and Higher pathways", "AQA, Edexcel and OCR-style specifications", "Students needing both method and confidence support", "Families wanting steady communication, not last-minute surprises"],
+    ctaTitle: "Enquire about GCSE Maths support",
+    ctaBody:
+      "If maths support would be valuable for your family, the best next step is still a free assessment or callback so FlyBridge can understand the student's current position properly."
+  },
+  {
+    name: "Functional Skills Maths",
+    slug: "functional-skills-maths",
+    eyebrow: "Maths Support",
+    navLabel: "Functional Skills Maths",
+    summary:
+      "Functional Skills Maths support from FlyBridge Education, designed to feel practical, encouraging and well organised.",
+    heroTitle: "Functional Skills Maths support built around clarity, practicality and steady progress.",
+    heroBody:
+      "For students and adult learners alike, Functional Skills support should feel direct and useful. FlyBridge focuses on practical understanding, confidence and consistent follow-through.",
+    image: site.images.reportCover,
+    imageAlt: "A premium study materials image representing Functional Skills Maths support.",
+    imageBadge: "Practical, confidence-building support",
+    coverageHeading: "What the support covers",
+    coverageBody:
+      "Sessions are built to strengthen the real-world maths skills and exam confidence most often needed for Functional Skills success.",
+    coverage: [
+      "Number, fractions, percentages and ratio in practical contexts",
+      "Measures, money, data handling and interpretation",
+      "Multi-step questions broken down into manageable decisions",
+      "Confidence-building practice for learners returning to maths after a difficult experience"
+    ],
+    structureHeading: "How sessions are delivered",
+    structureBody:
+      "Teaching is designed to be supportive without becoming vague, so learners know exactly what they are working on and why it matters.",
+    structure: [
+      "Clear teaching with everyday examples before formal question practice",
+      "Short, focused exercises that prioritise useful progress over overload",
+      "Steady repetition of key methods so skills begin to stick",
+      "Simple reporting and next-step guidance so progress stays visible"
+    ],
+    boardsHeading: "A strong fit for",
+    boardsBody:
+      "Functional Skills support is especially valuable for learners who need maths to feel calmer, more approachable and easier to apply.",
+    boards: ["Students resitting essential maths skills", "Learners preparing for Functional Skills assessments", "Families wanting practical support without unnecessary pressure", "Anyone who benefits from a slower, more confidence-led teaching pace"],
+    ctaTitle: "Talk through Functional Skills Maths support",
+    ctaBody:
+      "A short conversation is the easiest way to understand whether Functional Skills support is the right fit and what kind of lesson structure would help most."
+  },
+  {
+    name: "French Tuition",
+    slug: "french",
+    eyebrow: "Languages",
+    navLabel: "French Tuition",
+    summary:
+      "Premium French tuition from FlyBridge Education, with structured support for vocabulary, grammar, confidence and exam performance.",
+    heroTitle: "French support that feels organised, encouraging and carefully structured.",
+    heroBody:
+      "FlyBridge French support is designed for students who need stronger routine, clearer explanations and more confidence across vocabulary, grammar, writing and speaking.",
+    image: site.images.bridgeBlueprint,
+    imageAlt: "A refined brand image representing premium French tuition.",
+    imageBadge: "Calm, structured language support",
+    coverageHeading: "What French tuition can focus on",
+    coverageBody:
+      "Support is adapted to the student, but lessons commonly centre on the language patterns and exam skills that unlock greater consistency.",
+    coverage: [
+      "Vocabulary building with better retention strategies",
+      "Grammar explained clearly so students can use it with more confidence",
+      "Reading, listening and translation practice with guided support",
+      "Writing and speaking preparation that reduces hesitation and builds fluency"
+    ],
+    structureHeading: "How the tuition feels",
+    structureBody:
+      "The goal is to make language learning feel more navigable, so students are not simply memorising but actually gaining control over how they respond.",
+    structure: [
+      "Regular retrieval of vocabulary and core structures",
+      "Careful correction that improves accuracy without knocking confidence",
+      "Exam-style practice that becomes more independent over time",
+      "Clear weekly follow-up so students know what to revisit between lessons"
+    ],
+    boardsHeading: "Well suited to",
+    boardsBody:
+      "French support is a good fit for students who want a calmer route to stronger performance across both classroom work and exam preparation.",
+    boards: ["GCSE French learners needing more confidence", "Students who struggle to retain vocabulary consistently", "Families wanting clearer communication around progress", "Students who benefit from patient, structured explanation"],
+    ctaTitle: "Enquire about French tuition",
+    ctaBody:
+      "If French support would help your child feel more confident and consistent, FlyBridge can talk through the best starting point and likely lesson format."
   }
 ] as const;
 

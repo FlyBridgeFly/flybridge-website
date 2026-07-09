@@ -6,12 +6,22 @@ interface Props {
 const { containerId } = Astro.props;
 ---
 
-<section class="space-y-5">
-  <div class="space-y-2">
-    <h2 class="text-2xl font-semibold tracking-tight text-fb-ink">Linked students</h2>
-    <p class="text-sm leading-7 text-fb-ink-soft">Parents see only the students linked to their account through `parent_student_links`.</p>
+<section class="space-y-4">
+  <div class="dashboard-section-heading">
+    <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Your child overview</h2>
+    <p class="body-copy">This read-only space is designed to feel calm and useful, keeping lesson updates, homework, assessments and current targets easy to follow without overwhelming families.</p>
+    <div class="flex flex-wrap gap-2 pt-1">
+      <span class="mini-chip">Latest lesson summary</span>
+      <span class="mini-chip">Areas to improve</span>
+      <span class="mini-chip">Homework and next steps</span>
+      <span class="mini-chip">Assessment progress</span>
+      <span class="mini-chip">Current targets</span>
+    </div>
   </div>
-  <div class="space-y-6" id={containerId} data-parent-dashboard>
-    <article class="card-panel p-6 text-sm text-fb-ink-soft">Loading student reporting data...</article>
+  <div class="surface-note-sky">
+    Google Classroom continues to hold resources and lesson files. This portal is intentionally narrower in scope, giving parents the clearest summary view of progress after each lesson.
+  </div>
+  <div class="dashboard-card-stack" id={containerId} data-parent-dashboard>
+    <article class="card-panel p-5 text-sm text-fb-ink-soft">Loading the latest lesson summaries, assessments and targets...</article>
   </div>
 </section>

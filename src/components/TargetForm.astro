@@ -7,16 +7,25 @@ interface Props {
 const { formId, title = "Add or update target" } = Astro.props;
 ---
 
-<form id={formId} class="card-panel p-7" data-target-form>
+<form id={formId} class="form-panel" data-target-form>
   <input name="target-id" type="hidden" value="" />
-  <div class="space-y-3">
-    <h2 class="text-2xl font-semibold tracking-tight text-fb-ink">{title}</h2>
-    <p class="text-sm leading-7 text-fb-ink-soft">Use this form for new targets or to update an existing one after selecting it from the current target list.</p>
+  <div class="form-heading">
+    <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
+    <p class="body-copy">Set a clear focus that the student, tutor and parent can all understand at a glance.</p>
   </div>
-  <div class="mt-6 grid gap-5 sm:grid-cols-2">
+  <div class="surface-note mt-4">
+    Strong targets are specific and observable so the student, tutor and parent can all recognise progress clearly.
+  </div>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <span class="mini-chip">Specific focus</span>
+    <span class="mini-chip">Easy to recognise</span>
+    <span class="mini-chip">Shared with parents</span>
+  </div>
+  <div class="form-grid-compact">
     <label>
       <span class="label-shell">Student</span>
-      <select class="input-shell" name="student-id" data-student-select></select>
+      <select class="input-shell" name="student-id" data-student-select required></select>
+      <span class="helper-shell">If you are updating an existing target, this field will populate when you select it from the current list.</span>
     </label>
     <label>
       <span class="label-shell">Status</span>
@@ -25,20 +34,25 @@ const { formId, title = "Add or update target" } = Astro.props;
         <option value="in progress">In progress</option>
         <option value="complete">Complete</option>
       </select>
+      <span class="helper-shell">Keep the wording consistent so parents can recognise whether the focus is new, active or complete.</span>
     </label>
     <label class="sm:col-span-2">
       <span class="label-shell">Target title</span>
-      <input class="input-shell" name="title" type="text" placeholder="For example: Improve six-mark biology responses" />
+      <input class="input-shell" name="title" type="text" placeholder="For example: Improve six-mark biology responses" required />
     </label>
     <label>
       <span class="label-shell">Target date</span>
       <input class="input-shell" name="due-date" type="date" />
+      <span class="helper-shell">Optional, but useful when the goal should be reviewed by a particular lesson or checkpoint.</span>
     </label>
     <label class="sm:col-span-2">
       <span class="label-shell">Notes</span>
-      <textarea class="input-shell min-h-24 resize-y" name="notes" placeholder="Explain the focus and what success will look like"></textarea>
+      <textarea class="input-shell min-h-[4.5rem] resize-y" name="notes" placeholder="Explain the focus and what success will look like"></textarea>
+      <span class="helper-shell">This is the best place to explain what the student is aiming to improve and how progress will be recognised.</span>
     </label>
   </div>
-  <p class="mt-5 hidden text-sm font-medium" data-form-status></p>
-  <button class="cta-button mt-6" type="submit">Save target</button>
+  <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+  <div class="form-actions">
+    <button class="cta-button w-full sm:w-auto" type="submit">Save target</button>
+  </div>
 </form>

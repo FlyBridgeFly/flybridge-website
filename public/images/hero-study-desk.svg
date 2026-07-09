@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="img" aria-labelledby="title desc">
+  <title id="title">FlyBridge learning illustration</title>
+  <desc id="desc">A premium study desk scene with structured tuition panels and progress elements.</desc>
+  <defs>
+    <linearGradient id="hero-bg" x1="8%" y1="4%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#071422" />
+      <stop offset="55%" stop-color="#10243b" />
+      <stop offset="100%" stop-color="#16385c" />
+    </linearGradient>
+    <linearGradient id="hero-card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.18)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0.08)" />
+    </linearGradient>
+    <linearGradient id="hero-accent" x1="10%" y1="0%" x2="95%" y2="100%">
+      <stop offset="0%" stop-color="#9fd3ff" />
+      <stop offset="50%" stop-color="#4da2ff" />
+      <stop offset="100%" stop-color="#1f74ee" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="640" rx="42" fill="url(#hero-bg)" />
+  <circle cx="150" cy="130" r="110" fill="#4da2ff" opacity=".15" />
+  <circle cx="670" cy="88" r="82" fill="#9fd3ff" opacity=".12" />
+  <rect x="96" y="116" width="418" height="346" rx="28" fill="url(#hero-card)" stroke="rgba(255,255,255,0.18)" />
+  <rect x="132" y="156" width="160" height="14" rx="7" fill="#8fcfff" opacity=".9" />
+  <rect x="132" y="187" width="246" height="12" rx="6" fill="#dcecff" opacity=".86" />
+  <rect x="132" y="214" width="198" height="12" rx="6" fill="#dcecff" opacity=".48" />
+  <rect x="132" y="258" width="348" height="160" rx="22" fill="rgba(6,17,31,0.48)" stroke="rgba(255,255,255,0.1)" />
+  <path d="M164 370c42-38 78-57 108-57 31 0 64 18 100 54 26-29 56-43 91-43" fill="none" stroke="url(#hero-accent)" stroke-linecap="round" stroke-linejoin="round" stroke-width="12" />
+  <circle cx="164" cy="370" r="10" fill="#9fd3ff" />
+  <circle cx="372" cy="367" r="10" fill="#9fd3ff" />
+  <circle cx="463" cy="324" r="10" fill="#9fd3ff" />
+  <rect x="544" y="138" width="172" height="198" rx="28" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.18)" />
+  <rect x="576" y="178" width="108" height="108" rx="22" fill="rgba(6,17,31,0.45)" stroke="rgba(255,255,255,0.1)" />
+  <path d="M613 207h34v8h-24v11h19v8h-19v24h-10z" fill="url(#hero-accent)" />
+  <path d="M631 226h16v8h-16z" fill="#ffffff" opacity=".92" />
+  <path d="M605 262c7-6 13.9-9 20.8-9 6.7 0 12.9 3 18.6 9" fill="none" stroke="#8fd1ff" stroke-linecap="round" stroke-width="3" opacity=".45" />
+  <rect x="520" y="372" width="196" height="134" rx="24" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" />
+  <rect x="550" y="408" width="48" height="60" rx="14" fill="#4da2ff" opacity=".85" />
+  <rect x="610" y="392" width="48" height="76" rx="14" fill="#8fd1ff" opacity=".72" />
+  <rect x="670" y="424" width="16" height="44" rx="8" fill="#dcecff" opacity=".8" />
+  <rect x="132" y="500" width="190" height="16" rx="8" fill="#dcecff" opacity=".24" />
+  <rect x="132" y="530" width="120" height="12" rx="6" fill="#dcecff" opacity=".16" />
+</svg>

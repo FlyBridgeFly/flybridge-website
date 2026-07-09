@@ -9,8 +9,8 @@ interface Props {
 const { eyebrow, title, body, centered = false } = Astro.props;
 ---
 
-<div class:list={["space-y-5", centered && "mx-auto max-w-3xl text-center"]}>
+<div class:list={["space-y-3 min-w-0", centered && "mx-auto max-w-3xl text-center"]}>
   {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-  <h2 class="text-balance text-3xl font-semibold tracking-tight text-fb-ink sm:text-4xl">{title}</h2>
-  {body && <p class="max-w-2xl text-lg leading-8 text-fb-ink-soft">{body}</p>}
+  <h2 class="text-balance text-[1.72rem] font-semibold tracking-tight text-fb-ink sm:text-[2.05rem] lg:text-[2.2rem]">{title}</h2>
+  {body && <p class:list={["max-w-2xl body-copy", centered && "mx-auto"]}>{body}</p>}
 </div>

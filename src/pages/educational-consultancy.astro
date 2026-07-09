@@ -44,11 +44,14 @@ const schema = {
       title="Consultancy support with a practical, student-focused approach."
       body="This is intentionally kept as a quieter offer within the website, but it provides an additional route for families needing more strategic academic support."
     />
-    <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+    <div class="surface-note mt-6">
+      Tuition remains the core FlyBridge offer. Consultancy is best used when a family wants broader academic guidance alongside, between, or instead of regular lessons.
+    </div>
+    <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {consultancyServices.map((service) => (
-        <article class="card-panel p-7">
-          <h2 class="text-xl font-semibold text-fb-ink">{service.title}</h2>
-          <p class="mt-3 text-base leading-7 text-fb-ink-soft">{service.body}</p>
+        <article class="card-panel p-5 sm:p-6">
+          <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{service.title}</h2>
+          <p class="mt-2 body-copy">{service.body}</p>
         </article>
       ))}
     </div>

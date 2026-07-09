@@ -1,4 +1,6 @@
 ---
+import { site } from "../data/site";
+
 interface Props {
   title?: string;
   body?: string;
@@ -10,18 +12,34 @@ const {
 } = Astro.props;
 ---
 
-<div class="space-y-8">
-  <div class="card-panel p-8 text-center" data-role-loading>
-    <h2 class="text-2xl font-semibold text-fb-ink">{title}</h2>
-    <p class="mt-3 text-base leading-7 text-fb-ink-soft">{body}</p>
+<div class="space-y-6">
+  <div class="card-panel p-5 text-center sm:p-6" data-role-loading>
+    <h2 class="text-xl font-semibold text-fb-ink sm:text-2xl">{title}</h2>
+    <p class="mt-3 body-copy">{body}</p>
+    <div class="mt-4 flex flex-wrap justify-center gap-2">
+      <span class="mini-chip">Secure FlyBridge access</span>
+      <span class="mini-chip">Role-based permissions</span>
+      <span class="mini-chip">Secure session check</span>
+    </div>
   </div>
   <div class="hidden" data-role-error>
-    <article class="card-panel border border-rose-100 bg-rose-50/70 p-8">
-      <h2 class="text-2xl font-semibold text-fb-ink">Access required</h2>
+    <article class="card-panel border border-rose-100 bg-rose-50/70 p-5 sm:p-6">
+      <h2 class="text-xl font-semibold text-fb-ink sm:text-2xl">Access required</h2>
       <p class="mt-3 text-base leading-7 text-rose-700" data-role-error-message></p>
+      <p class="mt-3 text-sm leading-6 text-fb-ink-soft">
+        If you expected access, return to the portal login and sign in with the email invited by FlyBridge.
+      </p>
+      <div class="surface-note mt-4">
+        If the wrong portal opened after sign-in, use the suggested route below and FlyBridge will direct you back to the correct dashboard.
+      </div>
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <a class="cta-button w-full sm:w-auto" href="/login">Back to portal login</a>
+        <a class="ghost-button hidden w-full sm:w-auto" data-role-redirect href="/parent-portal">Open portal</a>
+        <a class="ghost-button w-full sm:w-auto" href={site.contactHref}>Contact FlyBridge</a>
+      </div>
     </article>
   </div>
-  <div class="hidden space-y-8" data-role-guard>
+  <div class="hidden space-y-6" data-role-guard>
     <slot />
   </div>
 </div>

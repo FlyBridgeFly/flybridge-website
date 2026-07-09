@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="img" aria-labelledby="title desc">
+  <title id="title">Science subject illustration</title>
+  <desc id="desc">A premium science illustration representing biology, chemistry and physics.</desc>
+  <defs>
+    <linearGradient id="science-bg" x1="8%" y1="4%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#071422" />
+      <stop offset="48%" stop-color="#10243b" />
+      <stop offset="100%" stop-color="#16385c" />
+    </linearGradient>
+    <linearGradient id="science-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9fd3ff" />
+      <stop offset="55%" stop-color="#4da2ff" />
+      <stop offset="100%" stop-color="#1f74ee" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="640" rx="42" fill="url(#science-bg)" />
+  <circle cx="160" cy="120" r="84" fill="#4da2ff" opacity=".12" />
+  <circle cx="644" cy="144" r="76" fill="#9fd3ff" opacity=".1" />
+  <rect x="116" y="170" width="170" height="260" rx="28" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.14)" />
+  <circle cx="201" cy="252" r="54" fill="none" stroke="url(#science-accent)" stroke-width="10" />
+  <circle cx="201" cy="252" r="8" fill="#ffffff" />
+  <circle cx="162" cy="220" r="7" fill="#9fd3ff" />
+  <circle cx="236" cy="223" r="7" fill="#9fd3ff" />
+  <circle cx="170" cy="290" r="7" fill="#9fd3ff" />
+  <rect x="154" y="346" width="94" height="12" rx="6" fill="#dcecff" opacity=".24" />
+  <rect x="315" y="170" width="170" height="260" rx="28" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.14)" />
+  <path d="M371 214v52c0 16 13 28 29 28s29-12 29-28v-52" fill="none" stroke="url(#science-accent)" stroke-linecap="round" stroke-width="10" />
+  <path d="M354 214h92" stroke="#dcecff" stroke-linecap="round" stroke-width="10" opacity=".92" />
+  <circle cx="400" cy="316" r="44" fill="#4da2ff" opacity=".18" />
+  <rect x="352" y="346" width="96" height="12" rx="6" fill="#dcecff" opacity=".24" />
+  <rect x="514" y="170" width="170" height="260" rx="28" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.14)" />
+  <path d="M557 314l40-86 40 86z" fill="none" stroke="url(#science-accent)" stroke-linejoin="round" stroke-width="10" />
+  <path d="M557 314h80" stroke="#dcecff" stroke-linecap="round" stroke-width="10" opacity=".82" />
+  <path d="M597 202v26" stroke="#dcecff" stroke-linecap="round" stroke-width="10" opacity=".82" />
+  <rect x="551" y="346" width="96" height="12" rx="6" fill="#dcecff" opacity=".24" />
+</svg>

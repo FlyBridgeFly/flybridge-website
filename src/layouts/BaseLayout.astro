@@ -50,8 +50,6 @@ const orgSchema = {
     <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href={site.images.faviconSvg} />
-    <link rel="icon" type="image/png" sizes="32x32" href={site.images.favicon32} />
-    <link rel="icon" type="image/png" sizes="16x16" href={site.images.favicon16} />
     <link rel="apple-touch-icon" href={site.images.appleTouchIcon} />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -78,9 +76,10 @@ const orgSchema = {
       <script type="application/ld+json" set:html={JSON.stringify(item)}></script>
     ))}
   </head>
-  <body class="antialiased">
-    <Header />
-    <main class="pt-2 sm:pt-3">
+  <body class="antialiased overflow-x-hidden">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <Header currentPath={path} />
+    <main id="main-content" class="overflow-x-hidden pt-1 sm:pt-2">
       <slot />
     </main>
     <Footer />

@@ -18,17 +18,21 @@ const {
 } = Astro.props;
 ---
 
-<div class="card-panel p-8 sm:p-10">
+<div class="card-panel p-5 sm:p-6 lg:p-7">
   <p class="text-sm font-semibold tracking-[0.22em] text-slate-500 uppercase">{title}</p>
   <div class="mt-4 flex items-end gap-2">
-    <span class="text-5xl font-semibold tracking-tight text-fb-ink">{price}</span>
-    <span class="pb-2 text-lg text-fb-ink-soft">/hour</span>
+    <span class="text-4xl font-semibold tracking-tight text-fb-ink sm:text-5xl">{price}</span>
+    <span class="pb-1.5 text-base text-fb-ink-soft sm:text-lg">/hour</span>
   </div>
-  <div class="mt-8 grid gap-3 text-base text-fb-ink">
+  <div class="mt-4 flex flex-wrap gap-2">
+    <span class="mini-chip">Free assessment included</span>
+    <span class="mini-chip">Online tuition</span>
+  </div>
+  <ul class="mt-5 grid gap-2.5 text-sm text-fb-ink sm:text-base">
     {features.map((item) => (
-      <p>{item}</p>
+      <li class="rounded-[1rem] border border-slate-200 bg-slate-50/80 px-4 py-3">{item}</li>
     ))}
-  </div>
-  <a class="cta-button mt-8" href={ctaHref}>{ctaLabel}</a>
-  {note && <p class="mt-5 text-sm leading-6 text-fb-ink-soft">{note}</p>}
+  </ul>
+  <a class="cta-button mt-5 w-full sm:w-auto" href={ctaHref}>{ctaLabel}</a>
+  {note && <p class="mt-4 text-sm leading-6 text-fb-ink-soft">{note}</p>}
 </div>

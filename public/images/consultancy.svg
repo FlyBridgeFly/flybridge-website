@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="img" aria-labelledby="title desc">
+  <title id="title">Educational consultancy illustration</title>
+  <desc id="desc">A premium mentoring and academic planning illustration.</desc>
+  <defs>
+    <linearGradient id="consultancy-bg" x1="8%" y1="4%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#071422" />
+      <stop offset="50%" stop-color="#10243b" />
+      <stop offset="100%" stop-color="#16385c" />
+    </linearGradient>
+    <linearGradient id="consultancy-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9fd3ff" />
+      <stop offset="55%" stop-color="#4da2ff" />
+      <stop offset="100%" stop-color="#1f74ee" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="640" rx="42" fill="url(#consultancy-bg)" />
+  <rect x="110" y="134" width="580" height="372" rx="34" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.16)" />
+  <rect x="152" y="176" width="214" height="288" rx="28" fill="rgba(6,17,31,0.42)" stroke="rgba(255,255,255,0.08)" />
+  <circle cx="259" cy="250" r="46" fill="rgba(77,162,255,0.18)" stroke="url(#consultancy-accent)" stroke-width="8" />
+  <path d="M226 320c20-24 42-36 66-36s46 12 66 36" fill="none" stroke="#dcecff" stroke-linecap="round" stroke-width="8" opacity=".84" />
+  <rect x="402" y="176" width="246" height="132" rx="24" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.1)" />
+  <rect x="434" y="212" width="108" height="12" rx="6" fill="#9fd3ff" />
+  <rect x="434" y="244" width="166" height="12" rx="6" fill="#dcecff" opacity=".22" />
+  <rect x="434" y="271" width="146" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="402" y="332" width="246" height="132" rx="24" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.1)" />
+  <path d="M438 420c24-22 47-33 69-33 21 0 42 10 63 30 15-11 32-17 53-17" fill="none" stroke="url(#consultancy-accent)" stroke-linecap="round" stroke-linejoin="round" stroke-width="8" />
+</svg>

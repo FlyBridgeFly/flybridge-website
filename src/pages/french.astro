@@ -1,44 +1,12 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHero from "../components/PageHero.astro";
-import CtaBanner from "../components/CtaBanner.astro";
-import { site } from "../data/site";
+import ExpansionSubjectPage from "../components/ExpansionSubjectPage.astro";
+import { expansionSubjectPages } from "../data/site";
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  name: "French Tuition",
-  description: "Premium French tuition from FlyBridge Education.",
-  url: new URL("/french", site.url).toString()
-};
+const subject = expansionSubjectPages.find((item) => item.slug === "french");
+
+if (!subject) {
+  throw new Error("French page data not found.");
+}
 ---
 
-<BaseLayout
-  title="French Tuition"
-  description="Premium French tuition from FlyBridge Education."
-  path="/french"
-  schema={schema}
->
-  <PageHero
-    eyebrow="Languages"
-    title="French tuition is coming soon."
-    body="This placeholder page keeps the new language navigation clean and ready for future expansion while preserving the premium FlyBridge structure."
-    primaryLabel="Book Assessment"
-    primaryHref={site.assessmentHref}
-    secondaryLabel="Contact FlyBridge"
-    secondaryHref={site.contactHref}
-    imageSrc={site.images.bridgeBlueprint}
-    imageAlt="A refined brand image representing the future French tuition offering."
-    imageBadge="Languages"
-  />
-
-  <CtaBanner
-    eyebrow="Future service"
-    title="Register interest if French tuition would be useful for your family."
-    body="The route is now part of the site architecture and can grow into a full subject page without another navigation redesign."
-    actions={[
-      { label: "Contact FlyBridge", href: site.contactHref },
-      { label: "Book Assessment", href: site.assessmentHref, variant: "secondary" }
-    ]}
-  />
-</BaseLayout>
+<ExpansionSubjectPage subject={subject} />

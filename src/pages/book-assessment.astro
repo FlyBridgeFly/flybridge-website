@@ -2,27 +2,50 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHero from "../components/PageHero.astro";
 import CtaBanner from "../components/CtaBanner.astro";
+import FormShell from "../components/FormShell.astro";
+import SectionHeading from "../components/SectionHeading.astro";
 import { assessmentFeatures, site } from "../data/site";
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Book a Free Assessment",
-  description: "Book a free assessment with FlyBridge Education. Placeholder booking structure ready for future calendar integration.",
+  description: "Book a free assessment with FlyBridge Education and request a preferred slot while calendar integration is being finalised.",
   url: new URL("/book-assessment", site.url).toString()
 };
+
+const fields = [
+  { label: "Parent name", name: "parent-name", placeholder: "Your full name", required: true, autocomplete: "name" },
+  { label: "Student name", name: "student-name", placeholder: "Student's name", required: true },
+  { label: "Year group", name: "year-group", placeholder: "For example: Year 10", required: true },
+  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com", required: true, autocomplete: "email" },
+  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to reach you", autocomplete: "tel" },
+  { label: "Preferred assessment time", name: "preferred-time", placeholder: "For example: weekday evenings or Saturday morning", required: true },
+  { label: "Focus areas", name: "focus-areas", type: "textarea" as const, placeholder: "Share current grades, topics of concern, or anything important before the assessment.", helper: "This helps FlyBridge make the first conversation more useful from the start." }
+] as const;
+
+const trustPoints = [
+  {
+    title: "Useful first step",
+    body: "The assessment is meant to clarify the best support route, not push families into a rushed decision."
+  },
+  {
+    title: "Easy to replace later",
+    body: "This booking layout is already structured so a calendar tool can be added later without redesigning the page."
+  }
+] as const;
 ---
 
 <BaseLayout
   title="Book a Free Assessment"
-  description="Book a free assessment with FlyBridge Education. Placeholder booking structure ready for future calendar integration."
+  description="Book a free assessment with FlyBridge Education and request a preferred slot while calendar integration is being finalised."
   path="/book-assessment"
   schema={schema}
 >
   <PageHero
     eyebrow="Book assessment"
-    title="A booking page designed to drop into Calendly or Google Calendar later."
-    body="For now, the page acts as a polished placeholder with clear next steps so families can still move forward while the final scheduling workflow is connected."
+    title="Book a free assessment and start with clarity."
+    body="The assessment helps FlyBridge understand your child's current position, priorities and the most useful next step before any lessons begin."
     primaryLabel="WhatsApp to Arrange"
     primaryHref={site.whatsappHref}
     secondaryLabel="Request a Callback"
@@ -33,46 +56,31 @@ const schema = {
   />
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-      <div class="space-y-5">
-        <span class="eyebrow">What the assessment covers</span>
-        <h2 class="text-3xl font-semibold tracking-tight text-fb-ink sm:text-4xl">The free assessment gives parents clarity before any lessons begin.</h2>
-        <div class="grid gap-4">
+    <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+      <div class="space-y-4">
+        <SectionHeading
+          eyebrow="What the assessment covers"
+          title="The free assessment gives parents clarity before any lessons begin."
+          body="It is designed to reduce guesswork, explain the likely best format, and show how FlyBridge would approach support if you move forward."
+        />
+        <div class="grid gap-3">
           {assessmentFeatures.map((item) => (
-            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
         </div>
       </div>
-      <div class="card-panel p-8 sm:p-10">
-        <p class="text-sm font-semibold tracking-[0.22em] text-slate-500 uppercase">Placeholder booking panel</p>
-        <h2 class="mt-4 text-3xl font-semibold tracking-tight text-fb-ink">Assessment slots will be embedded here.</h2>
-        <p class="mt-4 max-w-xl text-base leading-7 text-fb-ink-soft">
-          This area is intentionally structured so a Calendly embed, booking iframe or simple calendar integration can replace it later without redesigning the page.
-        </p>
-        <div class="mt-8 grid gap-4 sm:grid-cols-2">
-          <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
-            <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Fastest route</p>
-            <p class="mt-3 text-lg font-semibold text-fb-ink">WhatsApp to arrange an assessment directly</p>
-          </div>
-          <div class="rounded-[1.5rem] border border-slate-200 bg-white p-5">
-            <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Alternative route</p>
-            <p class="mt-3 text-lg font-semibold text-fb-ink">Request a callback and discuss the best lesson fit first</p>
-          </div>
-        </div>
-        <div class="mt-8 flex flex-col gap-4 sm:flex-row">
-          <a class="cta-button" href={site.whatsappHref}>WhatsApp</a>
-          <a class="ghost-button" href={site.callbackHref}>Request a Callback</a>
-        </div>
-        <div class="image-panel mt-8">
-          <img
-            src={site.images.reportCover}
-            alt="A premium report cover image representing the clear written guidance parents can expect."
-            class="h-[220px] w-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-      </div>
+      <FormShell
+        title="Request an assessment slot"
+        body="Complete the form below and FlyBridge will open a pre-filled email draft with your preferred times, so arranging the assessment is still quick while the final calendar integration is being added."
+        fields={fields}
+        submitLabel="Request assessment"
+        helper="This page is intentionally structured so a Calendly embed or calendar booking tool can replace this form later without redesigning the overall page."
+        subject="FlyBridge free assessment request"
+        recipientEmail={site.email}
+        secondaryLabel="WhatsApp FlyBridge"
+        secondaryHref={site.whatsappHref}
+        trustPoints={trustPoints}
+      />
     </div>
   </section>
 

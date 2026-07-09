@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 404 84" role="img" aria-labelledby="title desc">
+  <title id="title">FlyBridge Education</title>
+  <desc id="desc">Light FlyBridge Education wordmark with premium monogram.</desc>
+  <defs>
+    <linearGradient id="logo-light-bg" x1="14%" y1="8%" x2="86%" y2="92%">
+      <stop offset="0%" stop-color="#b7dcff" />
+      <stop offset="45%" stop-color="#72b8ff" />
+      <stop offset="100%" stop-color="#3a90ff" />
+    </linearGradient>
+    <linearGradient id="logo-light-accent" x1="18%" y1="8%" x2="82%" y2="92%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#dff0ff" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="6" width="72" height="72" rx="20" fill="rgba(255,255,255,0.12)" />
+  <rect x="9" y="13" width="58" height="58" rx="16" fill="none" stroke="rgba(255,255,255,0.18)" />
+  <path d="M24 24.5h29v6.5H31.5v8.5h18V46h-18v13.5H24z" fill="url(#logo-light-bg)" />
+  <path d="M41 40h12v6.5H41z" fill="url(#logo-light-accent)" opacity=".92" />
+  <path d="M20 56.5c6.4-5.8 12.8-8.7 19-8.7 6.1 0 11.7 2.9 17 8.7" fill="none" stroke="#dff0ff" stroke-linecap="round" stroke-width="2.6" opacity=".55" />
+  <text x="96" y="38" fill="#ffffff" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="27" font-weight="800" letter-spacing="-0.03em">
+    FlyBridge
+  </text>
+  <text x="96" y="62" fill="#d6e7fb" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0.08em">
+    EDUCATION
+  </text>
+</svg>

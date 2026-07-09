@@ -7,37 +7,51 @@ interface Props {
 const { formId, title = "Add assessment" } = Astro.props;
 ---
 
-<form id={formId} class="card-panel p-7" data-assessment-form>
-  <div class="space-y-3">
-    <h2 class="text-2xl font-semibold tracking-tight text-fb-ink">{title}</h2>
-    <p class="text-sm leading-7 text-fb-ink-soft">Log checkpoints, mini-tests or formal assessments so parents can see measurable academic movement.</p>
+<form id={formId} class="form-panel" data-assessment-form>
+  <div class="form-heading">
+    <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
+    <p class="body-copy">Log checkpoints quickly so parents can see measurable movement without wading through too much detail.</p>
   </div>
-  <div class="mt-6 grid gap-5 sm:grid-cols-2">
+  <div class="surface-note mt-4">
+    Short notes are enough here. The goal is to show what the score means, not to overload the portal with raw data.
+  </div>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <span class="mini-chip">Checkpoint clarity</span>
+    <span class="mini-chip">Scores in context</span>
+  </div>
+  <div class="form-grid-compact">
     <label>
       <span class="label-shell">Student</span>
-      <select class="input-shell" name="student-id" data-student-select></select>
+      <select class="input-shell" name="student-id" data-student-select required></select>
+      <span class="helper-shell">Choose the student first so the assessment is attached to the correct reporting history.</span>
     </label>
     <label>
       <span class="label-shell">Assessment date</span>
-      <input class="input-shell" name="assessment-date" type="date" />
+      <input class="input-shell" name="assessment-date" type="date" required />
+      <span class="helper-shell">Use the date the checkpoint was set or reviewed with the student.</span>
     </label>
     <label class="sm:col-span-2">
       <span class="label-shell">Assessment title</span>
-      <input class="input-shell" name="title" type="text" placeholder="For example: Chemistry retrieval quiz" />
+      <input class="input-shell" name="title" type="text" placeholder="For example: Chemistry retrieval quiz" required />
     </label>
     <label>
       <span class="label-shell">Score</span>
       <input class="input-shell" name="score" type="number" min="0" step="0.1" placeholder="14" />
+      <span class="helper-shell">Leave blank only if the checkpoint was discussed qualitatively rather than marked numerically.</span>
     </label>
     <label>
       <span class="label-shell">Maximum score</span>
       <input class="input-shell" name="max-score" type="number" min="0" step="0.1" placeholder="20" />
+      <span class="helper-shell">Adding the maximum score helps the parent portal show the result more clearly.</span>
     </label>
     <label class="sm:col-span-2">
       <span class="label-shell">Notes</span>
-      <textarea class="input-shell min-h-24 resize-y" name="notes" placeholder="Optional notes for context or interpretation"></textarea>
+      <textarea class="input-shell min-h-[4.5rem] resize-y" name="notes" placeholder="Optional notes for context or interpretation"></textarea>
+      <span class="helper-shell">For example: stronger recall than last week, timing still needs practice, or confidence improving.</span>
     </label>
   </div>
-  <p class="mt-5 hidden text-sm font-medium" data-form-status></p>
-  <button class="cta-button mt-6" type="submit">Save assessment</button>
+  <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+  <div class="form-actions">
+    <button class="cta-button w-full sm:w-auto" type="submit">Save assessment</button>
+  </div>
 </form>

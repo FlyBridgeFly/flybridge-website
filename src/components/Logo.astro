@@ -10,18 +10,18 @@ const logoSrc = variant === "light" ? site.images.logoLight : site.images.logo;
 const markSrc = site.images.logoMark;
 ---
 
-<a href="/" class="inline-flex items-center gap-3" aria-label="FlyBridge Education home">
+<a href="/" class="inline-flex min-w-0 items-center gap-2.5" aria-label="FlyBridge Education home">
   <img
     src={markSrc}
     alt=""
-    class="h-9 w-9 rounded-xl object-contain sm:hidden"
+    class="h-8 w-8 rounded-xl object-contain sm:hidden"
     loading="eager"
     decoding="async"
   />
   <img
     src={logoSrc}
     alt="FlyBridge Education"
-    class="hidden h-9 w-auto object-contain sm:block lg:h-10"
+    class="hidden h-8 w-auto max-w-[10.75rem] object-contain sm:block lg:h-9 lg:max-w-[11.5rem]"
     loading="eager"
     decoding="async"
   />

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="img" aria-labelledby="title desc">
+  <title id="title">Bridge blueprint illustration</title>
+  <desc id="desc">A premium abstract bridge blueprint representing thoughtful academic planning.</desc>
+  <defs>
+    <linearGradient id="bridge-bg" x1="10%" y1="4%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#071422" />
+      <stop offset="50%" stop-color="#10243b" />
+      <stop offset="100%" stop-color="#16385c" />
+    </linearGradient>
+    <linearGradient id="bridge-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9fd3ff" />
+      <stop offset="55%" stop-color="#4da2ff" />
+      <stop offset="100%" stop-color="#1f74ee" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="640" rx="42" fill="url(#bridge-bg)" />
+  <rect x="90" y="112" width="620" height="416" rx="34" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.14)" />
+  <path d="M170 410c50-94 126-141 230-141 103 0 179 47 230 141" fill="none" stroke="url(#bridge-accent)" stroke-linecap="round" stroke-width="12" />
+  <path d="M170 410h460" stroke="#dcecff" stroke-linecap="round" stroke-width="10" opacity=".86" />
+  <path d="M242 410V248M328 410V214M402 410V196M476 410V214M560 410V248" stroke="#dcecff" stroke-linecap="round" stroke-width="6" opacity=".42" />
+  <circle cx="242" cy="248" r="10" fill="#9fd3ff" />
+  <circle cx="328" cy="214" r="10" fill="#9fd3ff" />
+  <circle cx="402" cy="196" r="10" fill="#9fd3ff" />
+  <circle cx="476" cy="214" r="10" fill="#9fd3ff" />
+  <circle cx="560" cy="248" r="10" fill="#9fd3ff" />
+  <rect x="158" y="152" width="110" height="12" rx="6" fill="#9fd3ff" />
+  <rect x="158" y="180" width="180" height="12" rx="6" fill="#dcecff" opacity=".28" />
+  <rect x="510" y="456" width="92" height="12" rx="6" fill="#dcecff" opacity=".24" />
+</svg>

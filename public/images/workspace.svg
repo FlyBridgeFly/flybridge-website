@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="img" aria-labelledby="title desc">
+  <title id="title">Workspace illustration</title>
+  <desc id="desc">A premium workspace illustration representing calm communication and onboarding.</desc>
+  <defs>
+    <linearGradient id="workspace-bg" x1="8%" y1="4%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#071422" />
+      <stop offset="50%" stop-color="#10243b" />
+      <stop offset="100%" stop-color="#16385c" />
+    </linearGradient>
+    <linearGradient id="workspace-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9fd3ff" />
+      <stop offset="55%" stop-color="#4da2ff" />
+      <stop offset="100%" stop-color="#1f74ee" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="640" rx="42" fill="url(#workspace-bg)" />
+  <circle cx="638" cy="122" r="92" fill="#4da2ff" opacity=".12" />
+  <rect x="116" y="156" width="430" height="286" rx="28" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.16)" />
+  <rect x="154" y="194" width="196" height="14" rx="7" fill="#9fd3ff" />
+  <rect x="154" y="232" width="330" height="16" rx="8" fill="#dcecff" opacity=".22" />
+  <rect x="154" y="270" width="294" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="154" y="298" width="248" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="154" y="346" width="214" height="58" rx="18" fill="rgba(6,17,31,0.42)" stroke="rgba(255,255,255,0.08)" />
+  <path d="M576 224h98c23 0 42 18 42 42v76c0 23-19 42-42 42h-62l-34 28 9-28h-11c-23 0-42-19-42-42v-76c0-24 19-42 42-42z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.16)" />
+  <rect x="576" y="272" width="96" height="12" rx="6" fill="#9fd3ff" />
+  <rect x="576" y="302" width="78" height="12" rx="6" fill="#dcecff" opacity=".28" />
+  <path d="M172 462h458" stroke="#dcecff" stroke-linecap="round" stroke-width="10" opacity=".82" />
+  <path d="M282 462v50h180v-50" stroke="url(#workspace-accent)" stroke-linecap="round" stroke-linejoin="round" stroke-width="10" />
+</svg>

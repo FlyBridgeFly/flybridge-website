@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="img" aria-labelledby="title desc">
+  <title id="title">Revision notebook illustration</title>
+  <desc id="desc">A premium study notebook with organised sections and revision tabs.</desc>
+  <defs>
+    <linearGradient id="notebook-bg" x1="8%" y1="4%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#071422" />
+      <stop offset="50%" stop-color="#10243b" />
+      <stop offset="100%" stop-color="#16385c" />
+    </linearGradient>
+    <linearGradient id="notebook-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9fd3ff" />
+      <stop offset="55%" stop-color="#4da2ff" />
+      <stop offset="100%" stop-color="#1f74ee" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="640" rx="42" fill="url(#notebook-bg)" />
+  <rect x="182" y="94" width="394" height="450" rx="30" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.18)" />
+  <rect x="220" y="132" width="116" height="14" rx="7" fill="#9fd3ff" />
+  <rect x="220" y="168" width="256" height="16" rx="8" fill="#dcecff" opacity=".22" />
+  <rect x="220" y="212" width="316" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="220" y="240" width="278" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="220" y="268" width="292" height="12" rx="6" fill="#dcecff" opacity=".16" />
+  <rect x="220" y="316" width="316" height="156" rx="22" fill="rgba(6,17,31,0.45)" stroke="rgba(255,255,255,0.08)" />
+  <rect x="578" y="152" width="36" height="72" rx="14" fill="#4da2ff" opacity=".92" />
+  <rect x="578" y="240" width="36" height="72" rx="14" fill="#8fd1ff" opacity=".78" />
+  <rect x="578" y="328" width="36" height="72" rx="14" fill="#dcecff" opacity=".72" />
+  <path d="M252 416c27-22 52-33 76-33 24 0 48 11 72 32 17-14 37-21 60-21 16 0 31 3 46 8" fill="none" stroke="url(#notebook-accent)" stroke-linecap="round" stroke-linejoin="round" stroke-width="8" />
+</svg>

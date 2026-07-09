@@ -28,15 +28,35 @@ const schema = {
     active="parent"
   >
     <RoleGuard>
-      <section class="grid gap-5 md:grid-cols-2">
-        <StudentCard title="0" subtitle="Students linked to your account through `parent_student_links`." meta="Linked students">
+      <section class="grid gap-4 lg:grid-cols-[0.92fr_1.08fr]">
+        <StudentCard title="Students in view" subtitle="Students linked to your account, ready with lesson updates and current progress information." meta="Linked students">
           <p class="mt-4 text-3xl font-semibold text-fb-ink" data-parent-student-count>0</p>
         </StudentCard>
-        <article class="card-panel p-6">
-          <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Read only</p>
-          <h2 class="mt-2 text-2xl font-semibold text-fb-ink">Everything in one place.</h2>
-          <p class="mt-3 text-sm leading-7 text-fb-ink-soft">Parents can view lesson reports, assessments and targets for linked students, but cannot edit academic records from this portal.</p>
+        <article class="card-panel p-4 sm:p-5">
+          <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Parent reporting USP</p>
+          <h2 class="mt-2 text-xl font-semibold text-fb-ink sm:text-2xl">Clear updates after every lesson.</h2>
+          <p class="mt-3 body-copy">Parents can quickly see lesson summaries, strengths, areas to improve, homework, assessments and targets for linked students, while Google Classroom continues to hold the learning materials themselves.</p>
+          <div class="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/80 px-3.5 py-3 text-xs font-semibold tracking-[0.15em] text-slate-600 uppercase">Lesson summaries</div>
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/80 px-3.5 py-3 text-xs font-semibold tracking-[0.15em] text-slate-600 uppercase">Areas to improve</div>
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/80 px-3.5 py-3 text-xs font-semibold tracking-[0.15em] text-slate-600 uppercase">Homework and next steps</div>
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/80 px-3.5 py-3 text-xs font-semibold tracking-[0.15em] text-slate-600 uppercase">Assessment visibility</div>
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/80 px-3.5 py-3 text-xs font-semibold tracking-[0.15em] text-slate-600 uppercase">Current targets</div>
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/80 px-3.5 py-3 text-xs font-semibold tracking-[0.15em] text-slate-600 uppercase">Calm parent view</div>
+          </div>
         </article>
+      </section>
+
+      <section class="dashboard-section">
+        <div class="grid gap-4 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
+          <div>
+            <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Designed for quick parent check-ins.</h2>
+            <p class="mt-3 body-copy">You should be able to open the portal, understand what happened in the latest lesson, and know the next step in under a minute.</p>
+          </div>
+          <div class="surface-note-sky">
+            Need resources or worksheet files? Those stay in Google Classroom for the student. This portal stays focused on progress, homework and next steps for families.
+          </div>
+        </div>
       </section>
 
       <ParentStudentDashboard containerId="parent-reporting-dashboard" />
@@ -45,11 +65,12 @@ const schema = {
 
   <script>
     import { bootstrapParentPortal } from "../lib/parent-portal";
+    import { getFriendlyErrorMessage } from "../lib/portal-client";
 
-    bootstrapParentPortal().catch((error) => {
+    bootstrapParentPortal().catch(async (error) => {
       const target = document.querySelector("[data-role-error-message]");
       if (target instanceof HTMLElement) {
-        target.textContent = error instanceof Error ? error.message : "Parent portal failed to load.";
+        target.textContent = await getFriendlyErrorMessage(error, "Parent portal failed to load.");
       }
     });
   </script>

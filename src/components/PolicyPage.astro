@@ -1,0 +1,27 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  updatedLabel: string;
+  note: string;
+}
+
+const { eyebrow, title, updatedLabel, note } = Astro.props;
+---
+
+<section class="container-shell section-shell">
+  <div class="mx-auto max-w-4xl card-panel p-6 sm:p-8 lg:p-10">
+    <span class="eyebrow">{eyebrow}</span>
+    <h1 class="mt-4 text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem]">{title}</h1>
+    <div class="mt-5 flex flex-wrap gap-2">
+      <span class="mini-chip">{updatedLabel}</span>
+      <span class="mini-chip">FlyBridge Education</span>
+    </div>
+    <div class="policy-content">
+      <slot />
+    </div>
+    <div class="mt-6 rounded-[1.15rem] border border-slate-200 bg-slate-50/80 p-4 text-sm leading-6 text-fb-ink-soft">
+      {note}
+    </div>
+  </div>
+</section>

@@ -3,53 +3,69 @@ import Logo from "./Logo.astro";
 import { footerPortalLinks, footerQuickLinks, footerServiceLinks, site } from "../data/site";
 ---
 
-<footer class="mt-24 bg-fb-bg text-fb-text">
-  <div class="container-shell grid gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr_0.95fr_0.8fr]">
+<footer class="mt-14 bg-fb-bg text-fb-text sm:mt-16">
+  <div class="container-shell grid gap-8 py-10 sm:py-12 lg:grid-cols-[1.05fr_0.95fr_0.95fr_0.9fr]">
     <div class="space-y-4">
       <Logo variant="light" />
-      <p class="max-w-md text-sm leading-7 text-slate-300">{site.tagline}</p>
+      <p class="max-w-md text-sm leading-6 text-slate-300">{site.tagline}</p>
+      <p class="max-w-md text-sm leading-6 text-slate-400">
+        Premium online tuition with clear parent communication, thoughtful academic support and a calm FlyBridge portal experience.
+      </p>
+      <div class="rounded-[1.15rem] border border-white/10 bg-white/[0.04] p-4">
+        <p class="text-xs font-semibold tracking-[0.18em] text-sky-200 uppercase">Why parents notice FlyBridge</p>
+        <p class="mt-2 text-sm leading-6 text-slate-300">Free assessment first, Cambridge-trained teaching, and progress reporting that makes the next step easier to understand.</p>
+      </div>
       <div class="flex flex-wrap gap-4 text-sm text-slate-300">
-        <a class="footer-link" href={`mailto:${site.email}`}>{site.email}</a>
+        <a class="footer-link break-words" href={`mailto:${site.email}`}>{site.email}</a>
         <a class="footer-link" href={site.whatsappHref} target="_blank" rel="noreferrer">{site.phone}</a>
       </div>
     </div>
     <div class="grid gap-8 sm:grid-cols-2">
-      <div class="space-y-4">
+      <nav class="space-y-4" aria-label="Footer quick links">
         <p class="text-xs font-semibold tracking-[0.22em] text-slate-400 uppercase">Quick links</p>
         <div class="flex flex-col gap-3">
           {footerQuickLinks.map((item) => (
             <a class="footer-link" href={item.href}>{item.label}</a>
           ))}
         </div>
-      </div>
-      <div class="space-y-4">
+      </nav>
+      <nav class="space-y-4" aria-label="Footer services">
         <p class="text-xs font-semibold tracking-[0.22em] text-slate-400 uppercase">Services</p>
         <div class="flex flex-col gap-3">
           {footerServiceLinks.map((item) => (
             <a class="footer-link" href={item.href}>{item.label}</a>
           ))}
         </div>
-      </div>
+      </nav>
     </div>
     <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
-      <div class="space-y-4">
+      <nav class="space-y-4" aria-label="Footer portal links">
         <p class="text-xs font-semibold tracking-[0.22em] text-slate-400 uppercase">Portal</p>
         <div class="flex flex-col gap-3">
           {footerPortalLinks.map((item) => (
             <a class="footer-link" href={item.href}>{item.label}</a>
           ))}
         </div>
-      </div>
+      </nav>
     </div>
     <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
-      <div class="space-y-4">
+      <nav class="space-y-4" aria-label="Footer contact links">
         <p class="text-xs font-semibold tracking-[0.22em] text-slate-400 uppercase">Contact</p>
         <div class="flex flex-col gap-3">
           <a class="footer-link" href={site.whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
           <a class="footer-link" href={`mailto:${site.email}`}>Email</a>
           <a class="footer-link" href={site.contactHref}>Contact Page</a>
         </div>
-      </div>
+      </nav>
+      <a class="focus-pill inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-fb-bg transition hover:bg-sky-50" href={site.assessmentHref}>
+        Book Assessment
+      </a>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="container-shell flex flex-col gap-2 py-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+      <p>© {new Date().getFullYear()} FlyBridge Education. All rights reserved.</p>
+      <p>Cambridge-trained GCSE tuition with parent reporting built in.</p>
     </div>
   </div>
 </footer>

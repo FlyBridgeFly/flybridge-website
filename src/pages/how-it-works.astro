@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import PageHero from "../components/PageHero.astro";
 import CtaBanner from "../components/CtaBanner.astro";
-import { assessmentFeatures, lessonFlow, progressTracking, site } from "../data/site";
+import { assessmentFeatures, lessonFlow, platformSplit, progressTracking, site } from "../data/site";
 
 const schema = {
   "@context": "https://schema.org",
@@ -35,21 +35,21 @@ const schema = {
   />
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-10 lg:grid-cols-[0.78fr_1.22fr]">
+    <div class="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
       <SectionHeading
         eyebrow="Lesson journey"
         title="What the process looks like in practice."
         body="Each step is designed to reduce friction, make expectations clear and keep support aligned with the student's goals."
       />
-      <div class="space-y-5">
+      <div class="space-y-4">
         {lessonFlow.map((step, index) => (
-          <div class="card-panel relative p-6 sm:p-7">
-            {index !== lessonFlow.length - 1 && <div class="absolute left-12 top-[4.5rem] h-[calc(100%-2.25rem)] w-px bg-slate-200"></div>}
-            <div class="flex gap-5">
-              <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-fb-bg text-sm font-semibold text-white">{index + 1}</div>
+          <div class="card-panel relative p-5 sm:p-6">
+            {index !== lessonFlow.length - 1 && <div class="absolute left-10 top-[4.1rem] h-[calc(100%-2rem)] w-px bg-slate-200"></div>}
+            <div class="flex gap-4">
+              <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-fb-bg text-sm font-semibold text-white">{index + 1}</div>
               <div>
-                <h2 class="text-xl font-semibold text-fb-ink">{step.title}</h2>
-                <p class="mt-3 text-base leading-7 text-fb-ink-soft">{step.body}</p>
+                <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{step.title}</h2>
+                <p class="mt-2 body-copy">{step.body}</p>
               </div>
             </div>
           </div>
@@ -66,16 +66,16 @@ const schema = {
           title="A useful first conversation, not a sales pitch."
           body="The aim is to understand what is going on beneath the surface so next steps can be recommended with confidence."
         />
-        <div class="mt-8 grid gap-4">
+        <div class="mt-6 grid gap-3">
           {assessmentFeatures.map((item) => (
-            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
         </div>
-        <div class="image-panel mt-6">
+        <div class="image-panel mt-4">
           <img
             src={site.images.assessmentReport}
             alt="An assessment report image representing the FlyBridge assessment process."
-            class="h-[250px] w-full object-cover"
+            class="h-[220px] w-full object-cover sm:h-[240px]"
             loading="lazy"
             decoding="async"
           />
@@ -87,20 +87,38 @@ const schema = {
           title="How families stay informed"
           body="Progress tracking is woven into the service so support remains visible rather than vague."
         />
-        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        <div class="mt-6 grid gap-3 sm:grid-cols-2">
           {progressTracking.map((item) => (
-            <div class="card-panel px-5 py-4 text-base text-fb-ink">{item}</div>
+            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
         </div>
-        <div class="image-panel mt-6">
+        <div class="image-panel mt-4">
           <img
             src={site.images.googleClassroom}
             alt="Google Classroom resources organised neatly for GCSE science students."
-            class="h-[250px] w-full object-cover"
+            class="h-[220px] w-full object-cover sm:h-[240px]"
             loading="lazy"
             decoding="async"
           />
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell">
+    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+      <SectionHeading
+        eyebrow="Student learning and parent visibility"
+        title="Two spaces, each with a clear job."
+        body="FlyBridge keeps the student workflow and the parent reporting workflow separate on purpose, so both remain simple to use."
+      />
+      <div class="grid gap-4 md:grid-cols-2">
+        {platformSplit.map((item) => (
+          <div class="card-panel p-5 sm:p-6">
+            <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{item.title}</h2>
+            <p class="mt-2 body-copy">{item.body}</p>
+          </div>
+        ))}
       </div>
     </div>
   </section>

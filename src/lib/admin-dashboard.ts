@@ -1,64 +1,137 @@
 import {
-  assignTutorToStudent,
+  activateTabs,
   createAssessmentRecord,
   createLessonReport,
+  createParentAccount,
   createStudentRecord,
+  createTutorAccount,
   fetchAllStudents,
   fetchProfilesByRole,
   fetchRecentReports,
   fetchStudentContent,
   fetchTableRows,
+  fillParentSelects,
   fillStudentSelects,
   fillTargetEditor,
   fillTutorSelects,
+  generateParentInvite,
+  getFriendlyErrorMessage,
   guardPage,
   readFormValues,
+  renderAssessmentList,
+  renderProfileCards,
   renderReportTimeline,
   renderStudentCards,
+  resetPortalPassword,
   saveTargetRecord,
-  setStatusMessage
+  setStudentSelection,
+  setStatusMessage,
+  updateStudentRecord,
+  linkParentToStudent,
+  linkTutorToStudent
 } from "./portal-client";
 
 export async function bootstrapAdminDashboard() {
   const { profile } = await guardPage(["admin"]);
 
   const studentsContainer = document.querySelector<HTMLElement>("[data-admin-students]");
+  const assessmentsContainer = document.querySelector<HTMLElement>("[data-admin-assessments]");
   const reportsContainer = document.querySelector<HTMLElement>("[data-admin-recent-reports]");
-  const studentCount = document.querySelector<HTMLElement>("[data-student-count]");
-  const tutorCount = document.querySelector<HTMLElement>("[data-tutor-count]");
-  const reportCount = document.querySelector<HTMLElement>("[data-report-count]");
+  const parentProfilesContainer = document.querySelector<HTMLElement>("[data-parent-profiles]");
+  const tutorProfilesContainer = document.querySelector<HTMLElement>("[data-tutor-profiles]");
   const targetEditor = document.querySelector<HTMLElement>("[data-target-editor]");
   const targetForm = document.querySelector<HTMLFormElement>("[data-target-form]");
   const lessonReportForm = document.querySelector<HTMLFormElement>("[data-lesson-report-form]");
   const assessmentForm = document.querySelector<HTMLFormElement>("[data-assessment-form]");
   const studentForm = document.querySelector<HTMLFormElement>("[data-student-form]");
-  const assignForm = document.querySelector<HTMLFormElement>("[data-assign-form]");
+  const parentAccountForm = document.querySelector<HTMLFormElement>("[data-parent-account-form]");
+  const tutorAccountForm = document.querySelector<HTMLFormElement>("[data-tutor-account-form]");
+  const parentLinkForm = document.querySelector<HTMLFormElement>("[data-parent-link-form]");
+  const tutorLinkForm = document.querySelector<HTMLFormElement>("[data-tutor-link-form]");
+  const parentInviteForm = document.querySelector<HTMLFormElement>("[data-parent-invite-form]");
+  const parentResetForm = document.querySelector<HTMLFormElement>("[data-parent-reset-form]");
+  const tutorResetForm = document.querySelector<HTMLFormElement>("[data-tutor-reset-form]");
+  const invitePreview = document.querySelector<HTMLElement>("[data-parent-invite-preview]");
+  const resetStudentButton = document.querySelector<HTMLElement>("[data-student-reset]");
+
+  const studentCount = document.querySelector<HTMLElement>("[data-student-count]");
+  const parentCount = document.querySelector<HTMLElement>("[data-parent-count]");
+  const tutorCount = document.querySelector<HTMLElement>("[data-tutor-count]");
+  const reportCount = document.querySelector<HTMLElement>("[data-report-count]");
+
+  const resetStudentForm = () => {
+    if (!studentForm) return;
+    studentForm.reset();
+    const idField = studentForm.querySelector<HTMLInputElement>('input[name="student-id"]');
+    if (idField) idField.value = "";
+  };
 
   async function refresh() {
-    const [students, tutors, tutorLinks, recentReports] = await Promise.all([
+    const [students, tutors, parents, tutorLinksRaw, parentLinksRaw, invitesRaw, recentReports] = await Promise.all([
       fetchAllStudents(),
       fetchProfilesByRole("tutor"),
+      fetchProfilesByRole("parent"),
       fetchTableRows("tutor_student_links"),
-      fetchRecentReports(8)
+      fetchTableRows("parent_student_links"),
+      fetchTableRows("parent_invites"),
+      fetchRecentReports(10)
     ]);
+
+    const tutorLinks = tutorLinksRaw as Array<Record<string, unknown>>;
+    const parentLinks = parentLinksRaw as Array<Record<string, unknown>>;
+    const invites = invitesRaw as Array<Record<string, unknown>>;
+
+    const { assessments, targets } = await fetchStudentContent(students.map((student) => student.id));
+    const studentsById = new Map(students.map((student) => [student.id, student]));
 
     fillStudentSelects(students);
     fillTutorSelects(tutors);
+    fillParentSelects(parents);
 
     if (studentsContainer) {
       renderStudentCards(studentsContainer, students, {
-        showAssignments: true,
-        tutorLinks
+        editable: true
+      });
+
+      studentsContainer.querySelectorAll<HTMLElement>("[data-student-fill]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const studentId = button.dataset.studentId;
+          if (!studentId) return;
+          setStudentSelection(studentId);
+          lessonReportForm?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      studentsContainer.querySelectorAll<HTMLElement>("[data-student-edit]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const studentId = button.dataset.studentId;
+          if (!studentId || !studentForm) return;
+          const student = students.find((item) => item.id === studentId);
+          if (!student) return;
+          const idField = studentForm.querySelector<HTMLInputElement>('input[name="student-id"]');
+          const nameField = studentForm.querySelector<HTMLInputElement>('input[name="full-name"]');
+          const yearField = studentForm.querySelector<HTMLInputElement>('input[name="year-group"]');
+          const schoolField = studentForm.querySelector<HTMLInputElement>('input[name="school"]');
+          const notesField = studentForm.querySelector<HTMLTextAreaElement>('textarea[name="notes"]');
+          if (idField) idField.value = student.id;
+          if (nameField) nameField.value = student.full_name ?? `${student.first_name ?? ""} ${student.last_name ?? ""}`.trim();
+          if (yearField) yearField.value = student.year_group ?? "";
+          if (schoolField) schoolField.value = student.school ?? "";
+          if (notesField) notesField.value = student.notes ?? "";
+          studentForm.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
       });
     }
 
+    if (assessmentsContainer) {
+      renderAssessmentList(assessmentsContainer, assessments, studentsById);
+    }
+
     if (reportsContainer) {
-      const studentsById = new Map(students.map((student) => [student.id, student]));
       renderReportTimeline(reportsContainer, recentReports, studentsById);
     }
 
     if (targetEditor) {
-      const { targets } = await fetchStudentContent(students.map((student) => student.id));
       fillTargetEditor(targetEditor, targets);
       targetEditor.querySelectorAll<HTMLElement>("[data-target-edit]").forEach((button) => {
         button.addEventListener("click", () => {
@@ -81,10 +154,31 @@ export async function bootstrapAdminDashboard() {
       });
     }
 
+    if (parentProfilesContainer) {
+      renderProfileCards(parentProfilesContainer, parents, {
+        heading: "parent",
+        links: parentLinks as never[],
+        studentsById,
+        invites: invites as never[]
+      });
+    }
+
+    if (tutorProfilesContainer) {
+      renderProfileCards(tutorProfilesContainer, tutors, {
+        heading: "tutor",
+        links: tutorLinks as never[],
+        studentsById
+      });
+    }
+
     if (studentCount) studentCount.textContent = String(students.length);
+    if (parentCount) parentCount.textContent = String(parents.length);
     if (tutorCount) tutorCount.textContent = String(tutors.length);
     if (reportCount) reportCount.textContent = String(recentReports.length);
   }
+
+  activateTabs("[data-admin-tab]", "[data-admin-panel]", "students");
+  resetStudentButton?.addEventListener("click", resetStudentForm);
 
   await refresh();
 
@@ -93,31 +187,148 @@ export async function bootstrapAdminDashboard() {
     const values = readFormValues(studentForm);
     const status = studentForm.querySelector<HTMLElement>("[data-form-status]");
     try {
-      await createStudentRecord({
-        fullName: values["full-name"],
-        yearGroup: values["year-group"],
-        school: values.school,
-        notes: values.notes
-      });
-      studentForm.reset();
-      setStatusMessage(status, "success", "Student created successfully.");
+      if (values["student-id"]) {
+        await updateStudentRecord({
+          studentId: values["student-id"],
+          fullName: values["full-name"],
+          yearGroup: values["year-group"],
+          school: values.school,
+          notes: values.notes
+        });
+        setStatusMessage(status, "success", "Student updated successfully.");
+      } else {
+        await createStudentRecord({
+          fullName: values["full-name"],
+          yearGroup: values["year-group"],
+          school: values.school,
+          notes: values.notes
+        });
+        setStatusMessage(status, "success", "Student created successfully.");
+      }
+      resetStudentForm();
       await refresh();
     } catch (error) {
-      setStatusMessage(status, "error", error instanceof Error ? error.message : "Unable to create student.");
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to save student."));
     }
   });
 
-  assignForm?.addEventListener("submit", async (event) => {
+  tutorAccountForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const values = readFormValues(assignForm);
-    const status = assignForm.querySelector<HTMLElement>("[data-form-status]");
+    const values = readFormValues(tutorAccountForm);
+    const status = tutorAccountForm.querySelector<HTMLElement>("[data-form-status]");
     try {
-      await assignTutorToStudent(values["tutor-id"], values["student-id"]);
-      assignForm.reset();
-      setStatusMessage(status, "success", "Tutor assigned to student.");
+      const result = await createTutorAccount({
+        fullName: values["full-name"],
+        email: values.email,
+        password: values.password
+      });
+      tutorAccountForm.reset();
+      setStatusMessage(status, "success", result.message);
       await refresh();
     } catch (error) {
-      setStatusMessage(status, "error", error instanceof Error ? error.message : "Unable to assign tutor.");
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to create tutor account."));
+    }
+  });
+
+  parentAccountForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const values = readFormValues(parentAccountForm);
+    const status = parentAccountForm.querySelector<HTMLElement>("[data-form-status]");
+    try {
+      const result = await createParentAccount({
+        fullName: values["full-name"],
+        email: values.email,
+        password: values.password
+      });
+      parentAccountForm.reset();
+      setStatusMessage(status, "success", result.message);
+      await refresh();
+    } catch (error) {
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to create parent account."));
+    }
+  });
+
+  tutorLinkForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const values = readFormValues(tutorLinkForm);
+    const status = tutorLinkForm.querySelector<HTMLElement>("[data-form-status]");
+    try {
+      const result = await linkTutorToStudent({
+        tutorId: values["tutor-id"],
+        studentId: values["student-id"]
+      });
+      tutorLinkForm.reset();
+      setStatusMessage(status, "success", result.message);
+      await refresh();
+    } catch (error) {
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to link tutor."));
+    }
+  });
+
+  parentLinkForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const values = readFormValues(parentLinkForm);
+    const status = parentLinkForm.querySelector<HTMLElement>("[data-form-status]");
+    try {
+      const result = await linkParentToStudent({
+        parentId: values["parent-id"],
+        studentId: values["student-id"]
+      });
+      parentLinkForm.reset();
+      setStatusMessage(status, "success", result.message);
+      await refresh();
+    } catch (error) {
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to link parent."));
+    }
+  });
+
+  parentInviteForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const values = readFormValues(parentInviteForm);
+    const status = parentInviteForm.querySelector<HTMLElement>("[data-form-status]");
+    try {
+      const result = await generateParentInvite({
+        parentId: values["parent-id"],
+        studentId: values["student-id"]
+      });
+      parentInviteForm.reset();
+      if (invitePreview) {
+        invitePreview.textContent = `Latest invite code: ${String(result.inviteCode ?? result.code ?? "Generated successfully")}`;
+      }
+      setStatusMessage(status, "success", result.message);
+      await refresh();
+    } catch (error) {
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to generate parent invite."));
+    }
+  });
+
+  parentResetForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const values = readFormValues(parentResetForm);
+    const status = parentResetForm.querySelector<HTMLElement>("[data-form-status]");
+    try {
+      const result = await resetPortalPassword({
+        userId: values["user-id"]
+      });
+      parentResetForm.reset();
+      setStatusMessage(status, "success", result.message);
+    } catch (error) {
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to reset parent password."));
+    }
+  });
+
+  tutorResetForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const values = readFormValues(tutorResetForm);
+    const status = tutorResetForm.querySelector<HTMLElement>("[data-form-status]");
+    try {
+      const result = await resetPortalPassword({
+        userId: values["user-id"]
+      });
+      tutorResetForm.reset();
+      setStatusMessage(status, "success", result.message);
+    } catch (error) {
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to reset tutor password."));
     }
   });
 
@@ -140,7 +351,7 @@ export async function bootstrapAdminDashboard() {
       setStatusMessage(status, "success", "Lesson report saved.");
       await refresh();
     } catch (error) {
-      setStatusMessage(status, "error", error instanceof Error ? error.message : "Unable to save lesson report.");
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to save lesson report."));
     }
   });
 
@@ -162,7 +373,7 @@ export async function bootstrapAdminDashboard() {
       setStatusMessage(status, "success", "Assessment saved.");
       await refresh();
     } catch (error) {
-      setStatusMessage(status, "error", error instanceof Error ? error.message : "Unable to save assessment.");
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to save assessment."));
     }
   });
 
@@ -186,7 +397,7 @@ export async function bootstrapAdminDashboard() {
       setStatusMessage(status, "success", "Target saved.");
       await refresh();
     } catch (error) {
-      setStatusMessage(status, "error", error instanceof Error ? error.message : "Unable to save target.");
+      setStatusMessage(status, "error", await getFriendlyErrorMessage(error, "Unable to save target."));
     }
   });
 }
