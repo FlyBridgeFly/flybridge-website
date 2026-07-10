@@ -2,10 +2,8 @@
 import CurriculumSubjectPage from "../components/CurriculumSubjectPage.astro";
 import { getCurriculumPage } from "../data/curriculum";
 
-const page = getCurriculumPage("combined-science");
-if (!page) {
-  throw new Error("Combined Science subject data not found.");
-}
+const page = getCurriculumPage("ks3-science");
+if (!page) throw new Error("KS3 Science data not found.");
 ---
 
 <CurriculumSubjectPage page={page} />

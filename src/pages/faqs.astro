@@ -1,8 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHero from "../components/PageHero.astro";
 import FAQList from "../components/FAQList.astro";
-import CtaBanner from "../components/CtaBanner.astro";
 import { faqs, site } from "../data/site";
 
 const schema = {
@@ -21,45 +19,50 @@ const schema = {
 
 <BaseLayout
   title="FAQs"
-  description="Frequently asked questions about FlyBridge Education, including lessons, pricing, progress tracking and free assessments."
+  description="Frequently asked questions about FlyBridge Education, including lessons, progress tracking, assessments and getting started."
   path="/faqs"
   schema={schema}
 >
-  <PageHero
-    eyebrow="FAQs"
-    title="Clear answers for parents before they book."
-    body="This page covers the questions families usually ask around lesson delivery, assessments, homework, pricing and ongoing support."
-    primaryLabel="Book Free Assessment"
-    primaryHref={site.assessmentHref}
-    secondaryLabel="Contact FlyBridge"
-    secondaryHref={site.contactHref}
-  />
-
-  <section class="container-shell section-shell pt-0">
-    <div class="mb-5 grid gap-3 md:grid-cols-3">
-      <div class="card-panel p-4 sm:p-5">
-        <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Before booking</p>
-        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Use this page to answer the practical questions most families ask before the first assessment.</p>
+  <section class="container-shell section-shell-tight">
+    <div class="grid gap-5 lg:grid-cols-[1.04fr_0.96fr] lg:items-end">
+      <div class="space-y-4">
+        <span class="eyebrow">FAQs</span>
+        <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[3rem]">
+          Clear answers before you book.
+        </h1>
+        <p class="max-w-3xl body-copy-compact">
+          These are the questions families most often ask about how tuition works, what the assessment covers and how progress is communicated.
+        </p>
       </div>
-      <div class="card-panel p-4 sm:p-5">
-        <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Parent clarity</p>
-        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">FlyBridge aims to make pricing, progress tracking and communication feel clear rather than vague.</p>
-      </div>
-      <div class="card-panel p-4 sm:p-5">
-        <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Still unsure?</p>
-        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">If your situation is more specific, a callback or WhatsApp message is usually the quickest next step.</p>
+      <div class="dashboard-list">
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Assessment first</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Families can discuss suitability, subject focus and likely next steps before lessons begin.</p>
+        </div>
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Need a specific answer?</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">If your situation is more specific, a callback or WhatsApp message is usually the fastest route.</p>
+        </div>
       </div>
     </div>
+  </section>
+
+  <section class="container-shell section-shell-tight pt-0">
     <FAQList items={faqs} />
   </section>
 
-  <CtaBanner
-    eyebrow="Still deciding?"
-    title="If your question is specific to your child, a callback may be the quickest route."
-    body="FlyBridge can talk through year group, confidence, current grades and the sort of support that would be most suitable."
-    actions={[
-      { label: "Request a Callback", href: site.callbackHref },
-      { label: "WhatsApp", href: site.whatsappHref, variant: "secondary" }
-    ]}
-  />
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dark-panel p-5 sm:p-6 lg:p-7">
+      <div class="grid gap-4 lg:grid-cols-[1fr_0.92fr] lg:items-center">
+        <div>
+          <span class="eyebrow border-white/15 bg-white/5 text-sky-100">Still deciding?</span>
+          <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-white sm:text-[2.2rem]">Talk through the right next step for your child.</h2>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <a class="cta-button justify-center bg-white text-fb-bg hover:bg-sky-50" href={site.callbackHref}>Request a Callback</a>
+          <a class="ghost-button justify-center border-white/15 bg-white/5 text-white hover:bg-white/10" href={site.whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

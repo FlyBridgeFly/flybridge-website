@@ -6,22 +6,97 @@ interface Props {
 const { containerId } = Astro.props;
 ---
 
-<section class="space-y-4">
-  <div class="dashboard-section-heading">
-    <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Your child overview</h2>
-    <p class="body-copy">This read-only space is designed to feel calm and useful, keeping lesson updates, homework, assessments and current targets easy to follow without overwhelming families.</p>
-    <div class="flex flex-wrap gap-2 pt-1">
-      <span class="mini-chip">Latest lesson summary</span>
-      <span class="mini-chip">Areas to improve</span>
-      <span class="mini-chip">Homework and next steps</span>
-      <span class="mini-chip">Assessment progress</span>
-      <span class="mini-chip">Current targets</span>
+<section id={containerId} data-parent-dashboard class="portal-shell pb-8 pt-3 sm:pb-10 sm:pt-5">
+  <div class="portal-app-grid">
+    <aside class="dashboard-section h-fit lg:sticky lg:top-6">
+      <div class="flex items-center gap-3">
+        <div class="grid h-11 w-11 place-items-center rounded-[1rem] bg-fb-bg text-sm font-semibold tracking-[0.2em] text-white">
+          FB
+        </div>
+        <div class="min-w-0">
+          <p class="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">FlyBridge Portal</p>
+          <h1 class="mt-1 text-xl font-semibold tracking-tight text-fb-ink">Parent reporting</h1>
+        </div>
+      </div>
+
+      <div class="dashboard-divider mt-4">
+        <div class="rounded-[1rem] border border-slate-200 bg-slate-50/85 px-4 py-3.5">
+          <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Signed in parent</p>
+          <p class="mt-2 text-base font-semibold text-fb-ink" data-session-name>Loading...</p>
+          <p class="mt-1 break-words text-sm text-fb-ink-soft" data-session-email></p>
+        </div>
+      </div>
+
+      <div class="dashboard-divider mt-4">
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Students</p>
+          <span class="mini-chip" data-parent-student-count>0 linked</span>
+        </div>
+        <div class="portal-student-switcher mt-3" data-parent-student-list aria-live="polite">
+          <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading linked students...</article>
+        </div>
+      </div>
+
+      <div class="dashboard-divider mt-4">
+        <button class="ghost-button w-full justify-center" data-logout type="button">Sign out</button>
+      </div>
+    </aside>
+
+    <div class="portal-main-grid">
+      <section class="overview-bar" data-parent-overview aria-live="polite">
+        <p class="text-sm text-slate-300">Loading student overview...</p>
+      </section>
+
+      <div class="dashboard-split-grid">
+        <section class="dashboard-section" data-parent-latest-lesson aria-live="polite">
+          <p class="text-sm text-fb-ink-soft">Loading latest lesson update...</p>
+        </section>
+        <section class="dashboard-section" data-parent-homework aria-live="polite">
+          <p class="text-sm text-fb-ink-soft">Loading homework and target summary...</p>
+        </section>
+      </div>
+
+      <div class="dashboard-split-grid">
+        <section class="dashboard-section" data-parent-assessments aria-live="polite">
+          <p class="text-sm text-fb-ink-soft">Loading assessment progress...</p>
+        </section>
+        <section class="dashboard-section" data-parent-history aria-live="polite">
+          <p class="text-sm text-fb-ink-soft">Loading progress history...</p>
+        </section>
+      </div>
     </div>
-  </div>
-  <div class="surface-note-sky">
-    Google Classroom continues to hold resources and lesson files. This portal is intentionally narrower in scope, giving parents the clearest summary view of progress after each lesson.
-  </div>
-  <div class="dashboard-card-stack" id={containerId} data-parent-dashboard aria-busy="true">
-    <article class="card-panel p-4 text-sm text-fb-ink-soft sm:p-5" role="status" aria-live="polite">Loading the latest lesson summaries, assessments and targets...</article>
+
+    <aside class="portal-right-rail xl:sticky xl:top-6">
+      <section class="dashboard-section">
+        <div class="dashboard-section-heading">
+          <h2 class="text-lg font-semibold text-fb-ink">Quick actions</h2>
+          <p class="body-copy-compact">Resources stay inside Google Classroom. Contact FlyBridge if you need support with access or next steps.</p>
+        </div>
+        <div class="mt-4 grid gap-2.5">
+          <a class="cta-button w-full justify-center" href="https://classroom.google.com" target="_blank" rel="noreferrer">Open Google Classroom</a>
+          <a class="ghost-button w-full justify-center" href="/contact">Contact FlyBridge</a>
+        </div>
+      </section>
+
+      <section class="dashboard-section">
+        <div class="dashboard-section-heading">
+          <h2 class="text-lg font-semibold text-fb-ink">Questions parents ask</h2>
+        </div>
+        <div class="mt-4 grid gap-2.5">
+          <details class="rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3" data-parent-faq>
+            <summary class="cursor-pointer list-none text-sm font-semibold text-fb-ink">Where are lesson resources and worksheets?</summary>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Those stay inside Google Classroom so the student can access lesson files, homework and revision resources in one place.</p>
+          </details>
+          <details class="rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3" data-parent-faq>
+            <summary class="cursor-pointer list-none text-sm font-semibold text-fb-ink">How often should I check this portal?</summary>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">A quick check after each reported lesson is usually enough to see the latest summary, follow-up task and any targets needing attention.</p>
+          </details>
+          <details class="rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3" data-parent-faq>
+            <summary class="cursor-pointer list-none text-sm font-semibold text-fb-ink">What if something looks missing?</summary>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">If a lesson, target or assessment has not been added yet, contact FlyBridge and we can confirm whether it is still being prepared or needs updating.</p>
+          </details>
+        </div>
+      </section>
+    </aside>
   </div>
 </section>

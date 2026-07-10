@@ -1,16 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHero from "../components/PageHero.astro";
 import FormShell from "../components/FormShell.astro";
 import ContactMethods from "../components/ContactMethods.astro";
-import SectionHeading from "../components/SectionHeading.astro";
 import { site } from "../data/site";
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Request a Callback",
-  description: "Request a callback from FlyBridge Education to discuss GCSE science tuition.",
+  description: "Request a callback from FlyBridge Education to discuss the right subject, level and lesson format.",
   url: new URL("/request-callback", site.url).toString()
 };
 
@@ -18,89 +16,51 @@ const fields = [
   { label: "Parent name", name: "parent-name", placeholder: "Your full name", required: true, autocomplete: "name" },
   { label: "Student name", name: "student-name", placeholder: "Student's name", required: true },
   { label: "School", name: "school", placeholder: "Current school" },
-  { label: "Year group", name: "year-group", placeholder: "For example: Year 10" },
+  { label: "Year group", name: "year-group", placeholder: "For example: Year 9" },
   { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to call", required: true, autocomplete: "tel" },
   { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com", required: true, autocomplete: "email" },
-  { label: "Preferred callback time", name: "callback-time", placeholder: "After 6pm weekdays, Saturday morning, etc.", required: true },
-  { label: "Message", name: "message", type: "textarea" as const, placeholder: "Share any context that would help before the call.", helper: "Include current grades, confidence concerns, or any timetable constraints if helpful." }
-] as const;
-
-const callbackMethods = [
+  { label: "Preferred days", name: "preferred-days", placeholder: "Weekdays, Saturdays, or specific days", required: true },
+  { label: "Preferred hours", name: "preferred-hours", placeholder: "After 5pm, mornings, early evenings", required: true },
   {
-    label: "WhatsApp",
-    value: site.phone,
-    href: site.whatsappHref,
-    hint: "Ideal if you want a quick reply first"
-  },
-  {
-    label: "Email",
-    value: site.email,
-    href: `mailto:${site.email}`,
-    hint: "Helpful if you want to give a little more background"
-  },
-  {
-    label: "Book Assessment",
-    value: "Prefer to book directly instead",
-    href: site.assessmentHref,
-    hint: "A good fit if you already know you want the assessment"
+    label: "Optional message",
+    name: "message",
+    type: "textarea" as const,
+    placeholder: "Share subject, confidence, attainment or timetable context if helpful.",
+    span: "full" as const
   }
 ] as const;
 
-const trustPoints = [
-  {
-    title: "Advice before commitment",
-    body: "This route is designed for parents who want to talk things through before deciding on lessons."
-  },
-  {
-    title: "Context matters",
-    body: "Share the concern briefly and FlyBridge can call back with a clearer understanding of what may help."
-  }
+const methods = [
+  { label: "WhatsApp", value: site.phone, href: site.whatsappHref, hint: "Quickest route for a fast reply" },
+  { label: "Email", value: site.email, href: `mailto:${site.email}`, hint: "Useful if you want to give fuller context" },
+  { label: "Book Assessment", value: "Prefer to book directly", href: site.assessmentHref, hint: "Best if you already know the next step" }
 ] as const;
 ---
 
 <BaseLayout
   title="Request a Callback"
-  description="Request a callback from FlyBridge Education to discuss GCSE science tuition."
+  description="Request a callback from FlyBridge Education to discuss the right subject, level and lesson format."
   path="/request-callback"
   schema={schema}
 >
-  <PageHero
-    eyebrow="Request a callback"
-    title="Prefer a conversation first? Request a callback and we will make the next step feel easy."
-    body="This page is designed for parents who want to talk through their child's situation before booking an assessment. Share a few details and FlyBridge can follow up with context in mind."
-    primaryLabel="Book Assessment Instead"
-    primaryHref={site.assessmentHref}
-    secondaryLabel="WhatsApp"
-    secondaryHref={site.whatsappHref}
-    imageSrc={site.images.workspace}
-    imageAlt="A premium workspace image representing thoughtful parent communication."
-    imageBadge="Reassuring first conversation"
-  />
-
-  <section class="container-shell section-shell pt-0">
-    <div class="grid gap-5 lg:grid-cols-[0.82fr_1.18fr]">
+  <section class="container-shell section-shell-tight">
+    <div class="grid gap-5 lg:grid-cols-[0.86fr_1.14fr]">
       <div class="space-y-4">
-        <SectionHeading
-          eyebrow="Reassuring first contact"
-          title="A callback is a good fit if you want advice before committing."
-          body="Many parents simply want to explain what is happening, ask a few practical questions and understand what kind of support would be most effective. That is exactly what this page is for."
-        />
-        <div class="surface-note">
-          If you are unsure whether to book an assessment or simply want to talk first, this is the calmer route. FlyBridge can help you choose the next step.
-        </div>
-        <ContactMethods methods={callbackMethods} />
+        <span class="eyebrow">Request a callback</span>
+        <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.5rem]">Talk through the right next step.</h1>
+        <p class="max-w-2xl body-copy-compact">Use this route if you want to discuss subject choice, key stage, lesson format or availability before booking.</p>
+        <ContactMethods methods={methods} />
       </div>
       <FormShell
         title="Callback request"
-        body="Complete the fields below and FlyBridge will open a pre-filled email draft so you can send the callback request immediately with the right context."
+        body="Share the essentials and FlyBridge will open a pre-filled email draft with the right context."
         fields={fields}
         submitLabel="Request callback"
-        helper="Submitting this form opens your email app with the enquiry already written out. If you prefer, you can also WhatsApp FlyBridge directly."
+        helper="This keeps the site static while still giving you a real submission route."
         subject="FlyBridge callback request"
         recipientEmail={site.email}
         secondaryLabel="WhatsApp FlyBridge"
         secondaryHref={site.whatsappHref}
-        trustPoints={trustPoints}
       />
     </div>
   </section>

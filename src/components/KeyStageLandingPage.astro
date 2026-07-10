@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import type { KeyStageLanding } from "../data/curriculum";
+import { primaryCurriculumAreas } from "../data/curriculum";
+import { site } from "../data/site";
+
+interface Props {
+  page: KeyStageLanding;
+}
+
+const { page } = Astro.props;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: page.title,
+  description: page.summary,
+  url: new URL(`/${page.slug}`, site.url).toString()
+};
+---
+
+<BaseLayout title={page.title} description={page.summary} path={`/${page.slug}`} schema={schema}>
+  <section class="container-shell section-shell-tight">
+    <div class="grid gap-5 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
+      <div class="space-y-4">
+        <span class="eyebrow">{page.keyStage}</span>
+        <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[3rem]">{page.title}</h1>
+        <p class="max-w-3xl body-copy-compact">{page.summary}</p>
+      </div>
+      <div class="dashboard-list">
+        {page.coreOffer && (
+          <div class="dashboard-list-item">
+            <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Current FlyBridge core offer</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{page.coreOffer.join(" • ")}</p>
+          </div>
+        )}
+        {page.keyStage === "KS2" && (
+          <div class="dashboard-list-item">
+            <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">KS2 all subjects</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{primaryCurriculumAreas.join(" • ")}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dashboard-card-grid md:grid-cols-2 xl:grid-cols-4">
+      {page.subjects.map((subject) => (
+        <a class="dashboard-section transition hover:border-slate-300 hover:bg-white" href={subject.href}>
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">{page.keyStage}</p>
+          <h2 class="mt-2 text-lg font-semibold text-fb-ink">{subject.label}</h2>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{subject.note}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

@@ -35,7 +35,7 @@ const schema = {
             <div class="min-w-0">
               <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">FlyBridge Admin</p>
               <h1 class="mt-2 text-[1.75rem] font-semibold tracking-tight text-fb-ink sm:text-[2.1rem]">FlyBridge Admin</h1>
-              <p class="mt-2 text-sm leading-6 text-fb-ink-soft">A focused workspace for student records, parent portals and tutor access.</p>
+              <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Student records, parent access and tutor access in one private workspace.</p>
             </div>
             <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
               <div class="rounded-[1.1rem] border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm">
@@ -70,7 +70,7 @@ const schema = {
         <section class="dashboard-section">
           <div class="dashboard-section-heading">
             <h2 class="text-xl font-semibold text-fb-ink">Workspace areas</h2>
-            <p class="body-copy">Switch between students, parent portals and tutor portals without leaving the dashboard.</p>
+            <p class="body-copy-compact">Keep the current task in view without leaving the dashboard.</p>
           </div>
           <div class="tab-switcher mt-4" role="tablist" aria-label="Admin dashboard sections">
             <button class="tab-button" data-admin-tab data-tab="students" type="button">
@@ -94,7 +94,7 @@ const schema = {
               <div class="admin-toolbar">
                 <div class="dashboard-section-heading">
                   <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Student directory</h2>
-                  <p class="body-copy">Search, filter and jump straight into the next action for each student record.</p>
+                  <p class="body-copy-compact">Search, filter and jump straight into the next action for each student record.</p>
                 </div>
                 <div class="mini-chip">Search and filter</div>
               </div>
@@ -124,7 +124,7 @@ const schema = {
               <form class="form-panel" data-student-form>
                 <input name="student-id" type="hidden" value="" />
                 <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Create or edit student</h2>
-                <p class="mt-3 body-copy">Use one compact form for new records and quick profile updates.</p>
+                <p class="mt-2 body-copy-compact">Use one compact form for new records and quick profile updates.</p>
                 <div class="form-grid">
                   <label class="sm:col-span-2">
                     <span class="label-shell">Student full name</span>
@@ -149,15 +149,6 @@ const schema = {
                   <button class="ghost-button w-full sm:w-auto" data-student-reset type="button">Clear form</button>
                 </div>
               </form>
-
-              <article class="dashboard-section">
-                <h2 class="text-xl font-semibold tracking-tight text-fb-ink">Quick admin rhythm</h2>
-                <div class="mt-4 space-y-3 text-sm leading-6 text-fb-ink-soft">
-                  <p>1. Create or update the student record.</p>
-                  <p>2. Add the latest assessment, report or target.</p>
-                  <p>3. Move to Parent Portals or Tutor Portals only when access needs to change.</p>
-                </div>
-              </article>
             </div>
           </div>
 
@@ -165,7 +156,7 @@ const schema = {
             <section class="dashboard-section">
               <div class="dashboard-section-heading">
                 <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Assessment records</h2>
-                <p class="body-copy">Recent checkpoints across the whole student list.</p>
+                <p class="body-copy-compact">Recent checkpoints across the whole student list.</p>
               </div>
               <div class="dashboard-card-stack mt-4" data-admin-assessments>
                 <EmptyState title="Loading assessments" body="Assessment records are being loaded for the FlyBridge dashboard." />
@@ -175,7 +166,7 @@ const schema = {
             <section class="dashboard-section">
               <div class="dashboard-section-heading">
                 <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Targets</h2>
-                <p class="body-copy">Choose a target to load it into the edit form below.</p>
+                <p class="body-copy-compact">Choose a target to load it into the edit form below.</p>
               </div>
               <div class="dashboard-card-stack mt-4" data-target-editor>
                 <EmptyState title="Loading targets" body="Targets are being loaded for the FlyBridge dashboard." />
@@ -189,13 +180,25 @@ const schema = {
             <TargetForm formId="admin-target-form" />
           </div>
 
-          <section class="dashboard-section">
-            <ReportTimeline
-              containerId="admin-report-timeline"
-              title="Recent reports"
-              body="The latest lesson summaries and follow-up notes added across the dashboard."
-            />
-          </section>
+          <div class="grid gap-4 xl:grid-cols-[0.88fr_1.12fr]">
+            <section class="dashboard-section">
+              <div class="dashboard-section-heading">
+                <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Upcoming lessons</h2>
+                <p class="body-copy-compact">Scheduled lessons across the portal.</p>
+              </div>
+              <div class="dashboard-card-stack mt-4" data-admin-lessons>
+                <EmptyState title="Loading lessons" body="Scheduled lessons are being loaded for the FlyBridge dashboard." />
+              </div>
+            </section>
+
+            <section class="dashboard-section">
+              <ReportTimeline
+                containerId="admin-report-timeline"
+                title="Recent reports"
+                body="The latest lesson summaries and follow-up notes added across the dashboard."
+              />
+            </section>
+          </div>
         </section>
 
         <section class="hidden space-y-6" data-admin-panel data-panel="parents">

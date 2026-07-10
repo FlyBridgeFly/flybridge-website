@@ -3,11 +3,14 @@ import {
   createLessonReport,
   fetchAssignedStudentsForTutor,
   fetchStudentContent,
+  fetchStudentLessons,
   fillStudentSelects,
   fillTargetEditor,
   getFriendlyErrorMessage,
   guardPage,
   readFormValues,
+  renderLessonList,
+  renderReportTimeline,
   renderStudentCards,
   saveTargetRecord,
   setStudentSelection,
@@ -22,14 +25,22 @@ export async function bootstrapTutorDashboard() {
   });
 
   const studentsContainer = document.querySelector<HTMLElement>("[data-tutor-students]");
+  const lessonsContainer = document.querySelector<HTMLElement>("[data-tutor-lessons]");
+  const reportsContainer = document.querySelector<HTMLElement>("[data-tutor-reports]");
   const targetEditor = document.querySelector<HTMLElement>("[data-target-editor]");
   const targetForm = document.querySelector<HTMLFormElement>("[data-target-form]");
   const lessonReportForm = document.querySelector<HTMLFormElement>("[data-lesson-report-form]");
   const assessmentForm = document.querySelector<HTMLFormElement>("[data-assessment-form]");
   const studentCount = document.querySelector<HTMLElement>("[data-student-count]");
+  const targetCount = document.querySelector<HTMLElement>("[data-target-count]");
+  const reportCount = document.querySelector<HTMLElement>("[data-report-count]");
 
   async function refresh() {
     const students = await fetchAssignedStudentsForTutor(profile.id);
+    const studentIds = students.map((student) => student.id);
+    const { reports, targets } = await fetchStudentContent(studentIds);
+    const upcomingLessons = await fetchStudentLessons(studentIds, { status: "scheduled", limit: 6 });
+    const studentsById = new Map(students.map((student) => [student.id, student]));
     fillStudentSelects(students);
 
     if (studentsContainer) {
@@ -48,8 +59,28 @@ export async function bootstrapTutorDashboard() {
       studentCount.textContent = String(students.length);
     }
 
+    if (targetCount) {
+      targetCount.textContent = String(targets.filter((target) => String(target.status ?? "").toLowerCase() !== "complete").length);
+    }
+
+    if (reportCount) {
+      reportCount.textContent = String(reports.length);
+    }
+
+    if (lessonsContainer) {
+      renderLessonList(lessonsContainer, upcomingLessons, studentsById, {
+        emptyTitle: "No upcoming lessons",
+        emptyBody: "Scheduled lessons will appear here once they are added for your assigned students.",
+        mode: "upcoming",
+        limit: 6
+      });
+    }
+
+    if (reportsContainer) {
+      renderReportTimeline(reportsContainer, reports.slice(0, 6), studentsById);
+    }
+
     if (targetEditor) {
-      const { targets } = await fetchStudentContent(students.map((student) => student.id));
       fillTargetEditor(targetEditor, targets);
       targetEditor.querySelectorAll<HTMLElement>("[data-target-edit]").forEach((button) => {
         button.addEventListener("click", () => {

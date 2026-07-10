@@ -10,15 +10,7 @@ const { formId, title = "Create lesson report" } = Astro.props;
 <form id={formId} class="form-panel" data-lesson-report-form>
   <div class="form-heading">
     <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
-    <p class="body-copy">Capture the lesson quickly so parents get a useful update without extra admin overhead.</p>
-  </div>
-  <div class="surface-note-sky mt-4">
-    Keep each update short, specific and parent-friendly. One strong sentence per field is usually enough.
-  </div>
-  <div class="mt-4 flex flex-wrap gap-2">
-    <span class="mini-chip">Fast to complete</span>
-    <span class="mini-chip">Parent-visible summary</span>
-    <span class="mini-chip">Next step included</span>
+    <p class="body-copy-compact">Record the latest teaching clearly so the parent portal stays current.</p>
   </div>
   <div class="form-grid-compact">
     <label>
@@ -39,7 +31,7 @@ const { formId, title = "Create lesson report" } = Astro.props;
     <label class="sm:col-span-2">
       <span class="label-shell">Quick lesson summary</span>
       <textarea class="input-shell min-h-[5.5rem] resize-y" name="summary" placeholder="What was covered and how did the student respond?" required></textarea>
-      <span class="helper-shell">Keep this practical: what was taught, how the student engaged, and what felt more secure by the end.</span>
+      <span class="helper-shell">One concise summary is enough.</span>
     </label>
     <label>
       <span class="label-shell">Strengths noticed</span>
@@ -54,7 +46,7 @@ const { formId, title = "Create lesson report" } = Astro.props;
     <label class="sm:col-span-2">
       <span class="label-shell">Areas to improve / next teaching focus</span>
       <textarea class="input-shell min-h-[4.5rem] resize-y" name="next-steps" placeholder="What should happen next in the tuition plan?"></textarea>
-      <span class="helper-shell">Use this for the clearest focus area so parents understand what FlyBridge is working on next.</span>
+      <span class="helper-shell">Keep the next step specific and easy to follow.</span>
     </label>
   </div>
   <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>

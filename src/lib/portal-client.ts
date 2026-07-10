@@ -2,6 +2,7 @@ import type { User } from "@supabase/supabase-js";
 import {
   createBrowserSupabaseClient,
   type AssessmentRow,
+  type LessonRow,
   type LessonReportRow,
   type LinkRow,
   type ProfileRole,
@@ -18,6 +19,7 @@ export interface GuardResult {
 
 export interface StudentBundle {
   student: StudentRow;
+  lessons: LessonRow[];
   reports: LessonReportRow[];
   assessments: AssessmentRow[];
   targets: TargetRow[];
@@ -176,6 +178,47 @@ function formatAssessmentScore(score?: number | null, maxScore?: number | null) 
   if (maxScore === undefined || maxScore === null || Number(maxScore) <= 0) return `${score}`;
   const percentage = Math.round((Number(score) / Number(maxScore)) * 100);
   return `${score} / ${maxScore} (${percentage}%)`;
+}
+
+function formatPercentage(score?: number | string | null, maxScore?: number | string | null) {
+  const scoreNumber = Number(score);
+  const maxNumber = Number(maxScore);
+  if (!Number.isFinite(scoreNumber) || !Number.isFinite(maxNumber) || maxNumber <= 0) {
+    return null;
+  }
+  return Math.round((scoreNumber / maxNumber) * 100);
+}
+
+function formatHours(totalMinutes: number) {
+  if (!totalMinutes) return "0 hours";
+  const hours = totalMinutes / 60;
+  if (Number.isInteger(hours)) {
+    return `${hours} hour${hours === 1 ? "" : "s"}`;
+  }
+  return `${hours.toFixed(1)} hours`;
+}
+
+function getStringField(source: Record<string, unknown> | null | undefined, keys: string[]) {
+  if (!source) return "";
+  for (const key of keys) {
+    const value = source[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return "";
+}
+
+function formatTrend(assessments: AssessmentRow[]) {
+  const recentPercentages = byRecentDate(assessments, "assessment_date", "created_at")
+    .slice(0, 3)
+    .map((assessment) => formatPercentage(assessment.score, assessment.max_score))
+    .filter((value): value is number => value !== null)
+    .reverse();
+
+  if (recentPercentages.length < 2) return "Trend not clear yet";
+  const delta = recentPercentages[recentPercentages.length - 1] - recentPercentages[0];
+  if (delta >= 8) return "Improving";
+  if (delta <= -8) return "Needs review";
+  return "Holding steady";
 }
 
 export function getStudentName(student: StudentRow) {
@@ -528,6 +571,7 @@ export async function fetchTableRows(table: "tutor_student_links" | "parent_stud
 export async function fetchStudentContent(studentIds: string[]) {
   if (studentIds.length === 0) {
     return {
+      lessons: [] as LessonRow[],
       reports: [] as LessonReportRow[],
       assessments: [] as AssessmentRow[],
       targets: [] as TargetRow[]
@@ -535,21 +579,48 @@ export async function fetchStudentContent(studentIds: string[]) {
   }
 
   const client = createBrowserSupabaseClient();
-  const [reportsRes, assessmentsRes, targetsRes] = await Promise.all([
+  const [lessonsRes, reportsRes, assessmentsRes, targetsRes] = await Promise.all([
+    client.from("lessons").select("*").in("student_id", studentIds),
     client.from("lesson_reports").select("*").in("student_id", studentIds),
     client.from("assessments").select("*").in("student_id", studentIds),
     client.from("student_targets").select("*").in("student_id", studentIds)
   ]);
 
+  if (lessonsRes.error) throw lessonsRes.error;
   if (reportsRes.error) throw reportsRes.error;
   if (assessmentsRes.error) throw assessmentsRes.error;
   if (targetsRes.error) throw targetsRes.error;
 
   return {
+    lessons: (lessonsRes.data as LessonRow[]) ?? [],
     reports: (reportsRes.data as LessonReportRow[]) ?? [],
     assessments: (assessmentsRes.data as AssessmentRow[]) ?? [],
     targets: (targetsRes.data as TargetRow[]) ?? []
   };
+}
+
+export async function fetchStudentLessons(studentIds: string[], options: { status?: string; limit?: number } = {}) {
+  if (studentIds.length === 0) return [] as LessonRow[];
+
+  const client = createBrowserSupabaseClient();
+  let query = client
+    .from("lessons")
+    .select("*")
+    .in("student_id", studentIds)
+    .order("lesson_date", { ascending: true, nullsFirst: false })
+    .order("start_time", { ascending: true, nullsFirst: false });
+
+  if (options.status) {
+    query = query.eq("status", options.status);
+  }
+
+  if (options.limit) {
+    query = query.limit(options.limit);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data as LessonRow[]) ?? [];
 }
 
 export async function fetchAssignedStudentsForTutor(tutorId: string) {
@@ -804,9 +875,7 @@ export function renderEmptyState(container: HTMLElement, title: string, body: st
   container.setAttribute("aria-busy", "false");
   container.innerHTML = `
     <article class="card-panel border-dashed p-4 text-center sm:p-5">
-      <span class="mini-chip">FlyBridge portal</span>
-      <h3 class="mt-3 text-lg font-semibold text-fb-ink sm:text-xl">${escapeHtml(title)}</h3>
-      <p class="mt-2 text-sm leading-6 text-fb-ink-soft sm:text-base">${escapeHtml(body)}</p>
+      <p class="text-sm leading-6 text-fb-ink-soft sm:text-base">No data available.</p>
     </article>
   `;
 }
@@ -1130,197 +1199,416 @@ export function renderReportTimeline(
     .join("");
 }
 
-export function renderParentStudentBundles(container: HTMLElement, bundles: StudentBundle[]) {
+export function renderLessonList(
+  container: HTMLElement,
+  lessons: LessonRow[],
+  studentsById?: Map<string, StudentRow>,
+  options: {
+    title?: string;
+    emptyTitle?: string;
+    emptyBody?: string;
+    limit?: number;
+    mode?: "upcoming" | "completed";
+  } = {}
+) {
   container.setAttribute("aria-busy", "false");
-  if (bundles.length === 0) {
+  if (lessons.length === 0) {
     renderEmptyState(
       container,
-      "No linked students yet",
-      "Once FlyBridge links this parent account to a student, the reporting portal will populate automatically."
+      options.emptyTitle ?? "No lessons yet",
+      options.emptyBody ?? "Lessons will appear here once they are scheduled or completed."
     );
     return;
   }
 
-  container.innerHTML = bundles
-    .map((bundle) => {
-      const reports = byRecentDate(bundle.reports, "lesson_date", "created_at");
-      const assessments = byRecentDate(bundle.assessments, "assessment_date", "created_at");
-      const targets = byRecentDate(bundle.targets, "due_date", "updated_at", "created_at");
-      const latestReport = reports[0];
-      const activeTargets = targets.filter((target) => String(target.status ?? "").toLowerCase() !== "complete");
-      const progress = getProgressStatusMeta(String(bundle.student.progress_status ?? ""));
-      const recallAverage =
-        bundle.student.recall_average !== undefined && bundle.student.recall_average !== null && bundle.student.recall_average !== ""
-          ? `${bundle.student.recall_average}`
-          : "Not tracked yet";
-      const overviewItems = [
-        {
-          label: "Progress status",
-          value: progress.label
-        },
-        {
-          label: "Recall score",
-          value: recallAverage
-        },
-        {
-          label: "Latest lesson",
-          value: latestReport ? formatDate(latestReport.lesson_date ?? latestReport.created_at) : "Pending"
-        },
-        {
-          label: "Current targets",
-          value: String(activeTargets.length)
-        }
-      ];
+  const sorted =
+    options.mode === "completed"
+      ? byRecentDate(lessons, "lesson_date", "created_at")
+      : [...lessons].sort((a, b) => {
+          const aTime = a.lesson_date ? new Date(String(a.lesson_date)).getTime() : Number.MAX_SAFE_INTEGER;
+          const bTime = b.lesson_date ? new Date(String(b.lesson_date)).getTime() : Number.MAX_SAFE_INTEGER;
+          return aTime - bTime;
+        });
 
-      const assessmentsMarkup = assessments.length
-        ? assessments
-            .slice(0, 2)
-            .map(
-              (assessment) => `
-                <div class="rounded-[1rem] border border-slate-200 bg-white p-4">
-                  <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                    <p class="break-words text-sm font-semibold text-fb-ink">${escapeHtml(assessment.title ?? "Assessment")}</p>
-                    <span class="mini-chip">${escapeHtml(formatDate(assessment.assessment_date ?? assessment.created_at))}</span>
-                  </div>
-                  <p class="mt-3 text-base font-semibold text-fb-ink">${escapeHtml(
-                    formatAssessmentScore(assessment.score, assessment.max_score)
-                  )}</p>
-                  ${
-                    assessment.notes
-                      ? `<p class="mt-2 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(assessment.notes)}</p>`
-                      : ""
-                  }
-                </div>
-              `
-            )
-            .join("")
-        : `<div class="rounded-[1rem] border border-dashed border-slate-200 bg-white p-4 text-sm text-fb-ink-soft">No assessments have been added yet.</div>`;
-
-      const targetsMarkup = targets.length
-        ? targets
-            .slice(0, 2)
-            .map(
-              (target) => `
-                <div class="rounded-[1rem] border border-slate-200 bg-white p-4">
-                  <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                    <p class="break-words text-sm font-semibold text-fb-ink">${escapeHtml(target.title ?? target.target ?? "Target")}</p>
-                    <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase">${escapeHtml(
-                      target.status ?? "Open"
-                    )}</span>
-                  </div>
-                  <p class="mt-3 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(target.notes ?? "No additional notes recorded.")}</p>
-                </div>
-              `
-            )
-            .join("")
-        : `<div class="rounded-[1rem] border border-dashed border-slate-200 bg-white p-4 text-sm text-fb-ink-soft">No targets are being tracked yet.</div>`;
-
-      const latestReportMarkup = latestReport
-        ? `
-            <section class="dark-panel p-5 sm:p-6">
-              <p class="text-xs font-semibold tracking-[0.18em] text-sky-200 uppercase">Latest lesson update</p>
-              <h3 class="mt-3 break-words text-xl font-semibold text-white sm:text-2xl">${escapeHtml(
-                latestReport.topic ?? latestReport.title ?? "Lesson summary"
-              )}</h3>
-              <p class="mt-3 break-words text-sm leading-6 text-slate-300">${escapeHtml(
-                latestReport.summary ?? "No summary recorded."
-              )}</p>
-              <div class="mt-4 grid gap-4 sm:grid-cols-2">
-                <div class="rounded-[1rem] border border-white/10 bg-white/[0.05] p-4">
-                  <p class="text-xs font-semibold tracking-[0.16em] text-sky-200 uppercase">Strengths</p>
-                  <p class="mt-2 break-words text-sm leading-6 text-slate-200">${escapeHtml(
-                    latestReport.strengths ?? "No strengths were highlighted in this update."
-                  )}</p>
-                </div>
-                <div class="rounded-[1rem] border border-white/10 bg-white/[0.05] p-4">
-                  <p class="text-xs font-semibold tracking-[0.16em] text-sky-200 uppercase">Areas to improve</p>
-                  <p class="mt-2 break-words text-sm leading-6 text-slate-200">${escapeHtml(
-                    latestReport.next_steps ?? "The next teaching focus has not been added yet."
-                  )}</p>
-                </div>
-              </div>
-              <div class="mt-4 rounded-[1rem] border border-white/10 bg-white/[0.05] p-4">
-                <p class="text-xs font-semibold tracking-[0.16em] text-sky-200 uppercase">Homework and follow-up</p>
-                <p class="mt-2 break-words text-sm leading-6 text-slate-200">${escapeHtml(
-                  latestReport.homework ?? "No homework or follow-up task was recorded in this update."
-                )}</p>
-              </div>
-            </section>
-          `
-        : `
-            <section class="dark-panel p-5 sm:p-6">
-              <p class="text-xs font-semibold tracking-[0.18em] text-sky-200 uppercase">Latest lesson update</p>
-              <h3 class="mt-3 text-xl font-semibold text-white sm:text-2xl">The first lesson update will appear here.</h3>
-              <p class="mt-3 text-sm leading-6 text-slate-300">Once FlyBridge logs the next lesson, this space will show a concise summary, key strengths, homework and the most useful next step for your child.</p>
-              <div class="mt-4 rounded-[1rem] border border-white/10 bg-white/[0.05] p-4 text-sm leading-6 text-slate-200">
-                Nothing is missing on your account. This simply means a lesson report has not been added yet.
-              </div>
-            </section>
-          `;
+  container.innerHTML = sorted
+    .slice(0, options.limit ?? 6)
+    .map((lesson) => {
+      const student = lesson.student_id ? studentsById?.get(String(lesson.student_id)) : undefined;
+      const status = String(lesson.status ?? "scheduled").toLowerCase();
+      const statusClass =
+        status === "completed"
+          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+          : status === "cancelled" || status === "missed"
+            ? "border-rose-200 bg-rose-50 text-rose-700"
+            : "border-sky-200 bg-sky-50 text-sky-700";
 
       return `
-        <article class="card-panel p-4 sm:p-5">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <article class="dashboard-list-item">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div class="min-w-0">
-              <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">${escapeHtml(
-                bundle.student.year_group ?? "Student overview"
+              <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">${escapeHtml(
+                student ? getStudentName(student) : lesson.subject ?? "Lesson"
               )}</p>
-              <h2 class="mt-2 break-words text-2xl font-semibold tracking-tight text-fb-ink sm:text-[2rem]">${escapeHtml(getStudentName(bundle.student))}</h2>
-              <p class="mt-2 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(bundle.student.school ?? "School not recorded")}</p>
+              <h3 class="mt-1 break-words text-sm font-semibold text-fb-ink sm:text-base">${escapeHtml(
+                lesson.lesson_title ?? lesson.subject ?? "Lesson"
+              )}</h3>
+              <p class="mt-1 text-sm text-fb-ink-soft">${escapeHtml(formatDate(lesson.lesson_date ?? lesson.created_at))}</p>
             </div>
-            <span class="rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase ${progress.badgeClass}">
-              ${escapeHtml(progress.label)}
-            </span>
+            <span class="metric-pill ${statusClass}">${escapeHtml(status.replaceAll("_", " "))}</span>
           </div>
-          <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            ${overviewItems
-              .map(
-                (item) => `
-                  <div class="rounded-[1rem] border border-slate-200 bg-slate-50/80 px-4 py-3.5">
-                    <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">${escapeHtml(item.label)}</p>
-                    <p class="mt-2 text-base font-semibold text-fb-ink sm:text-lg">${escapeHtml(item.value)}</p>
-                  </div>
-                `
-              )
-              .join("")}
-          </div>
-          ${
-            bundle.student.progress_status_note
-              ? `<div class="mt-4 rounded-[1rem] border border-sky-100 bg-sky-50/90 px-4 py-3.5 text-sm leading-6 text-fb-ink-soft">
-                  <span class="font-semibold text-fb-ink">Current progress note:</span> ${escapeHtml(bundle.student.progress_status_note)}
-                </div>`
-              : ""
-          }
-          <div class="mt-5 grid gap-4 xl:grid-cols-[1.02fr_0.98fr]">
-            ${latestReportMarkup}
-            <div class="space-y-4">
-              <section class="card-panel p-5 sm:p-6">
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <h3 class="text-lg font-semibold text-fb-ink">Assessment progress</h3>
-                  <span class="mini-chip">Latest checkpoints</span>
-                </div>
-                <div class="mt-4 space-y-3">
-                  ${assessmentsMarkup}
-                </div>
-              </section>
-              <section class="card-panel p-5 sm:p-6">
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <h3 class="text-lg font-semibold text-fb-ink">Current targets</h3>
-                  <span class="mini-chip">Shared focus</span>
-                </div>
-                <div class="mt-4 space-y-3">
-                  ${targetsMarkup}
-                </div>
-              </section>
-            </div>
-          </div>
-          <div class="mt-4 rounded-[1rem] border border-slate-200 bg-slate-50/80 px-4 py-4 text-sm leading-6 text-fb-ink-soft">
-            This view is deliberately selective. It is meant to show families the clearest summary of progress without pulling them into every student resource or worksheet.
+          <div class="mt-3 flex flex-wrap gap-2 text-xs text-fb-ink-soft">
+            ${
+              lesson.subject
+                ? `<span class="rounded-full border border-slate-200 bg-white px-2.5 py-1">${escapeHtml(lesson.subject)}</span>`
+                : ""
+            }
+            ${
+              lesson.duration_minutes
+                ? `<span class="rounded-full border border-slate-200 bg-white px-2.5 py-1">${escapeHtml(
+                    `${lesson.duration_minutes} mins`
+                  )}</span>`
+                : ""
+            }
+            ${
+              lesson.start_time
+                ? `<span class="rounded-full border border-slate-200 bg-white px-2.5 py-1">${escapeHtml(lesson.start_time)}</span>`
+                : ""
+            }
           </div>
         </article>
       `;
     })
     .join("");
+}
+
+export function renderParentStudentBundles(
+  elements: {
+    list: HTMLElement;
+    overview: HTMLElement;
+    latestLesson: HTMLElement;
+    homework: HTMLElement;
+    assessments: HTMLElement;
+    history: HTMLElement;
+  },
+  bundles: StudentBundle[]
+) {
+  const { list, overview, latestLesson: latestLessonPanel, homework, assessments, history } = elements;
+  const allContainers = [list, overview, latestLessonPanel, homework, assessments, history];
+  allContainers.forEach((container) => container.setAttribute("aria-busy", "false"));
+
+  if (bundles.length === 0) {
+    list.innerHTML = `<article class="dashboard-list-item text-sm text-fb-ink-soft">No data available.</article>`;
+    overview.innerHTML = `<p class="text-sm text-slate-300">No data available.</p>`;
+    renderEmptyState(latestLessonPanel, "No data available.", "No data available.");
+    renderEmptyState(homework, "No data available.", "No data available.");
+    renderEmptyState(assessments, "No data available.", "No data available.");
+    renderEmptyState(history, "No data available.", "No data available.");
+    return;
+  }
+
+  let selectedId = bundles[0]?.student.id ?? "";
+
+  const renderSelectedStudent = () => {
+    const bundle = bundles.find((entry) => entry.student.id === selectedId) ?? bundles[0];
+    if (!bundle) return;
+
+    const reports = byRecentDate(bundle.reports, "lesson_date", "created_at");
+    const lessons = byRecentDate(bundle.lessons, "lesson_date", "updated_at", "created_at");
+    const completedLessons = lessons.filter((lesson) => String(lesson.status ?? "").toLowerCase() === "completed");
+    const assessmentsByRecent = byRecentDate(bundle.assessments, "assessment_date", "created_at");
+    const targetsByRecent = byRecentDate(bundle.targets, "due_date", "updated_at", "created_at");
+    const latestReport = reports[0];
+    const latestCompletedLesson = completedLessons[0];
+    const latestActivityDate =
+      latestReport?.lesson_date ?? latestCompletedLesson?.lesson_date ?? latestReport?.created_at ?? latestCompletedLesson?.created_at;
+    const progress = getProgressStatusMeta(String(bundle.student.progress_status ?? ""));
+    const recallAverage =
+      bundle.student.recall_average !== undefined && bundle.student.recall_average !== null && bundle.student.recall_average !== ""
+        ? `${bundle.student.recall_average}`
+        : "Not tracked yet";
+    const activeTargets = targetsByRecent.filter((target) => String(target.status ?? "").toLowerCase() !== "complete");
+    const completedHours = formatHours(
+      completedLessons.reduce((total, lesson) => total + Number(lesson.duration_minutes ?? 0), 0)
+    );
+    const targetGrade =
+      getStringField(bundle.student, ["target_grade", "current_target_grade", "working_target_grade"]) || "Not recorded";
+    const engagement = getStringField(latestReport, ["engagement_rating", "engagement", "engagement_score"]) || "Not recorded";
+    const confidence = getStringField(latestReport, ["confidence_rating", "confidence", "confidence_score"]) || "Not recorded";
+    const effort = getStringField(latestReport, ["effort_rating", "effort", "effort_score"]) || "Not recorded";
+
+    list.innerHTML = bundles
+      .map((entry) => {
+        const isActive = entry.student.id === bundle.student.id;
+        return `
+          <button class="portal-student-button" data-parent-student-button data-student-id="${escapeHtml(entry.student.id)}" data-active="${String(
+            isActive
+          )}" type="button">
+            <span class="min-w-0">
+              <span class="block truncate text-sm font-semibold text-fb-ink">${escapeHtml(getStudentName(entry.student))}</span>
+              <span class="mt-1 block truncate text-xs text-fb-ink-soft">${escapeHtml(
+                entry.student.year_group ?? "Year group not recorded"
+              )}</span>
+            </span>
+            <span class="metric-pill ${getProgressStatusMeta(String(entry.student.progress_status ?? "")).badgeClass}">
+              ${escapeHtml(getProgressStatusMeta(String(entry.student.progress_status ?? "")).label)}
+            </span>
+          </button>
+        `;
+      })
+      .join("");
+
+    overview.innerHTML = `
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div class="min-w-0">
+          <p class="text-xs font-semibold tracking-[0.2em] text-sky-200 uppercase">Student overview</p>
+          <h2 class="mt-2 break-words text-2xl font-semibold tracking-tight text-white sm:text-[2rem]">${escapeHtml(
+            getStudentName(bundle.student)
+          )}</h2>
+          <p class="mt-2 break-words text-sm leading-6 text-slate-300">${escapeHtml(
+            [bundle.student.year_group, bundle.student.school].filter(Boolean).join(" • ") || "Year group and school not recorded"
+          )}</p>
+        </div>
+        <span class="metric-pill ${progress.badgeClass}">${escapeHtml(progress.label)}</span>
+      </div>
+      <div class="overview-grid">
+        <div class="overview-stat">
+          <p class="text-xs font-semibold tracking-[0.14em] text-sky-200 uppercase">Average recall</p>
+          <p class="mt-2 text-base font-semibold text-white">${escapeHtml(recallAverage)}</p>
+        </div>
+        <div class="overview-stat">
+          <p class="text-xs font-semibold tracking-[0.14em] text-sky-200 uppercase">Completed tuition hours</p>
+          <p class="mt-2 text-base font-semibold text-white">${escapeHtml(completedHours)}</p>
+        </div>
+        <div class="overview-stat">
+          <p class="text-xs font-semibold tracking-[0.14em] text-sky-200 uppercase">Latest lesson date</p>
+          <p class="mt-2 text-base font-semibold text-white">${escapeHtml(formatDate(latestActivityDate))}</p>
+        </div>
+        <div class="overview-stat">
+          <p class="text-xs font-semibold tracking-[0.14em] text-sky-200 uppercase">Current target grade</p>
+          <p class="mt-2 text-base font-semibold text-white">${escapeHtml(targetGrade)}</p>
+        </div>
+        <div class="overview-stat">
+          <p class="text-xs font-semibold tracking-[0.14em] text-sky-200 uppercase">Active targets</p>
+          <p class="mt-2 text-base font-semibold text-white">${escapeHtml(String(activeTargets.length))}</p>
+        </div>
+        <div class="overview-stat">
+          <p class="text-xs font-semibold tracking-[0.14em] text-sky-200 uppercase">Progress note</p>
+          <p class="mt-2 text-sm leading-6 text-slate-200">${escapeHtml(bundle.student.progress_status_note ?? "No extra note recorded.")}</p>
+        </div>
+      </div>
+    `;
+
+    if (!latestReport) {
+      renderEmptyState(
+        latestLessonPanel,
+        "No lesson report yet",
+        "Once the next lesson report is logged, this panel will show the latest summary, strengths, improvement focus and follow-up task."
+      );
+    } else {
+      latestLessonPanel.innerHTML = `
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div class="min-w-0">
+            <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Latest lesson</p>
+            <h3 class="mt-2 break-words text-xl font-semibold text-fb-ink">${escapeHtml(
+              latestReport.topic ?? latestReport.title ?? latestCompletedLesson?.lesson_title ?? "Lesson update"
+            )}</h3>
+            <p class="mt-2 text-sm text-fb-ink-soft">${escapeHtml(formatDate(latestReport.lesson_date ?? latestReport.created_at))}</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="mini-chip">Engagement: ${escapeHtml(engagement)}</span>
+            <span class="mini-chip">Confidence: ${escapeHtml(confidence)}</span>
+            <span class="mini-chip">Effort: ${escapeHtml(effort)}</span>
+          </div>
+        </div>
+        <div class="dashboard-list mt-4">
+          <div class="dashboard-list-item">
+            <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Tutor summary</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(latestReport.summary ?? "No summary recorded.")}</p>
+          </div>
+          <div class="dashboard-compact-grid">
+            <div class="dashboard-list-item">
+              <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Strengths</p>
+              <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(latestReport.strengths ?? "No strengths recorded.")}</p>
+            </div>
+            <div class="dashboard-list-item">
+              <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Area to improve</p>
+              <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(latestReport.next_steps ?? "No improvement area recorded yet.")}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    homework.innerHTML = `
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Homework and next steps</p>
+          <h3 class="mt-2 text-xl font-semibold text-fb-ink">What to focus on now</h3>
+        </div>
+        <span class="mini-chip">${activeTargets.length} active</span>
+      </div>
+      <div class="dashboard-list mt-4">
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Current homework</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(
+            latestReport?.homework ?? "No homework has been recorded for the latest lesson."
+          )}</p>
+        </div>
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Tutor next step</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(
+            latestReport?.next_steps ?? "No next teaching step has been recorded yet."
+          )}</p>
+        </div>
+        <div class="dashboard-list">
+          ${
+            activeTargets.length
+              ? activeTargets
+                  .slice(0, 3)
+                  .map(
+                    (target) => `
+                      <div class="dashboard-list-item">
+                        <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                          <p class="text-sm font-semibold text-fb-ink">${escapeHtml(target.title ?? target.target ?? "Current target")}</p>
+                          <span class="mini-chip">${escapeHtml(target.status ?? "Open")}</span>
+                        </div>
+                        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(target.notes ?? "No extra notes recorded.")}</p>
+                        ${
+                          target.due_date
+                            ? `<p class="mt-2 text-xs font-medium text-slate-500">Review by ${escapeHtml(formatDate(target.due_date))}</p>`
+                            : ""
+                        }
+                      </div>
+                    `
+                  )
+                  .join("")
+              : `<div class="dashboard-list-item text-sm text-fb-ink-soft">No active targets are being tracked right now.</div>`
+          }
+        </div>
+      </div>
+    `;
+
+    assessments.innerHTML = `
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Assessment progress</p>
+          <h3 class="mt-2 text-xl font-semibold text-fb-ink">Latest checkpoints</h3>
+        </div>
+        <span class="mini-chip">${escapeHtml(formatTrend(assessmentsByRecent))}</span>
+      </div>
+      <div class="dashboard-list mt-4">
+        ${
+          assessmentsByRecent.length
+            ? assessmentsByRecent
+                .slice(0, 3)
+                .map((assessment) => {
+                  const percentage = formatPercentage(assessment.score, assessment.max_score);
+                  const estimatedGrade =
+                    getStringField(assessment, ["estimated_grade", "grade", "working_grade"]) || "Not recorded";
+                  const keyGap = getStringField(assessment, ["key_gap", "gap", "notes"]) || "No specific gap recorded.";
+                  const recommendedAction =
+                    getStringField(assessment, ["recommended_action", "action"]) ||
+                    getStringField(latestReport, ["next_steps"]) ||
+                    "No action recorded yet.";
+
+                  return `
+                    <article class="dashboard-list-item">
+                      <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <div class="min-w-0">
+                          <p class="text-sm font-semibold text-fb-ink">${escapeHtml(assessment.title ?? "Assessment")}</p>
+                          <p class="mt-1 text-xs text-slate-500">${escapeHtml(formatDate(assessment.assessment_date ?? assessment.created_at))}</p>
+                        </div>
+                        <div class="text-left sm:text-right">
+                          <p class="text-sm font-semibold text-fb-ink">${escapeHtml(formatAssessmentScore(assessment.score, assessment.max_score))}</p>
+                          <p class="mt-1 text-xs text-slate-500">${escapeHtml(
+                            percentage === null ? "Percentage not recorded" : `${percentage}%`
+                          )}</p>
+                        </div>
+                      </div>
+                      <div class="mt-3 grid gap-2 text-sm text-fb-ink-soft">
+                        <p><span class="font-semibold text-fb-ink">Estimated grade:</span> ${escapeHtml(estimatedGrade)}</p>
+                        <p><span class="font-semibold text-fb-ink">Key gap:</span> ${escapeHtml(keyGap)}</p>
+                        <p><span class="font-semibold text-fb-ink">Recommended action:</span> ${escapeHtml(recommendedAction)}</p>
+                      </div>
+                    </article>
+                  `;
+                })
+                .join("")
+            : `<div class="dashboard-list-item text-sm text-fb-ink-soft">No assessments have been recorded yet for this student.</div>`
+        }
+      </div>
+      ${
+        assessmentsByRecent.length > 3
+          ? `<button class="ghost-button mt-4 w-full justify-center" data-parent-show-assessments type="button">View all assessments</button>`
+          : ""
+      }
+      ${
+        assessmentsByRecent.length > 3
+          ? `<div class="dashboard-list mt-3 hidden" data-parent-all-assessments>
+              ${assessmentsByRecent
+                .slice(3)
+                .map(
+                  (assessment) => `
+                    <article class="dashboard-list-item">
+                      <p class="text-sm font-semibold text-fb-ink">${escapeHtml(assessment.title ?? "Assessment")}</p>
+                      <p class="mt-1 text-sm text-fb-ink-soft">${escapeHtml(formatAssessmentScore(assessment.score, assessment.max_score))}</p>
+                      <p class="mt-2 text-xs text-slate-500">${escapeHtml(formatDate(assessment.assessment_date ?? assessment.created_at))}</p>
+                    </article>
+                  `
+                )
+                .join("")}
+            </div>`
+          : ""
+      }
+    `;
+
+    const historyItems = reports.slice(1, 6);
+    history.innerHTML = `
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Progress history</p>
+          <h3 class="mt-2 text-xl font-semibold text-fb-ink">Recent lesson timeline</h3>
+        </div>
+        <span class="mini-chip">${escapeHtml(`${reports.length} report${reports.length === 1 ? "" : "s"}`)}</span>
+      </div>
+      <div class="dashboard-list mt-4">
+        ${
+          historyItems.length
+            ? historyItems
+                .map(
+                  (report) => `
+                    <article class="dashboard-list-item">
+                      <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                        <div class="min-w-0">
+                          <p class="text-sm font-semibold text-fb-ink">${escapeHtml(report.topic ?? report.title ?? "Lesson update")}</p>
+                          <p class="mt-1 text-xs text-slate-500">${escapeHtml(formatDate(report.lesson_date ?? report.created_at))}</p>
+                        </div>
+                      </div>
+                      <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(report.summary ?? "No summary recorded.")}</p>
+                    </article>
+                  `
+                )
+                .join("")
+            : `<div class="dashboard-list-item text-sm text-fb-ink-soft">No earlier lesson reports are available yet beyond the latest update.</div>`
+        }
+      </div>
+    `;
+
+    list.querySelectorAll<HTMLElement>("[data-parent-student-button]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const nextId = button.dataset.studentId;
+        if (!nextId || nextId === selectedId) return;
+        selectedId = nextId;
+        renderSelectedStudent();
+      });
+    });
+
+    assessments.querySelector<HTMLElement>("[data-parent-show-assessments]")?.addEventListener("click", () => {
+      assessments.querySelector<HTMLElement>("[data-parent-all-assessments]")?.classList.toggle("hidden");
+    });
+  };
+
+  renderSelectedStudent();
 }
 
 export function fillStudentSelects(students: StudentRow[]) {

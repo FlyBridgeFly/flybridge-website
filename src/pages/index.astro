@@ -1,27 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHero from "../components/PageHero.astro";
-import SectionHeading from "../components/SectionHeading.astro";
-import SubjectOverviewCard from "../components/SubjectOverviewCard.astro";
-import PricingCard from "../components/PricingCard.astro";
 import FAQList from "../components/FAQList.astro";
-import CtaBanner from "../components/CtaBanner.astro";
-import {
-  assessmentFeatures,
-  faqs,
-  flybridgeMethod,
-  heroSupportPoints,
-  heroMetrics,
-  lessonFlow,
-  parentReasons,
-  parentPortalFeatures,
-  platformSplit,
-  pricingFeatures,
-  progressTracking,
-  site,
-  subjectPages,
-  tutorHighlights
-} from "../data/site";
+import PricingCard from "../components/PricingCard.astro";
+import { faqs, pricingFeatures, site } from "../data/site";
+import { keyStageLandingPages } from "../data/curriculum";
 
 const schema = [
   {
@@ -33,215 +15,139 @@ const schema = [
   },
   {
     "@context": "https://schema.org",
-    "@type": "Service",
-    serviceType: "GCSE science tuition",
-    provider: {
-      "@type": "EducationalOrganization",
-      name: site.name,
-      url: site.url
-    },
-    areaServed: "United Kingdom",
+    "@type": "EducationalOrganization",
+    name: site.name,
+    url: site.url,
     description: site.description
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer
-      }
-    }))
   }
 ];
+
+const homepageFaqs = faqs.slice(0, 5);
 ---
 
 <BaseLayout
-  title="Online Tuition With Clear Parent Reporting"
+  title="Qualified-Teacher Tuition With Clear Parent Reporting"
   description={site.description}
   path="/"
   schema={schema}
 >
-  <PageHero
-    eyebrow="Thoughtful online tuition"
-    title="Science tuition built around strong teaching, clear reporting and a calm experience for families."
-    body="FlyBridge supports students through focused online lessons, practical follow-up work and parent updates that make progress easier to understand from the very first assessment."
-    primaryLabel="Book Free Assessment"
-    primaryHref={site.assessmentHref}
-    secondaryLabel="Request a Callback"
-    secondaryHref={site.callbackHref}
-    tertiaryLabel="Student Hub"
-    tertiaryHref="/student-hub"
-    imageSrc={site.images.heroStudyDesk}
-    imageAlt="A premium study desk setup representing focused GCSE science tuition."
-    imageLoading="eager"
-    imagePosition="center"
-    imageBadge="Built by educators"
-    supportPoints={heroSupportPoints}
-  />
+  <section class="container-shell section-shell-tight">
+    <div class="grid gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+      <div class="space-y-5">
+        <span class="eyebrow">FlyBridge Education</span>
+        <div class="space-y-3">
+          <h1 class="text-balance text-[2.15rem] font-semibold tracking-tight text-fb-ink sm:text-[2.8rem] lg:text-[3.3rem]">
+            Qualified teachers. Clear teaching. Parent reporting.
+          </h1>
+          <p class="max-w-3xl body-copy-compact">
+            FlyBridge Education helps pupils move forward through organised teaching, curriculum-aware support and reporting that makes progress easy to follow.
+          </p>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <a class="cta-button w-full sm:w-auto" href={site.assessmentHref}>Book Free Assessment</a>
+          <a class="ghost-button w-full sm:w-auto" href={site.callbackHref}>Request a Callback</a>
+          <a class="ghost-button w-full sm:w-auto" href="/student-hub">Student Hub</a>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div class="dashboard-list-item">
+            <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Founded by educators</p>
+            <p class="mt-2 text-sm text-fb-ink-soft">Founded by Mr Mubarak and his mother.</p>
+          </div>
+          <div class="dashboard-list-item">
+            <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Qualified teaching</p>
+            <p class="mt-2 text-sm text-fb-ink-soft">Cambridge teacher training and careful classroom practice.</p>
+          </div>
+          <div class="dashboard-list-item">
+            <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Clear parent reporting</p>
+            <p class="mt-2 text-sm text-fb-ink-soft">Lesson updates, targets and assessments in one portal.</p>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-section hero-glow">
+        <div class="grid gap-3">
+          {keyStageLandingPages.map((stage) => (
+            <a class="dashboard-list-item transition hover:border-slate-300 hover:bg-white" href={`/${stage.slug}`}>
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">{stage.keyStage}</p>
+                  <p class="mt-1 text-base font-semibold text-fb-ink">{stage.title}</p>
+                </div>
+                <span class="mini-chip">{stage.subjects.length} subjects</span>
+              </div>
+              <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{stage.summary}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section class="container-shell section-shell-tight pt-0">
-    <div class="grid gap-4 md:grid-cols-3">
-      {heroMetrics.map((item) => (
-        <div class="card-panel p-4 sm:p-5">
-          <p class="text-2xl font-semibold text-fb-ink sm:text-[1.8rem]">{item.value}</p>
-          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{item.label}</p>
-        </div>
-      ))}
+    <div class="dashboard-metric-grid">
+      <div class="dashboard-section">
+        <p class="text-sm font-semibold text-fb-ink">Why FlyBridge</p>
+        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Qualified classroom practitioners, clear teaching and straightforward communication with families.</p>
+      </div>
+      <div class="dashboard-section">
+        <p class="text-sm font-semibold text-fb-ink">How tuition works</p>
+        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Assessment first, planned teaching, guided practice and concise reporting after progress checkpoints.</p>
+      </div>
+      <div class="dashboard-section">
+        <p class="text-sm font-semibold text-fb-ink">What parents see</p>
+        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Latest lesson, current targets, assessment movement and follow-up tasks without extra noise.</p>
+      </div>
+      <div class="dashboard-section">
+        <p class="text-sm font-semibold text-fb-ink">Who teaches</p>
+        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Carefully selected qualified teachers and experienced subject specialists across FlyBridge subjects.</p>
+      </div>
     </div>
   </section>
 
-  <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-      <div class="space-y-5">
-        <SectionHeading
-          eyebrow="Parent reporting"
-          title="Clear updates after every lesson."
-          body="Families can quickly see what was covered, how the student responded, what needs attention next and how assessment performance is moving over time."
-        />
-        <div class="surface-note-sky">
-          Google Classroom is used for learning materials and homework. The FlyBridge Portal is the parent-facing progress layer, designed for calm visibility rather than extra noise.
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dashboard-section">
+      <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div>
+          <span class="eyebrow">Qualified teachers</span>
+          <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-fb-ink sm:text-[2.2rem]">Qualified teachers, not generic tutoring</h2>
+          <p class="mt-3 body-copy-compact">
+            FlyBridge tuition is delivered by qualified teachers who understand how pupils learn, where misconceptions develop and how to turn explanation into independent performance.
+          </p>
         </div>
         <div class="grid gap-3 sm:grid-cols-2">
-          {platformSplit.map((item) => (
-            <div class="card-panel p-5">
-              <h3 class="text-base font-semibold text-fb-ink sm:text-lg">{item.title}</h3>
-              <p class="mt-2 body-copy-compact">{item.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div class="grid gap-4 lg:grid-cols-[0.92fr_1.08fr]">
-        <div class="image-panel">
-          <img
-            src={site.images.reportCover}
-            alt="A premium parent reporting dashboard visual representing post-lesson updates."
-            class="h-full min-h-[240px] w-full object-cover sm:min-h-[260px]"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="grid gap-3 sm:grid-cols-2">
-          {parentPortalFeatures.map((item) => (
-            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink-soft">
-              <span class="mini-chip">Portal view</span>
-              <p class="mt-3 text-sm font-semibold text-fb-ink sm:text-base">{item}</p>
-            </div>
+          {[
+            "Curriculum expertise",
+            "Misconception diagnosis",
+            "Clear teacher modelling",
+            "Guided and independent practice",
+            "Assessment-informed planning",
+            "Exam-board familiarity",
+            "Safeguarding and professional standards"
+          ].map((item) => (
+            <div class="dashboard-list-item text-sm font-medium text-fb-ink">{item}</div>
           ))}
         </div>
       </div>
     </div>
   </section>
 
-  <section class="container-shell section-shell pt-0">
-    <SectionHeading
-      eyebrow="Why parents choose FlyBridge"
-      title="A tuition experience designed to feel thoughtful, organised and genuinely effective."
-      body="Parents are not just looking for extra lessons. They want credible teaching, steady communication and a clear path from concern to progress."
-    />
-    <div class="mt-6 grid gap-4 md:grid-cols-2">
-      {parentReasons.map((item) => (
-        <div class="card-panel p-5 sm:p-6">
-          <h3 class="text-lg font-semibold text-fb-ink sm:text-xl">{item.title}</h3>
-          <p class="mt-3 body-copy">{item.body}</p>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
-      <SectionHeading
-        eyebrow="Meet your tutor"
-        title="Built by educators who care about clarity, confidence and long-term understanding."
-        body="FlyBridge began as a family-led education project and has grown into a wider teaching network shaped by strong subject knowledge, calm teaching and reliable communication with parents."
-      />
-      <div class="card-panel p-5 sm:p-6">
-        <div class="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-          <div class="image-panel">
-            <img
-              src={site.images.bridgeBlueprint}
-              alt="A premium bridge blueprint visual representing the FlyBridge mission and structure."
-              class="h-full min-h-[220px] w-full object-cover sm:min-h-[240px]"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <div class="grid gap-5 sm:grid-cols-3 lg:grid-cols-1">
-            {tutorHighlights.map((item) => (
-              <div class="rounded-[1.15rem] border border-slate-200 bg-slate-50/80 p-4">
-                <h3 class="text-base font-semibold text-fb-ink sm:text-lg">{item.title}</h3>
-                <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="container-shell section-shell">
-    <div class="dark-panel section-grid relative overflow-hidden p-6 sm:p-8 lg:p-10">
-      <div class="absolute right-0 top-0 h-48 w-48 -translate-y-12 translate-x-12 rounded-full bg-sky-400/20 blur-3xl"></div>
-      <div class="relative">
-        <SectionHeading
-          eyebrow="The FlyBridge method"
-          title="A simple process that gives families clarity from the first conversation."
-          body="The goal is to reduce uncertainty. Parents understand what the student needs, students know what to work on, and lessons stay focused."
-        />
-        <div class="mt-6 grid gap-4 md:grid-cols-[1.1fr_0.9fr] xl:grid-cols-[1.2fr_0.8fr]">
-          <div class="image-panel order-2 md:order-1">
-            <img
-              src={site.images.learningPath}
-              alt="A structured learning path visual representing the FlyBridge teaching method."
-              class="h-full min-h-[250px] w-full object-cover sm:min-h-[280px]"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <div class="order-1 grid gap-5 md:order-2 md:grid-cols-2">
-            {flybridgeMethod.map((item) => (
-              <div class="rounded-[1.25rem] border border-white/10 bg-white/[0.05] p-5 backdrop-blur">
-                <h3 class="text-lg font-semibold text-white">{item.title}</h3>
-                <p class="mt-2 text-sm leading-6 text-slate-300">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="container-shell section-shell">
-    <SectionHeading
-      eyebrow="Subjects"
-      title="Dedicated support across GCSE science."
-      body="Each subject page explains what is covered, how online lessons are structured and how FlyBridge approaches progress."
-    />
-    <div class="mt-6 grid gap-4 md:grid-cols-2">
-      {subjectPages.map((subject) => <SubjectOverviewCard subject={subject} />)}
-    </div>
-  </section>
-
-  <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-      <SectionHeading
-        eyebrow="How lessons work"
-        title="Structured weekly tuition with clear expectations and no wasted time."
-        body="The lesson experience is built for busy families who want consistency, quality and a strong sense of direction."
-      />
-      <div class="space-y-4">
-        {lessonFlow.map((item, index) => (
-          <div class="card-panel relative p-5 sm:p-6">
-            {index !== lessonFlow.length - 1 && <div class="absolute left-10 top-[4.1rem] h-[calc(100%-2rem)] w-px bg-slate-200"></div>}
-            <div class="flex gap-4">
-              <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-fb-bg text-sm font-semibold text-white">{index + 1}</div>
-              <div>
-                <h3 class="text-lg font-semibold text-fb-ink sm:text-xl">{item.title}</h3>
-                <p class="mt-2 body-copy">{item.body}</p>
-              </div>
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dashboard-section">
+      <span class="eyebrow">Teaching methodology</span>
+      <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-fb-ink sm:text-[2.2rem]">A teaching method built for lasting progress</h2>
+      <div class="mt-6 grid gap-4 lg:grid-cols-3">
+        {[
+          ["Learn", "Secure the knowledge, vocabulary and methods clearly."],
+          ["Practise", "Build fluency through guided and independent questions."],
+          ["Apply", "Use the knowledge under exam conditions with feedback."]
+        ].map(([title, body], index) => (
+          <div class="relative">
+            <div class="flex items-center gap-3">
+              <div class="grid h-11 w-11 place-items-center rounded-full bg-fb-bg text-sm font-semibold text-white">{index + 1}</div>
+              <div class="h-px flex-1 bg-slate-200 lg:block hidden"></div>
+            </div>
+            <div class="mt-4 space-y-2">
+              <h3 class="text-lg font-semibold text-fb-ink">{title}</h3>
+              <p class="text-sm leading-6 text-fb-ink-soft">{body}</p>
             </div>
           </div>
         ))}
@@ -249,39 +155,24 @@ const schema = [
     </div>
   </section>
 
-  <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
-      <SectionHeading
-        eyebrow="Progress tracking"
-        title="Parents can see how support is translating into real progress."
-        body="FlyBridge is designed to feel transparent. Materials, homework, revision guidance and feedback are organised so improvement is easier to spot and sustain."
-      />
-      <div class="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <div class="image-panel">
-          <img
-            src={site.images.progressDashboard}
-            alt="A progress dashboard visual representing tracked GCSE science progress."
-            class="h-full min-h-[240px] w-full object-cover sm:min-h-[260px]"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="grid gap-4 sm:grid-cols-2">
-          {progressTracking.map((item) => (
-            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="grid gap-4 lg:grid-cols-[1fr_0.95fr]">
+      <div class="dashboard-section">
+        <span class="eyebrow">Parent reporting</span>
+        <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-fb-ink sm:text-[2.2rem]">Parent reporting is built into the service.</h2>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          {[
+            "Latest lesson summary",
+            "Homework and next step",
+            "Active targets",
+            "Assessment movement",
+            "Progress status",
+            "Google Classroom access"
+          ].map((item) => (
+            <div class="dashboard-list-item text-sm font-medium text-fb-ink">{item}</div>
           ))}
         </div>
       </div>
-    </div>
-  </section>
-
-  <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-      <SectionHeading
-        eyebrow="Pricing"
-        title="Straightforward pricing with the free assessment built in."
-        body="Start with an assessment so recommendations are based on the student's actual needs rather than a generic package."
-      />
       <PricingCard
         price="£20"
         ctaLabel="Book Free Assessment"
@@ -292,55 +183,49 @@ const schema = [
     </div>
   </section>
 
-  <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
-      <SectionHeading
-        eyebrow="Free assessment"
-        title="A calm first step for parents who want clarity before committing."
-        body="The assessment is designed to be genuinely useful. It helps identify where the student is now, what is holding them back and what support would make the biggest difference."
-      />
-      <div class="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
-        <div class="grid gap-4 sm:grid-cols-2">
-          {assessmentFeatures.map((item) => (
-            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
-          ))}
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="grid gap-5 lg:grid-cols-[0.88fr_1.12fr]">
+      <div class="space-y-4">
+        <span class="eyebrow">How to start</span>
+        <h2 class="text-balance text-[1.8rem] font-semibold tracking-tight text-fb-ink sm:text-[2.2rem]">Start with a free assessment.</h2>
+        <div class="dashboard-list">
+          <div class="dashboard-list-item">
+            <p class="text-sm font-semibold text-fb-ink">1. Share the current picture</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Year group, subject, exam board, confidence and the areas causing concern.</p>
+          </div>
+          <div class="dashboard-list-item">
+            <p class="text-sm font-semibold text-fb-ink">2. Receive a recommendation</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Lesson format, likely focus and the most useful next step for the pupil.</p>
+          </div>
+          <div class="dashboard-list-item">
+            <p class="text-sm font-semibold text-fb-ink">3. Begin ongoing support</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Teaching, follow-up tasks and parent updates begin from a clear plan.</p>
+          </div>
         </div>
-        <div class="image-panel">
-          <img
-            src={site.images.assessmentReport}
-            alt="An assessment report visual representing FlyBridge's free assessment and reporting process."
-            class="h-full min-h-[240px] w-full object-cover sm:min-h-[260px]"
-            loading="lazy"
-            decoding="async"
-          />
+      </div>
+      <div class="dashboard-section">
+        <span class="eyebrow">FAQs</span>
+        <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-fb-ink sm:text-[2.2rem]">Common questions</h2>
+        <div class="mt-5">
+          <FAQList items={homepageFaqs} />
         </div>
       </div>
     </div>
   </section>
 
-  <section class="container-shell section-shell">
-    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <SectionHeading
-        eyebrow="FAQ preview"
-        title="A few of the questions parents usually ask first."
-        body="Detailed answers are available on the full FAQs page."
-      />
-      <a class="ghost-button" href="/faqs">View all FAQs</a>
-    </div>
-    <div class="mt-6">
-      <FAQList items={faqs.slice(0, 4)} />
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dark-panel p-5 sm:p-6 lg:p-7">
+      <div class="grid gap-5 lg:grid-cols-[1fr_0.92fr] lg:items-center">
+        <div>
+          <span class="eyebrow border-white/15 bg-white/5 text-sky-100">Next step</span>
+          <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-white sm:text-[2.2rem]">Discuss the right subject, level and lesson format.</h2>
+          <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-300">FlyBridge can help you decide whether the best next step is a callback or a full assessment.</p>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <a class="cta-button justify-center bg-white text-fb-bg hover:bg-sky-50" href={site.assessmentHref}>Book Free Assessment</a>
+          <a class="ghost-button justify-center border-white/15 bg-white/5 text-white hover:bg-white/10" href={site.callbackHref}>Request a Callback</a>
+        </div>
+      </div>
     </div>
   </section>
-
-  <CtaBanner
-    eyebrow="Get started"
-    title="Book a free assessment and take the uncertainty out of GCSE science support."
-    body="Whether your child needs stronger foundations, sharper exam technique or a more consistent approach to revision, FlyBridge can help you map the next step."
-    actions={[
-      { label: "Book Free Assessment", href: site.assessmentHref },
-      { label: "Request a Callback", href: site.callbackHref, variant: "secondary" },
-      { label: "WhatsApp", href: site.whatsappHref, variant: "secondary" },
-      { label: "Email", href: `mailto:${site.email}`, variant: "secondary" }
-    ]}
-  />
 </BaseLayout>

@@ -1,0 +1,9 @@
+---
+import KeyStageLandingPage from "../components/KeyStageLandingPage.astro";
+import { getKeyStageLanding } from "../data/curriculum";
+
+const page = getKeyStageLanding("ks3");
+if (!page) throw new Error("KS3 landing data not found.");
+---
+
+<KeyStageLandingPage page={page} />

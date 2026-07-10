@@ -11,15 +11,7 @@ const { formId, title = "Add or update target" } = Astro.props;
   <input name="target-id" type="hidden" value="" />
   <div class="form-heading">
     <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
-    <p class="body-copy">Set a clear focus that the student, tutor and parent can all understand at a glance.</p>
-  </div>
-  <div class="surface-note mt-4">
-    Strong targets are specific and observable so the student, tutor and parent can all recognise progress clearly.
-  </div>
-  <div class="mt-4 flex flex-wrap gap-2">
-    <span class="mini-chip">Specific focus</span>
-    <span class="mini-chip">Easy to recognise</span>
-    <span class="mini-chip">Shared with parents</span>
+    <p class="body-copy-compact">Keep targets brief, measurable and easy for the family to recognise.</p>
   </div>
   <div class="form-grid-compact">
     <label>
@@ -48,7 +40,7 @@ const { formId, title = "Add or update target" } = Astro.props;
     <label class="sm:col-span-2">
       <span class="label-shell">Notes</span>
       <textarea class="input-shell min-h-[4.5rem] resize-y" name="notes" placeholder="Explain the focus and what success will look like"></textarea>
-      <span class="helper-shell">This is the best place to explain what the student is aiming to improve and how progress will be recognised.</span>
+      <span class="helper-shell">Add only the detail needed to make the target actionable.</span>
     </label>
   </div>
   <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>

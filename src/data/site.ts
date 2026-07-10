@@ -3,7 +3,7 @@ export const site = {
   shortName: "FlyBridge",
   tagline: "Helping students bridge the gap to GCSE success.",
   description:
-    "Thoughtful online tuition in science, mathematics and languages, with free assessment, clear reporting and supportive teaching for families across the UK.",
+    "Qualified-teacher tuition in science, mathematics, English and French, with clear reporting and thoughtful support for families across the UK.",
   url: "https://flybridgeeducation.co.uk",
   email: "admin@flybridgeeducation.co.uk",
   phone: "07729 467146",
@@ -40,66 +40,88 @@ export const headerNavigation = [
   { label: "Home", href: "/" }
 ] as const;
 
-export const scienceNavigation = [
-  { label: "GCSE Biology", href: "/gcse-biology" },
-  { label: "GCSE Chemistry", href: "/gcse-chemistry" },
-  { label: "GCSE Physics", href: "/gcse-physics" },
-  { label: "Combined Science", href: "/combined-science" }
-] as const;
-
-export const mathsNavigation = [
-  { label: "GCSE Maths", href: "/gcse-maths" },
-  { label: "Functional Skills Maths", href: "/functional-skills-maths" }
-] as const;
-
-export const languageNavigation = [
-  { label: "French", href: "/french" }
-] as const;
-
-export const courseNavigation = [
+export const keyStageNavigation = [
   {
-    label: "Science",
-    items: scienceNavigation
+    label: "KS2",
+    href: "/ks2",
+    items: [
+      { label: "All Subjects", href: "/ks2" },
+      { label: "English", href: "/ks2-english" },
+      { label: "Maths", href: "/ks2-maths" },
+      { label: "Science", href: "/ks2-science" },
+      { label: "French", href: "/ks2-french" }
+    ]
   },
   {
-    label: "Maths",
-    items: mathsNavigation
+    label: "KS3",
+    href: "/ks3",
+    items: [
+      { label: "English", href: "/ks3-english" },
+      { label: "Maths", href: "/ks3-maths" },
+      { label: "Science", href: "/ks3-science" },
+      { label: "French", href: "/ks3-french" }
+    ]
   },
   {
-    label: "Languages",
-    items: languageNavigation
+    label: "KS4",
+    href: "/ks4",
+    items: [
+      { label: "English Language", href: "/english-language" },
+      { label: "English Literature", href: "/english-literature" },
+      { label: "Maths", href: "/gcse-maths" },
+      { label: "Biology", href: "/gcse-biology" },
+      { label: "Chemistry", href: "/gcse-chemistry" },
+      { label: "Physics", href: "/gcse-physics" },
+      { label: "Combined Science", href: "/combined-science" },
+      { label: "French", href: "/french" }
+    ]
+  },
+  {
+    label: "KS5",
+    href: "/ks5",
+    items: [
+      { label: "Maths", href: "/a-level-maths" },
+      { label: "French", href: "/a-level-french" }
+    ]
   }
 ] as const;
 
 export const portalNavigation = [
-  { label: "Parent Portal", href: "/parent-portal" },
-  { label: "Tutor Login", href: "/tutor" },
+  { label: "Parent Portal", href: "/login?portal=parent" },
+  { label: "Tutor Login", href: "/login?portal=tutor" },
   { label: "Student Hub", href: "/student-hub" }
 ] as const;
 
-export const footerQuickLinks = [
-  { label: "Home", href: "/" },
+export const footerKeyStageLinks = [
+  { label: "KS2", href: "/ks2" },
+  { label: "KS3", href: "/ks3" },
+  { label: "KS4", href: "/ks4" },
+  { label: "KS5", href: "/ks5" }
+] as const;
+
+export const footerCompanyLinks = [
   { label: "About", href: "/about" },
   { label: "How It Works", href: "/how-it-works" },
-  { label: "FAQs", href: "/faqs" },
+  { label: "Articles", href: "/articles" },
+  { label: "Educational Consultancy", href: "/educational-consultancy" }
+] as const;
+
+export const footerSupportLinks = [
   { label: "Contact", href: "/contact" },
   { label: "Request a Callback", href: site.callbackHref },
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" }
+  { label: "Book Assessment", href: site.assessmentHref },
+  { label: "FAQs", href: "/faqs" }
 ] as const;
 
 export const footerPortalLinks = [
-  { label: "Parent Portal", href: "/parent-portal" },
-  { label: "Tutor Login", href: "/tutor" },
-  { label: "Student Hub", href: "/student-hub" },
-  { label: "Book Assessment", href: site.assessmentHref }
+  { label: "Parent Login", href: "/login?portal=parent" },
+  { label: "Tutor Login", href: "/login?portal=tutor" },
+  { label: "Student Hub", href: "/student-hub" }
 ] as const;
 
-export const footerServiceLinks = [
-  { label: "Science Tuition", href: "/gcse-biology" },
-  { label: "Maths Tuition", href: "/gcse-maths" },
-  { label: "French Tuition", href: "/french" },
-  { label: "Educational Consultancy", href: "/educational-consultancy" }
+export const footerLegalLinks = [
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" }
 ] as const;
 
 export const heroMetrics = [
@@ -138,7 +160,7 @@ export const parentReasons = [
   },
   {
     title: "Personalised support",
-    body: "Students receive a structured plan shaped by their current performance, target grades, confidence level and exam timeline."
+    body: "Students receive a clear plan shaped by their current performance, target grades, confidence level and exam timeline."
   }
 ] as const;
 
@@ -153,7 +175,7 @@ export const tutorHighlights = [
   },
   {
     title: "Carefully selected tutors",
-    body: "As FlyBridge grows, it works with experienced teachers across the country so more families can access structured, supportive subject teaching."
+    body: "As FlyBridge grows, it works with experienced teachers across the country so more families can access clear, supportive subject teaching."
   }
 ] as const;
 
@@ -276,7 +298,7 @@ export const consultancyServices = [
   },
   {
     title: "Revision planning",
-    body: "Practical revision structures for busy students who need a realistic system rather than a vague checklist."
+    body: "Practical revision planning for busy students who need a realistic system rather than a vague checklist."
   },
   {
     title: "University guidance",
@@ -323,7 +345,7 @@ export const subjectPages = [
     slug: "gcse-chemistry",
     navLabel: "GCSE Chemistry",
     summary:
-      "Chemistry tuition that turns confusing topics into structured, manageable steps, especially for calculations and multi-stage ideas.",
+      "Chemistry tuition that turns confusing topics into manageable steps, especially for calculations and multi-stage ideas.",
     hero:
       "Gain clarity in chemistry with lessons that make difficult concepts feel teachable, logical and exam-ready.",
     image: site.images.chemistryTools,
@@ -348,7 +370,7 @@ export const subjectPages = [
     summary:
       "Physics tuition for students who need stronger problem solving, better formula confidence and clearer conceptual understanding.",
     hero:
-      "Develop a calmer, stronger approach to GCSE Physics with structured support for both maths and concepts.",
+      "Develop a calmer, stronger approach to GCSE Physics with clear support for both maths and concepts.",
     image: site.images.physicsTools,
     imageAlt: "Physics revision tools and stationery laid out for focused study.",
     coverage: [
@@ -371,9 +393,9 @@ export const subjectPages = [
     summary:
       "Joined-up support across Biology, Chemistry and Physics for students studying Combined Science and needing coherent, balanced guidance.",
     hero:
-      "Get structured support across the full Combined Science course without losing clarity between subjects.",
+      "Get joined-up support across the full Combined Science course without losing clarity between subjects.",
     image: site.images.scienceIcons,
-    imageAlt: "A premium science-themed study image representing Combined Science support.",
+    imageAlt: "A science-themed study image representing Combined Science support.",
     coverage: [
       "Core Biology, Chemistry and Physics topics across the combined specification",
       "Topic prioritisation based on the student's strongest and weakest areas",
@@ -396,13 +418,13 @@ export const expansionSubjectPages = [
     eyebrow: "Maths Tuition",
     navLabel: "GCSE Maths",
     summary:
-      "Premium GCSE Maths tuition from FlyBridge Education, with clear explanations, steady confidence-building and structured parent communication.",
+      "GCSE Maths tuition from FlyBridge Education, with clear explanations, steady confidence-building and parent communication.",
     heroTitle: "GCSE Maths support with the same calm structure and parent clarity as the wider FlyBridge experience.",
     heroBody:
-      "FlyBridge maths support is designed for families who want organised teaching, careful explanation and a premium experience that keeps both students and parents confident about the next step.",
+      "FlyBridge maths support is designed for families who want organised teaching, careful explanation and a clear sense of the next step.",
     image: site.images.workspace,
-    imageAlt: "A refined study workspace representing structured GCSE Maths tuition.",
-    imageBadge: "Clear, structured maths support",
+    imageAlt: "A refined study workspace representing GCSE Maths tuition.",
+    imageBadge: "Clear maths support",
     coverageHeading: "What maths support focuses on",
     coverageBody:
       "Lessons are shaped around the student's current working level, but support often centres on the patterns that most affect GCSE Maths confidence and marks.",
@@ -440,7 +462,7 @@ export const expansionSubjectPages = [
     heroBody:
       "For students and adult learners alike, Functional Skills support should feel direct and useful. FlyBridge focuses on practical understanding, confidence and consistent follow-through.",
     image: site.images.reportCover,
-    imageAlt: "A premium study materials image representing Functional Skills Maths support.",
+    imageAlt: "A study materials image representing Functional Skills Maths support.",
     imageBadge: "Practical, confidence-building support",
     coverageHeading: "What the support covers",
     coverageBody:
@@ -474,13 +496,13 @@ export const expansionSubjectPages = [
     eyebrow: "Languages",
     navLabel: "French Tuition",
     summary:
-      "Premium French tuition from FlyBridge Education, with structured support for vocabulary, grammar, confidence and exam performance.",
-    heroTitle: "French support that feels organised, encouraging and carefully structured.",
+      "French tuition from FlyBridge Education, with clear support for vocabulary, grammar, confidence and exam performance.",
+    heroTitle: "French support that feels organised, encouraging and carefully planned.",
     heroBody:
       "FlyBridge French support is designed for students who need stronger routine, clearer explanations and more confidence across vocabulary, grammar, writing and speaking.",
     image: site.images.bridgeBlueprint,
-    imageAlt: "A refined brand image representing premium French tuition.",
-    imageBadge: "Calm, structured language support",
+    imageAlt: "A refined brand image representing French tuition.",
+    imageBadge: "Calm language support",
     coverageHeading: "What French tuition can focus on",
     coverageBody:
       "Support is adapted to the student, but lessons commonly centre on the language patterns and exam skills that unlock greater consistency.",
@@ -502,7 +524,7 @@ export const expansionSubjectPages = [
     boardsHeading: "Well suited to",
     boardsBody:
       "French support is a good fit for students who want a calmer route to stronger performance across both classroom work and exam preparation.",
-    boards: ["GCSE French learners needing more confidence", "Students who struggle to retain vocabulary consistently", "Families wanting clearer communication around progress", "Students who benefit from patient, structured explanation"],
+    boards: ["GCSE French learners needing more confidence", "Students who struggle to retain vocabulary consistently", "Families wanting clearer communication around progress", "Students who benefit from patient, careful explanation"],
     ctaTitle: "Enquire about French tuition",
     ctaBody:
       "If French support would help your child feel more confident and consistent, FlyBridge can talk through the best starting point and likely lesson format."
@@ -513,7 +535,7 @@ export const faqs = [
   {
     question: "How are lessons delivered?",
     answer:
-      "Lessons are delivered online in a live, structured format. Students receive guided teaching, active questioning, exam-style practice and clear follow-up tasks."
+      "Lessons are delivered online in a live format. Students receive guided teaching, active questioning, exam-style practice and clear follow-up tasks."
   },
   {
     question: "Who is FlyBridge best suited for?",

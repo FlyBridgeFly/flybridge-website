@@ -1,0 +1,253 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SubjectCallbackForm from "./SubjectCallbackForm.astro";
+import type { CurriculumPage } from "../data/curriculum";
+import { site } from "../data/site";
+
+interface Props {
+  page: CurriculumPage;
+}
+
+const { page } = Astro.props;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: page.pageTitle,
+  description: page.summary,
+  url: new URL(`/${page.slug}`, site.url).toString()
+};
+---
+
+<BaseLayout title={page.pageTitle} description={page.summary} path={`/${page.slug}`} schema={schema}>
+  <section class="container-shell section-shell-tight">
+    <div class="grid gap-5 lg:grid-cols-[1.12fr_0.88fr] lg:items-end">
+      <div class="min-w-0 space-y-4">
+        <span class="eyebrow">{page.keyStage}</span>
+        <div class="space-y-3">
+          <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[3rem]">
+            {page.pageTitle}
+          </h1>
+          <p class="max-w-3xl body-copy-compact">{page.summary}</p>
+        </div>
+      </div>
+      <div class="dashboard-list">
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Qualified-teacher trust line</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{page.trustLine}</p>
+        </div>
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Qualification</p>
+          <p class="mt-2 text-sm font-semibold text-fb-ink">{page.qualificationLine}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {page.mode === "boards" ? (
+    <section class="container-shell section-shell-tight pt-0" data-board-browser>
+      <div class="card-panel p-4 sm:p-5">
+        <div class="flex flex-wrap gap-2" role="tablist" aria-label={`${page.pageTitle} exam boards`}>
+          {page.boards?.map((board, index) => (
+            <button
+              class="tab-button min-w-0 md:min-w-[10rem]"
+              data-board-tab
+              data-board-key={board.name}
+              aria-selected={index === 0 ? "true" : "false"}
+              tabindex={index === 0 ? "0" : "-1"}
+              type="button"
+              role="tab"
+            >
+              {board.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-4">
+        {page.boards?.map((board, index) => (
+          <section
+            class:list={["dashboard-section", index !== 0 && "hidden"]}
+            data-board-panel
+            data-board-key={board.name}
+            aria-hidden={index !== 0 ? "true" : "false"}
+          >
+            <div class="grid gap-4 lg:grid-cols-[0.84fr_1.16fr]">
+              <div class="dashboard-list">
+                <div class="dashboard-list-item">
+                  <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Qualification</p>
+                  <p class="mt-2 text-base font-semibold text-fb-ink">{board.qualification}</p>
+                  {board.specificationCode && <p class="mt-1 text-sm text-fb-ink-soft">Specification code: {board.specificationCode}</p>}
+                </div>
+                <div class="dashboard-list-item">
+                  <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Assessment summary</p>
+                  <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{board.assessmentSummary}</p>
+                </div>
+                <a class="ghost-button w-full justify-center" href={board.officialUrl} target="_blank" rel="noreferrer">
+                  Official specification
+                </a>
+              </div>
+
+              <div class="dashboard-list">
+                {board.papers.map((paper) => (
+                  <details class="rounded-[1rem] border border-slate-200 bg-white/85 px-4 py-3.5" open>
+                    <summary class="cursor-pointer list-none text-base font-semibold text-fb-ink">{paper.title}</summary>
+                    {paper.summary && <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{paper.summary}</p>}
+                    <div class="mt-3 grid gap-2.5">
+                      {paper.modules.length > 0 ? (
+                        paper.modules.map((module) => (
+                          <div class="dashboard-list-item">
+                            <p class="text-sm font-semibold text-fb-ink">{module.title}</p>
+                            <p class="mt-1 text-sm leading-6 text-fb-ink-soft">{module.summary}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <div class="dashboard-list-item text-sm text-fb-ink-soft">No data available.</div>
+                      )}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
+  ) : (
+    <section class="container-shell section-shell-tight pt-0" data-board-browser>
+      <div class="card-panel p-4 sm:p-5">
+        <div class="flex flex-wrap gap-2" role="tablist" aria-label={`${page.pageTitle} curriculum areas`}>
+          {page.curriculumGroups?.map((group, index) => (
+            <button
+              class="tab-button min-w-0 md:min-w-[10rem]"
+              data-board-tab
+              data-board-key={group.title}
+              aria-selected={index === 0 ? "true" : "false"}
+              tabindex={index === 0 ? "0" : "-1"}
+              type="button"
+              role="tab"
+            >
+              {group.title}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-4">
+        {page.curriculumGroups?.map((group, index) => (
+          <section
+            class:list={["dashboard-section", index !== 0 && "hidden"]}
+            data-board-panel
+            data-board-key={group.title}
+            aria-hidden={index !== 0 ? "true" : "false"}
+          >
+            <div class="grid gap-4 lg:grid-cols-[0.84fr_1.16fr]">
+              <div class="dashboard-list">
+                <div class="dashboard-list-item">
+                  <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Curriculum area</p>
+                  <p class="mt-2 text-base font-semibold text-fb-ink">{group.title}</p>
+                </div>
+                <div class="dashboard-list-item">
+                  <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Summary</p>
+                  <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{group.summary}</p>
+                </div>
+                {page.officialUrl && (
+                  <a class="ghost-button w-full justify-center" href={page.officialUrl} target="_blank" rel="noreferrer">
+                    Official curriculum guidance
+                  </a>
+                )}
+              </div>
+
+              <div class="dashboard-list">
+                {group.modules.length > 0 ? (
+                  group.modules.map((module) => (
+                    <div class="dashboard-list-item">
+                      <p class="text-sm font-semibold text-fb-ink">{module.title}</p>
+                      <p class="mt-1 text-sm leading-6 text-fb-ink-soft">{module.summary}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div class="dashboard-list-item text-sm text-fb-ink-soft">No data available.</div>
+                )}
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dashboard-section">
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Qualified teachers, not generic tutoring</p>
+          <h2 class="mt-2 text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Qualified teaching practice sits behind the support.</h2>
+        </div>
+        <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <span class="mini-chip">Curriculum expertise</span>
+          <span class="mini-chip">Misconception diagnosis</span>
+          <span class="mini-chip">Assessment-informed planning</span>
+          <span class="mini-chip">Professional standards</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell pt-0">
+    <SubjectCallbackForm keyStage={page.keyStage} subject={page.pageTitle} />
+  </section>
+
+  <script is:inline>
+    const browsers = Array.from(document.querySelectorAll("[data-board-browser]"));
+
+    browsers.forEach((browser) => {
+      const tabs = Array.from(browser.querySelectorAll("[data-board-tab]"));
+      const panels = Array.from(browser.querySelectorAll("[data-board-panel]"));
+      if (!tabs.length || !panels.length) return;
+
+      const showTab = (key) => {
+        tabs.forEach((tab) => {
+          const active = tab.dataset.boardKey === key;
+          tab.setAttribute("aria-selected", String(active));
+          tab.setAttribute("tabindex", active ? "0" : "-1");
+          tab.classList.toggle("bg-fb-bg", active);
+          tab.classList.toggle("text-white", active);
+          tab.classList.toggle("shadow-sm", active);
+          tab.classList.toggle("border-slate-200", !active);
+          tab.classList.toggle("bg-white", !active);
+          tab.classList.toggle("text-fb-ink", !active);
+        });
+
+        panels.forEach((panel) => {
+          const active = panel.dataset.boardKey === key;
+          panel.classList.toggle("hidden", !active);
+          panel.setAttribute("aria-hidden", String(!active));
+        });
+
+        if (window.location.hash !== `#${encodeURIComponent(key)}`) {
+          history.replaceState(null, "", `${window.location.pathname}${window.location.search}#${encodeURIComponent(key)}`);
+        }
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => showTab(tab.dataset.boardKey ?? ""));
+        tab.addEventListener("keydown", (event) => {
+          if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+          const direction = event.key === "ArrowRight" ? 1 : -1;
+          const nextTab = tabs[(index + direction + tabs.length) % tabs.length];
+          nextTab?.focus();
+          showTab(nextTab?.dataset.boardKey ?? "");
+        });
+      });
+
+      const hashValue = decodeURIComponent(window.location.hash.replace("#", ""));
+      const initialKey =
+        tabs.find((tab) => tab.dataset.boardKey === hashValue)?.dataset.boardKey ??
+        tabs[0]?.dataset.boardKey ??
+        "";
+
+      if (initialKey) showTab(initialKey);
+    });
+  </script>
+</BaseLayout>

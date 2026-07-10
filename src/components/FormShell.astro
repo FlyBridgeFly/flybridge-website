@@ -2,11 +2,14 @@
 interface Field {
   label: string;
   name: string;
-  type?: "text" | "email" | "tel" | "textarea";
+  type?: "text" | "email" | "tel" | "textarea" | "hidden";
   placeholder: string;
   helper?: string;
   required?: boolean;
   autocomplete?: string;
+  value?: string;
+  readOnly?: boolean;
+  span?: "full";
 }
 
 interface Props {
@@ -42,15 +45,12 @@ const {
 <div class="form-panel">
   <div class="min-w-0 space-y-3">
     <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
-    <p class="max-w-2xl body-copy">{body}</p>
-  </div>
-  <div class="surface-note mt-4">
-    FlyBridge keeps first contact clear and low-pressure. Share the essentials and the next step will stay simple.
+    <p class="max-w-2xl body-copy-compact">{body}</p>
   </div>
   {trustPoints.length > 0 && (
     <div class="mt-4 grid gap-3 sm:grid-cols-2">
       {trustPoints.map((item) => (
-        <div class="rounded-[1rem] border border-slate-200 bg-white px-4 py-3.5">
+        <div class="dashboard-list-item">
           <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">{item.title}</p>
           <p class="mt-2 text-sm leading-6 text-fb-ink-soft">{item.body}</p>
         </div>
@@ -67,21 +67,29 @@ const {
   >
     <div class="form-grid-compact mt-0">
       {fields.map((field) =>
-        field.type === "textarea" ? (
-          <label class="md:col-span-2">
+        field.type === "hidden" ? (
+          <input
+            type="hidden"
+            name={field.name}
+            value={field.value ?? ""}
+            data-label={field.label}
+          />
+        ) : field.type === "textarea" ? (
+          <label class:list={[field.span === "full" && "md:col-span-2"]}>
             <span class="label-shell">{field.label}</span>
             <textarea
               class="input-shell min-h-[6rem] resize-y"
               name={field.name}
               placeholder={field.placeholder}
               data-label={field.label}
+              readonly={field.readOnly}
               required={field.required}
               autocomplete={field.autocomplete}
-            ></textarea>
+            >{field.value ?? ""}</textarea>
             {field.helper && <span class="helper-shell">{field.helper}</span>}
           </label>
         ) : (
-          <label>
+          <label class:list={[field.span === "full" && "md:col-span-2"]}>
             <span class="label-shell">{field.label}</span>
             <input
               class="input-shell"
@@ -89,6 +97,8 @@ const {
               name={field.name}
               placeholder={field.placeholder}
               data-label={field.label}
+              value={field.value ?? ""}
+              readonly={field.readOnly}
               required={field.required}
               autocomplete={field.autocomplete}
             />
@@ -97,7 +107,7 @@ const {
         )
       )}
     </div>
-    <div class="surface-note-sky">
+    <div class="surface-note">
       {helper}
     </div>
     <p class="status-message hidden" data-form-feedback role="status" aria-live="polite"></p>

@@ -1,8 +1,5 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHero from "../components/PageHero.astro";
-import SectionHeading from "../components/SectionHeading.astro";
-import CtaBanner from "../components/CtaBanner.astro";
 import { consultancyServices, site } from "../data/site";
 
 const schema = {
@@ -14,56 +11,64 @@ const schema = {
     name: site.name,
     url: site.url
   },
-  description:
-    "Secondary educational consultancy support from FlyBridge Education, including study skills, revision planning and academic mentoring."
+  description: "Educational consultancy support from FlyBridge Education, including study skills, revision planning, academic mentoring and transition guidance."
 };
 ---
 
 <BaseLayout
   title="Educational Consultancy"
-  description="Secondary educational consultancy support from FlyBridge Education, including study skills, revision planning and academic mentoring."
+  description="Educational consultancy support from FlyBridge Education, including study skills, revision planning, academic mentoring and transition guidance."
   path="/educational-consultancy"
   schema={schema}
 >
-  <PageHero
-    eyebrow="Educational consultancy"
-    title="Broader academic guidance for families who need support beyond tuition."
-    body="Educational consultancy is offered as a secondary service for students who would benefit from sharper academic habits, planning and mentoring alongside or outside tuition."
-    primaryLabel="Email to Enquire"
-    primaryHref={`mailto:${site.email}`}
-    secondaryLabel="WhatsApp"
-    secondaryHref={site.whatsappHref}
-    imageSrc={site.images.consultancy}
-    imageAlt="A refined consultancy workspace image representing academic planning and mentoring."
-    imageBadge="Secondary service"
-  />
-
-  <section class="container-shell section-shell pt-0">
-    <SectionHeading
-      eyebrow="Secondary service"
-      title="Consultancy support with a practical, student-focused approach."
-      body="This is intentionally kept as a quieter offer within the website, but it provides an additional route for families needing more strategic academic support."
-    />
-    <div class="surface-note mt-5">
-      Tuition remains the core FlyBridge offer. Consultancy is best used when a family wants broader academic guidance alongside, between, or instead of regular lessons.
+  <section class="container-shell section-shell-tight">
+    <div class="grid gap-5 lg:grid-cols-[1.04fr_0.96fr] lg:items-end">
+      <div class="space-y-4">
+        <span class="eyebrow">Educational Consultancy</span>
+        <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[3rem]">
+          Broader academic guidance for families who need support beyond weekly tuition.
+        </h1>
+        <p class="max-w-3xl body-copy-compact">
+          Consultancy is a secondary FlyBridge service for families who need study structure, planning or mentoring rather than a standard lesson arrangement.
+        </p>
+      </div>
+      <div class="dashboard-list">
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">When it is useful</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Revision planning, academic routines, transitions, longer-term study choices and broader mentoring conversations.</p>
+        </div>
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">How to enquire</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">The best next step is a direct message or email so the enquiry can be discussed around the student’s situation.</p>
+        </div>
+      </div>
     </div>
-    <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+  </section>
+
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dashboard-card-grid md:grid-cols-2 xl:grid-cols-3">
       {consultancyServices.map((service) => (
-        <article class="card-panel p-4 sm:p-5">
-          <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{service.title}</h2>
-          <p class="mt-2 body-copy">{service.body}</p>
+        <article class="dashboard-section">
+          <h2 class="text-lg font-semibold text-fb-ink">{service.title}</h2>
+          <p class="mt-3 text-sm leading-6 text-fb-ink-soft">{service.body}</p>
         </article>
       ))}
     </div>
   </section>
 
-  <CtaBanner
-    eyebrow="Enquire further"
-    title="If you are considering a broader layer of academic support, get in touch directly."
-    body="A short message or email is the best first step for consultancy enquiries so the discussion can be tailored to the student's context."
-    actions={[
-      { label: "Email FlyBridge", href: `mailto:${site.email}` },
-      { label: "WhatsApp", href: site.whatsappHref, variant: "secondary" }
-    ]}
-  />
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dark-panel p-5 sm:p-6 lg:p-7">
+      <div class="grid gap-4 lg:grid-cols-[1fr_0.92fr] lg:items-center">
+        <div>
+          <span class="eyebrow border-white/15 bg-white/5 text-sky-100">Consultancy enquiry</span>
+          <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-white sm:text-[2.2rem]">Message FlyBridge to discuss the right kind of support.</h2>
+          <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-300">A short WhatsApp message or email is usually the quickest way to explain context and receive a tailored reply.</p>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <a class="cta-button justify-center bg-white text-fb-bg hover:bg-sky-50" href={`mailto:${site.email}`}>Email FlyBridge</a>
+          <a class="ghost-button justify-center border-white/15 bg-white/5 text-white hover:bg-white/10" href={site.whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

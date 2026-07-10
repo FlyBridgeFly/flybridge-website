@@ -1,12 +1,11 @@
 ---
-import ExpansionSubjectPage from "../components/ExpansionSubjectPage.astro";
-import { expansionSubjectPages } from "../data/site";
+import CurriculumSubjectPage from "../components/CurriculumSubjectPage.astro";
+import { getCurriculumPage } from "../data/curriculum";
 
-const subject = expansionSubjectPages.find((item) => item.slug === "gcse-maths");
-
-if (!subject) {
+const page = getCurriculumPage("gcse-maths");
+if (!page) {
   throw new Error("GCSE Maths page data not found.");
 }
 ---
 
-<ExpansionSubjectPage subject={subject} />
+<CurriculumSubjectPage page={page} />

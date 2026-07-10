@@ -1,12 +1,83 @@
 ---
-import ExpansionSubjectPage from "../components/ExpansionSubjectPage.astro";
-import { expansionSubjectPages } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SubjectCallbackForm from "../components/SubjectCallbackForm.astro";
+import { site } from "../data/site";
 
-const subject = expansionSubjectPages.find((item) => item.slug === "functional-skills-maths");
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Functional Skills Maths",
+  description: "Functional Skills Maths support from FlyBridge Education for learners who need calm, practical and clearly explained teaching.",
+  url: new URL("/functional-skills-maths", site.url).toString()
+};
 
-if (!subject) {
-  throw new Error("Functional Skills Maths page data not found.");
-}
+const focusAreas = [
+  "Number, fractions, percentages and ratio in practical settings",
+  "Measures, money, time and data interpretation",
+  "Breaking multistep questions into manageable decisions",
+  "Rebuilding confidence for learners returning to maths"
+] as const;
+
+const sessionApproach = [
+  "Clear modelling before independent attempts",
+  "Everyday examples that make the method feel useful",
+  "Short follow-up practice to keep skills active",
+  "Simple next-step guidance after each session"
+] as const;
 ---
 
-<ExpansionSubjectPage subject={subject} />
+<BaseLayout
+  title="Functional Skills Maths"
+  description="Functional Skills Maths support from FlyBridge Education for learners who need calm, practical and clearly explained teaching."
+  path="/functional-skills-maths"
+  schema={schema}
+>
+  <section class="container-shell section-shell-tight">
+    <div class="grid gap-5 lg:grid-cols-[1.06fr_0.94fr] lg:items-end">
+      <div class="space-y-4">
+        <span class="eyebrow">Maths Support</span>
+        <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[3rem]">
+          Functional Skills Maths with practical teaching and clear next steps.
+        </h1>
+        <p class="max-w-3xl body-copy-compact">
+          Support is designed for learners who need maths to feel more approachable, more useful and easier to apply in assessment settings.
+        </p>
+      </div>
+      <div class="dashboard-list">
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Who it helps</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Learners resitting, rebuilding confidence or preparing for a Functional Skills assessment pathway.</p>
+        </div>
+        <div class="dashboard-list-item">
+          <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Teaching style</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Qualified-teacher support with practical examples, steady pacing and concise follow-up.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="dashboard-section">
+        <h2 class="text-xl font-semibold tracking-tight text-fb-ink">What is covered</h2>
+        <div class="mt-4 grid gap-3">
+          {focusAreas.map((item) => (
+            <div class="dashboard-list-item text-sm leading-6 text-fb-ink-soft">{item}</div>
+          ))}
+        </div>
+      </div>
+      <div class="dashboard-section">
+        <h2 class="text-xl font-semibold tracking-tight text-fb-ink">How sessions work</h2>
+        <div class="mt-4 grid gap-3">
+          {sessionApproach.map((item) => (
+            <div class="dashboard-list-item text-sm leading-6 text-fb-ink-soft">{item}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell pt-0">
+    <SubjectCallbackForm keyStage="Post-16 / Resit" subject="Functional Skills Maths" />
+  </section>
+</BaseLayout>

@@ -1,135 +1,98 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SectionHeading from "../components/SectionHeading.astro";
-import PageHero from "../components/PageHero.astro";
-import CtaBanner from "../components/CtaBanner.astro";
-import { assessmentFeatures, lessonFlow, platformSplit, progressTracking, site } from "../data/site";
+import { site } from "../data/site";
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "How FlyBridge Works",
-  description:
-    "Understand the FlyBridge process from free assessment through weekly online lessons and progress tracking.",
+  description: "Understand the FlyBridge process from free assessment through teaching, follow-up and reporting.",
   url: new URL("/how-it-works", site.url).toString()
 };
+
+const steps = [
+  {
+    title: "Free assessment",
+    body: "FlyBridge starts by understanding the pupil’s current position, confidence, curriculum context and the areas causing concern."
+  },
+  {
+    title: "Clear recommendation",
+    body: "Parents receive a view on the right subject focus, lesson format and the most useful immediate next step."
+  },
+  {
+    title: "Clear teaching",
+    body: "Lessons combine clear explanation, guided practice, independent application and concise follow-up."
+  },
+  {
+    title: "Progress reporting",
+    body: "Parents can track lesson summaries, assessments, targets and next steps through the FlyBridge portal."
+  }
+] as const;
 ---
 
 <BaseLayout
   title="How It Works"
-  description="Understand the FlyBridge process from free assessment through weekly online lessons and progress tracking."
+  description="Understand the FlyBridge process from free assessment through teaching, follow-up and reporting."
   path="/how-it-works"
   schema={schema}
 >
-  <PageHero
-    eyebrow="How it works"
-    title="A clear process from free assessment to steady GCSE science progress."
-    body="Families should not have to guess what happens next. FlyBridge is designed around clarity, structure and thoughtful communication at every stage."
-    primaryLabel="Book Free Assessment"
-    primaryHref={site.assessmentHref}
-    secondaryLabel="Request a Callback"
-    secondaryHref={site.callbackHref}
-    imageSrc={site.images.learningPath}
-    imageAlt="A learning path visual showing a structured route from assessment to progress."
-    imageBadge="A clear learning pathway"
-  />
+  <section class="container-shell section-shell-tight">
+    <div class="space-y-4">
+      <span class="eyebrow">How it works</span>
+      <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[3rem]">A clear process from first enquiry to ongoing progress.</h1>
+      <p class="max-w-3xl body-copy-compact">FlyBridge is designed to make the next step obvious for both pupils and parents.</p>
+    </div>
+  </section>
 
-  <section class="container-shell section-shell pt-0">
-    <div class="grid gap-5 lg:grid-cols-[0.78fr_1.22fr]">
-      <SectionHeading
-        eyebrow="Lesson journey"
-        title="What the process looks like in practice."
-        body="Each step is designed to reduce friction, make expectations clear and keep support aligned with the student's goals."
-      />
-      <div class="space-y-3">
-        {lessonFlow.map((step, index) => (
-          <div class="card-panel relative p-4 sm:p-5">
-            {index !== lessonFlow.length - 1 && <div class="absolute left-10 top-[4.1rem] h-[calc(100%-2rem)] w-px bg-slate-200"></div>}
-            <div class="flex gap-4">
-              <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-fb-bg text-sm font-semibold text-white">{index + 1}</div>
-              <div>
-                <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{step.title}</h2>
-                <p class="mt-2 body-copy">{step.body}</p>
-              </div>
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="grid gap-4 lg:grid-cols-2">
+      {steps.map((step, index) => (
+        <article class="dashboard-section">
+          <div class="flex items-start gap-4">
+            <div class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-fb-bg text-sm font-semibold text-white">{index + 1}</div>
+            <div>
+              <h2 class="text-xl font-semibold tracking-tight text-fb-ink">{step.title}</h2>
+              <p class="mt-3 text-sm leading-6 text-fb-ink-soft">{step.body}</p>
             </div>
           </div>
-        ))}
-      </div>
+        </article>
+      ))}
     </div>
   </section>
 
-  <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-2">
-      <div>
-        <SectionHeading
-          eyebrow="What happens in the free assessment"
-          title="A useful first conversation, not a sales pitch."
-          body="The aim is to understand what is going on beneath the surface so next steps can be recommended with confidence."
-        />
-        <div class="mt-5 grid gap-3">
-          {assessmentFeatures.map((item) => (
-            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
-          ))}
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dashboard-section">
+      <span class="eyebrow">Teaching methodology</span>
+      <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-fb-ink sm:text-[2.2rem]">Learn, practise, apply.</h2>
+      <div class="mt-5 grid gap-4 lg:grid-cols-3">
+        <div class="dashboard-list-item">
+          <p class="text-sm font-semibold text-fb-ink">Learn</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Secure the knowledge, vocabulary and methods clearly.</p>
         </div>
-        <div class="image-panel mt-4">
-          <img
-            src={site.images.assessmentReport}
-            alt="An assessment report image representing the FlyBridge assessment process."
-            class="h-[220px] w-full object-cover sm:h-[240px]"
-            loading="lazy"
-            decoding="async"
-          />
+        <div class="dashboard-list-item">
+          <p class="text-sm font-semibold text-fb-ink">Practise</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Build fluency through guided and independent questions.</p>
         </div>
-      </div>
-      <div>
-        <SectionHeading
-          eyebrow="Progress tracking"
-          title="How families stay informed"
-          body="Progress tracking is woven into the service so support remains visible rather than vague."
-        />
-        <div class="mt-5 grid gap-3 sm:grid-cols-2">
-          {progressTracking.map((item) => (
-            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
-          ))}
-        </div>
-        <div class="image-panel mt-4">
-          <img
-            src={site.images.googleClassroom}
-            alt="Google Classroom resources organised neatly for GCSE science students."
-            class="h-[220px] w-full object-cover sm:h-[240px]"
-            loading="lazy"
-            decoding="async"
-          />
+        <div class="dashboard-list-item">
+          <p class="text-sm font-semibold text-fb-ink">Apply</p>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Use the knowledge under exam conditions with feedback.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="container-shell section-shell">
-    <div class="grid gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
-      <SectionHeading
-        eyebrow="Student learning and parent visibility"
-        title="Two spaces, each with a clear job."
-        body="FlyBridge keeps the student workflow and the parent reporting workflow separate on purpose, so both remain simple to use."
-      />
-      <div class="grid gap-4 md:grid-cols-2">
-        {platformSplit.map((item) => (
-          <div class="card-panel p-4 sm:p-5">
-            <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{item.title}</h2>
-            <p class="mt-2 body-copy">{item.body}</p>
-          </div>
-        ))}
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dark-panel p-5 sm:p-6 lg:p-7">
+      <div class="grid gap-4 lg:grid-cols-[1fr_0.92fr] lg:items-center">
+        <div>
+          <span class="eyebrow border-white/15 bg-white/5 text-sky-100">Next step</span>
+          <h2 class="mt-4 text-balance text-[1.8rem] font-semibold tracking-tight text-white sm:text-[2.2rem]">Book the assessment and start with clarity.</h2>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <a class="cta-button justify-center bg-white text-fb-bg hover:bg-sky-50" href={site.assessmentHref}>Book Free Assessment</a>
+          <a class="ghost-button justify-center border-white/15 bg-white/5 text-white hover:bg-white/10" href={site.callbackHref}>Request a Callback</a>
+        </div>
       </div>
     </div>
   </section>
-
-  <CtaBanner
-    eyebrow="Ready to begin?"
-    title="Book the assessment and get clarity on the most effective next step."
-    body="Whether the priority is confidence, topic knowledge or exam technique, FlyBridge can help you identify the right starting point."
-    actions={[
-      { label: "Book Free Assessment", href: site.assessmentHref },
-      { label: "Contact FlyBridge", href: site.contactHref, variant: "secondary" }
-    ]}
-  />
 </BaseLayout>

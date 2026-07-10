@@ -7,13 +7,7 @@ interface Props {
   active: "admin" | "tutor" | "parent";
 }
 
-const { title, description, active } = Astro.props;
-
-const navItems = [
-  { label: "Admin", href: "/admin", key: "admin" },
-  { label: "Tutor", href: "/tutor", key: "tutor" },
-  { label: "Parent Portal", href: "/parent-portal", key: "parent" }
-] as const;
+const { title, description } = Astro.props;
 ---
 
 <section class="container-shell pb-7 pt-3 sm:pb-9 sm:pt-4">
@@ -41,27 +35,8 @@ const navItems = [
       </div>
 
       <div class="dashboard-divider mt-4">
-        <nav class="dashboard-nav-scroll snap-x" aria-label="Portal">
-          {navItems.map((item) => (
-            <a
-              class:list={[
-                "focus-pill min-w-max snap-start rounded-[0.95rem] px-4 py-2.5 text-sm font-semibold transition text-center xl:min-w-0 xl:text-left",
-                active === item.key
-                  ? "bg-fb-bg text-white"
-                  : "border border-slate-200 bg-white text-fb-ink hover:border-slate-300"
-              ]}
-              aria-current={active === item.key ? "page" : undefined}
-              href={item.href}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      </div>
-
-      <div class="dashboard-divider mt-4">
         <div class="surface-note">
-          Portal access is matched to your FlyBridge role, so each dashboard stays focused and uncluttered.
+          Use this workspace for your current FlyBridge responsibilities, with reporting and follow-up tools kept in one place.
         </div>
       </div>
 

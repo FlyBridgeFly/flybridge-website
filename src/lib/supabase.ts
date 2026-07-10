@@ -55,6 +55,21 @@ export interface LessonReportRow {
   [key: string]: unknown;
 }
 
+export interface LessonRow {
+  id: string;
+  student_id?: string | null;
+  tutor_id?: string | null;
+  lesson_title?: string | null;
+  subject?: string | null;
+  lesson_date?: string | null;
+  start_time?: string | null;
+  duration_minutes?: number | string | null;
+  status?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  [key: string]: unknown;
+}
+
 export interface AssessmentRow {
   id: string;
   student_id?: string | null;

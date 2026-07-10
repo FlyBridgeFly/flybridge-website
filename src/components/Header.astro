@@ -1,6 +1,6 @@
 ---
 import Logo from "./Logo.astro";
-import { courseNavigation, headerNavigation, portalNavigation, site } from "../data/site";
+import { headerNavigation, keyStageNavigation, portalNavigation, site } from "../data/site";
 
 interface Props {
   currentPath?: string;
@@ -9,8 +9,8 @@ interface Props {
 const { currentPath = "/" } = Astro.props;
 const normalisedPath = currentPath === "/" ? "/" : currentPath.replace(/\/$/, "");
 const isHomeActive = normalisedPath === "/";
-const isCoursesActive = courseNavigation.some((group) =>
-  group.items.some((item) => item.href === normalisedPath)
+const activeKeyStages = keyStageNavigation.filter((group) =>
+  group.href === normalisedPath || group.items.some((item) => item.href === normalisedPath)
 );
 const portalRoutePrefixes = ["/login", "/forgot-password", "/change-password", "/reset-password", "/parent-portal", "/tutor", "/admin"];
 const isPortalActive =
@@ -18,12 +18,12 @@ const isPortalActive =
 ---
 
 <header class="sticky top-0 z-50 px-3 pt-2 sm:px-5 sm:pt-2.5 lg:px-8">
-  <div id="site-header" class="mx-auto w-full max-w-7xl rounded-[1.35rem] border border-transparent px-3 py-2 transition duration-300 sm:px-4 sm:py-2.5">
+  <div id="site-header" class="mx-auto w-full max-w-7xl rounded-[1.15rem] border border-transparent px-3 py-2 transition duration-300 sm:px-4 sm:py-2.5">
     <div class="flex items-center justify-between gap-3">
       <div class="shrink-0">
         <Logo />
       </div>
-      <nav class="hidden min-w-0 items-center gap-1 lg:flex xl:gap-2" aria-label="Primary">
+      <nav class="hidden min-w-0 items-center gap-1 lg:flex xl:gap-1.5" aria-label="Primary">
         {headerNavigation.map((item) => (
           <a
             class:list={[
@@ -36,43 +36,38 @@ const isPortalActive =
             {item.label}
           </a>
         ))}
-        <details class="group relative" data-header-dropdown>
-          <summary
-            class:list={[
-              "nav-link focus-pill flex cursor-pointer list-none items-center gap-2 rounded-full px-3 py-2",
-              isCoursesActive && "bg-white text-fb-ink shadow-sm"
-            ]}
-            aria-haspopup="true"
-          >
-            Courses
-            <svg viewBox="0 0 20 20" class="h-4 w-4 transition group-open:rotate-180" fill="none" aria-hidden="true">
-              <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </summary>
-          <div class="absolute left-1/2 top-[3rem] z-20 w-[min(35rem,calc(100vw-4rem))] -translate-x-1/2 rounded-[1.35rem] border border-white/70 bg-white/[0.97] p-4 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
-            <div class="grid gap-4 md:grid-cols-3">
-              {courseNavigation.map((group) => (
-                <div class="space-y-2.5">
-                  <p class="px-3 text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">{group.label}</p>
-                  <div class="space-y-1">
-                    {group.items.map((item) => (
-                      <a
-                        class:list={[
-                          "block rounded-[0.95rem] px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink",
-                          item.href === normalisedPath && "bg-slate-100 text-fb-ink"
-                        ]}
-                        aria-current={item.href === normalisedPath ? "page" : undefined}
-                        href={item.href}
-                      >
-                        {item.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ))}
+        {keyStageNavigation.map((group) => (
+          <details class="group relative" data-header-dropdown>
+            <summary
+              class:list={[
+                "nav-link focus-pill flex cursor-pointer list-none items-center gap-2 rounded-full px-3 py-2",
+                activeKeyStages.some((item) => item.label === group.label) && "bg-white text-fb-ink shadow-sm"
+              ]}
+              aria-haspopup="true"
+            >
+              {group.label}
+              <svg viewBox="0 0 20 20" class="h-4 w-4 transition group-open:rotate-180" fill="none" aria-hidden="true">
+                <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </summary>
+            <div class="absolute left-1/2 top-[3rem] z-20 w-[min(21rem,calc(100vw-4rem))] -translate-x-1/2 rounded-[1.1rem] border border-white/70 bg-white/[0.97] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+              <div class="space-y-1">
+                {group.items.map((item) => (
+                  <a
+                    class:list={[
+                      "block rounded-[0.9rem] px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink",
+                      item.href === normalisedPath && "bg-slate-100 text-fb-ink"
+                    ]}
+                    aria-current={item.href === normalisedPath ? "page" : undefined}
+                    href={item.href}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        </details>
+          </details>
+        ))}
         <details class="group relative" data-header-dropdown>
           <summary
             class:list={[
@@ -159,7 +154,7 @@ const isPortalActive =
             <div class="flex items-start justify-between gap-4 border-b border-slate-200 pb-4">
               <div class="min-w-0">
                 <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Navigate FlyBridge</p>
-                <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Courses, portals and the quickest route to booking in one place.</p>
+                <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Key stages, portal links and booking routes in one place.</p>
               </div>
               <button
                 class="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-slate-200 bg-white text-fb-ink"
@@ -175,9 +170,6 @@ const isPortalActive =
 
             <div class="mt-5 grid gap-3">
               <a class="cta-button w-full" href={site.assessmentHref}>Book Assessment</a>
-              <a class="focus-pill rounded-[1rem] border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm font-semibold text-fb-ink transition hover:border-slate-300 hover:bg-white" href="/login">
-                Parent & Tutor Login
-              </a>
             </div>
 
             <div class="mt-6 grid gap-1.5">
@@ -196,40 +188,30 @@ const isPortalActive =
             </div>
 
             <div class="mt-6 space-y-3">
-              <details class:list={["rounded-[1rem] border border-slate-200 bg-slate-50/80", isCoursesActive && "border-sky-100 bg-sky-50/60"]}>
-                <summary class="focus-pill flex cursor-pointer list-none items-center justify-between rounded-[1rem] px-4 py-3 text-sm font-semibold text-fb-ink">
-                  Courses
-                  <svg viewBox="0 0 20 20" class="h-4 w-4 transition" fill="none" aria-hidden="true">
-                    <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                </summary>
-                <div class="space-y-3 px-3 pb-3">
-                  {courseNavigation.map((group) => (
-                    <details class="rounded-[0.95rem] border border-slate-200 bg-white">
-                      <summary class="focus-pill flex cursor-pointer list-none items-center justify-between rounded-[0.95rem] px-4 py-3 text-sm font-medium text-slate-700">
-                        {group.label}
-                        <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" aria-hidden="true">
-                          <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                      </summary>
-                      <div class="space-y-1 px-2 pb-2">
-                        {group.items.map((item) => (
-                          <a
-                            class:list={[
-                              "block rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink",
-                              item.href === normalisedPath && "bg-slate-100 text-fb-ink"
-                            ]}
-                            aria-current={item.href === normalisedPath ? "page" : undefined}
-                            href={item.href}
-                          >
-                            {item.label}
-                          </a>
-                        ))}
-                      </div>
-                    </details>
-                  ))}
-                </div>
-              </details>
+              {keyStageNavigation.map((group) => (
+                <details class:list={["rounded-[1rem] border border-slate-200 bg-slate-50/80", activeKeyStages.some((item) => item.label === group.label) && "border-sky-100 bg-sky-50/60"]}>
+                  <summary class="focus-pill flex cursor-pointer list-none items-center justify-between rounded-[1rem] px-4 py-3 text-sm font-semibold text-fb-ink">
+                    {group.label}
+                    <svg viewBox="0 0 20 20" class="h-4 w-4 transition" fill="none" aria-hidden="true">
+                      <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </summary>
+                  <div class="space-y-1 px-3 pb-3">
+                    {group.items.map((item) => (
+                      <a
+                        class:list={[
+                          "block rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink",
+                          item.href === normalisedPath && "bg-slate-100 text-fb-ink"
+                        ]}
+                        aria-current={item.href === normalisedPath ? "page" : undefined}
+                        href={item.href}
+                      >
+                        {item.label}
+                      </a>
+                    ))}
+                  </div>
+                </details>
+              ))}
 
               <details class:list={["rounded-[1rem] border border-slate-200 bg-slate-50/80", isPortalActive && "border-sky-100 bg-sky-50/60"]}>
                 <summary class="focus-pill flex cursor-pointer list-none items-center justify-between rounded-[1rem] px-4 py-3 text-sm font-semibold text-fb-ink">
@@ -253,10 +235,31 @@ const isPortalActive =
                   ))}
                 </div>
               </details>
-            </div>
 
-            <div class="mt-6 rounded-[1.1rem] border border-slate-200 bg-slate-50/80 px-4 py-4 text-sm leading-6 text-fb-ink-soft">
-              Need advice first? Use <a class="font-semibold text-fb-ink" href={site.callbackHref}>Request a Callback</a> and FlyBridge can help you choose the right next step.
+              <details class="rounded-[1rem] border border-slate-200 bg-slate-50/80">
+                <summary class="focus-pill flex cursor-pointer list-none items-center justify-between rounded-[1rem] px-4 py-3 text-sm font-semibold text-fb-ink">
+                  Account
+                  <svg viewBox="0 0 20 20" class="h-4 w-4 transition" fill="none" aria-hidden="true">
+                    <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </summary>
+                <div class="space-y-1 px-3 pb-3" data-account-signed-out>
+                  <a class="block rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/login?portal=parent">
+                    Parent login
+                  </a>
+                  <a class="block rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/login?portal=tutor">
+                    Tutor login
+                  </a>
+                </div>
+                <div class="hidden space-y-1 px-3 pb-3" data-account-signed-in>
+                  <a class="block rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-dashboard href="/login">
+                    Open dashboard
+                  </a>
+                  <button class="block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-signout type="button">
+                    Sign out
+                  </button>
+                </div>
+              </details>
             </div>
 
             <div class="mt-3 grid gap-2 text-sm">

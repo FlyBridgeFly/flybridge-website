@@ -1,102 +1,57 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHero from "../components/PageHero.astro";
-import SectionHeading from "../components/SectionHeading.astro";
-import CtaBanner from "../components/CtaBanner.astro";
-import { aboutSections, site } from "../data/site";
+import { site } from "../data/site";
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
   name: "About FlyBridge Education",
-  description:
-    "Learn more about the Cambridge-trained background, teaching philosophy and mission behind FlyBridge Education.",
+  description: "Learn more about FlyBridge Education and the educators behind it.",
   url: new URL("/about", site.url).toString()
 };
+
+const sections = [
+  {
+    title: "Founded by educators",
+    body: "FlyBridge Education was founded by Mr Mubarak and his mother. Both are science education specialists and both completed teacher training at the University of Cambridge."
+  },
+  {
+    title: "A family-led beginning",
+    body: "The company began with a shared commitment to strong science teaching and clearer support for families who wanted more than ad hoc tutoring."
+  },
+  {
+    title: "Qualified teaching",
+    body: "Mr Mubarak later completed a Master of Education at Cambridge. That training continues to shape a careful approach to explanation, practice and feedback."
+  },
+  {
+    title: "Carefully selected specialists",
+    body: "FlyBridge now works with carefully selected qualified teachers across its subject areas, with an emphasis on experienced classroom practitioners and clear teaching."
+  }
+] as const;
 ---
 
 <BaseLayout
   title="About"
-  description="Learn more about FlyBridge Education, including Cambridge training, teaching philosophy, experience and mission."
+  description="Learn more about FlyBridge Education and the educators behind it."
   path="/about"
   schema={schema}
 >
-  <PageHero
-    eyebrow="About FlyBridge"
-    title="Built by educators, shaped by family."
-    body="FlyBridge Education was founded by Mr Mubarak and his mother, two science education specialists whose shared goal was to help students understand demanding subjects with greater clarity and confidence."
-    primaryLabel="Book Free Assessment"
-    primaryHref={site.assessmentHref}
-    secondaryLabel="Request a Callback"
-    secondaryHref={site.callbackHref}
-    imageSrc={site.images.bridgeBlueprint}
-    imageAlt="A refined bridge blueprint image representing the FlyBridge mission and structure."
-    imagePosition="center"
-    imageBadge="Built with structure"
-  />
-
-  <section class="container-shell section-shell pt-0">
-    <SectionHeading
-      eyebrow="Company story"
-      title="A teaching network grounded in subject expertise and family values."
-      body="What began as a shared educational commitment has grown into a broader teaching offer for families who want structure, clarity and steady communication."
-    />
-    <div class="surface-note-sky mt-5">
-      FlyBridge Education was founded by Mr Mubarak and his mother, two science education specialists with teacher training from the University of Cambridge. Mr Mubarak later completed a Master of Education at Cambridge, strengthening the research-informed approach behind FlyBridge.
-    </div>
-    <div class="mt-4 rounded-[1.2rem] border border-slate-200 bg-white/85 px-5 py-5 shadow-fb">
-      <p class="max-w-4xl text-base leading-7 text-fb-ink-soft">
-        What began as a shared commitment to helping students understand science with greater clarity has grown into a wider teaching network.
-        FlyBridge works with carefully selected educators across the country to provide structured, supportive tuition across science, mathematics and languages.
-      </p>
-    </div>
-    <div class="mt-6 grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-      <div class="image-panel">
-        <img
-          src={site.images.scienceIcons}
-          alt="A refined science-themed image representing specialist GCSE science teaching."
-          class="h-full min-h-[240px] w-full object-cover sm:min-h-[280px]"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-      <div class="grid gap-4 md:grid-cols-2">
-        {aboutSections.map((section) => (
-          <article class="card-panel p-4 sm:p-5">
-            <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{section.title}</h2>
-            <p class="mt-2 body-copy">{section.body}</p>
-          </article>
-        ))}
-      </div>
+  <section class="container-shell section-shell-tight">
+    <div class="space-y-4">
+      <span class="eyebrow">About FlyBridge</span>
+      <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[3rem]">A family-led education company built by teachers.</h1>
+      <p class="max-w-3xl body-copy-compact">FlyBridge exists to provide clear teaching, subject expertise and better communication for families who want support they can trust.</p>
     </div>
   </section>
 
-  <section class="container-shell section-shell pt-0">
+  <section class="container-shell section-shell-tight pt-0">
     <div class="grid gap-4 lg:grid-cols-2">
-      <article class="card-panel p-5 sm:p-6">
-        <span class="mini-chip">How FlyBridge works</span>
-        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-fb-ink">Teaching that feels personal, not improvised.</h2>
-        <p class="mt-3 body-copy">
-          FlyBridge combines experienced teaching, clear parent communication, structured progress tracking and carefully selected tutors. The aim is to make support feel dependable for families and easier to sustain for students.
-        </p>
-      </article>
-      <article class="card-panel p-5 sm:p-6">
-        <span class="mini-chip">What families can expect</span>
-        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-fb-ink">A clear next step from the first conversation.</h2>
-        <p class="mt-3 body-copy">
-          Free assessments, focused lesson plans, organised follow-up work and concise reporting all exist for the same reason: to help families understand where support is going and why it matters.
-        </p>
-      </article>
+      {sections.map((section) => (
+        <article class="dashboard-section">
+          <h2 class="text-xl font-semibold tracking-tight text-fb-ink">{section.title}</h2>
+          <p class="mt-3 text-sm leading-6 text-fb-ink-soft">{section.body}</p>
+        </article>
+      ))}
     </div>
   </section>
-
-  <CtaBanner
-    eyebrow="Next step"
-    title="If the approach feels right, the best next step is a free assessment."
-    body="That first conversation helps parents understand how support would be tailored and whether FlyBridge is the right fit."
-    actions={[
-      { label: "Book Free Assessment", href: site.assessmentHref },
-      { label: "Contact FlyBridge", href: site.contactHref, variant: "secondary" }
-    ]}
-  />
 </BaseLayout>

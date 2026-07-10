@@ -1,11 +1,11 @@
 ---
-import SubjectPage from "../components/SubjectPage.astro";
-import { subjectPages } from "../data/site";
+import CurriculumSubjectPage from "../components/CurriculumSubjectPage.astro";
+import { getCurriculumPage } from "../data/curriculum";
 
-const subject = subjectPages.find((item) => item.slug === "gcse-physics");
-if (!subject) {
+const page = getCurriculumPage("gcse-physics");
+if (!page) {
   throw new Error("GCSE Physics subject data not found.");
 }
 ---
 
-<SubjectPage subject={subject} />
+<CurriculumSubjectPage page={page} />

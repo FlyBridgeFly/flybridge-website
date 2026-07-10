@@ -9,6 +9,7 @@ import {
   fetchProfilesByRole,
   fetchRecentReports,
   fetchStudentContent,
+  fetchStudentLessons,
   fetchTableRows,
   fillParentSelects,
   fillStudentSelects,
@@ -21,6 +22,7 @@ import {
   linkTutorToStudent,
   readFormValues,
   renderAssessmentList,
+  renderLessonList,
   renderProfileCards,
   renderReportTimeline,
   renderStudentCards,
@@ -39,6 +41,7 @@ export async function bootstrapAdminDashboard() {
   const studentsContainer = document.querySelector<HTMLElement>("[data-admin-students]");
   const assessmentsContainer = document.querySelector<HTMLElement>("[data-admin-assessments]");
   const reportsContainer = document.querySelector<HTMLElement>("[data-admin-recent-reports]");
+  const lessonsContainer = document.querySelector<HTMLElement>("[data-admin-lessons]");
   const parentProfilesContainer = document.querySelector<HTMLElement>("[data-parent-profiles]");
   const tutorProfilesContainer = document.querySelector<HTMLElement>("[data-tutor-profiles]");
   const targetEditor = document.querySelector<HTMLElement>("[data-target-editor]");
@@ -145,7 +148,9 @@ export async function bootstrapAdminDashboard() {
     const parentLinks = parentLinksRaw as Array<Record<string, unknown>>;
     const invites = invitesRaw as Array<Record<string, unknown>>;
 
-    const { assessments, targets } = await fetchStudentContent(students.map((student) => student.id));
+    const studentIds = students.map((student) => student.id);
+    const { assessments, targets } = await fetchStudentContent(studentIds);
+    const upcomingLessons = await fetchStudentLessons(studentIds, { status: "scheduled", limit: 8 });
     const studentsById = new Map(students.map((student) => [student.id, student]));
 
     fillStudentSelects(students);
@@ -204,6 +209,15 @@ export async function bootstrapAdminDashboard() {
 
     if (reportsContainer) {
       renderReportTimeline(reportsContainer, recentReports, studentsById);
+    }
+
+    if (lessonsContainer) {
+      renderLessonList(lessonsContainer, upcomingLessons, studentsById, {
+        emptyTitle: "No upcoming lessons",
+        emptyBody: "Scheduled lessons will appear here once they are added in the portal.",
+        mode: "upcoming",
+        limit: 8
+      });
     }
 
     if (targetEditor) {

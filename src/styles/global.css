@@ -106,19 +106,19 @@ summary::-webkit-details-marker {
   }
 
   .section-shell {
-    @apply py-6 sm:py-8 lg:py-10;
+    @apply py-5 sm:py-7 lg:py-9;
   }
 
   .section-shell-tight {
-    @apply py-4 sm:py-6 lg:py-8;
+    @apply py-3 sm:py-5 lg:py-6;
   }
 
   .dashboard-shell {
-    @apply grid gap-4;
+    @apply grid gap-4 lg:gap-5;
   }
 
   .dashboard-section {
-    @apply rounded-[1.35rem] border border-white/70 bg-white/[0.88] p-4 shadow-fb backdrop-blur-xl sm:p-5 lg:p-6;
+    @apply rounded-[1.25rem] border border-white/70 bg-white/[0.9] p-4 shadow-fb backdrop-blur-xl sm:p-5;
   }
 
   .dashboard-section-heading {
@@ -130,11 +130,11 @@ summary::-webkit-details-marker {
   }
 
   .dashboard-card-grid {
-    @apply grid gap-3 md:grid-cols-2 lg:gap-4;
+    @apply grid gap-3 md:grid-cols-2;
   }
 
   .dashboard-card-stack {
-    @apply grid gap-3.5 lg:gap-4;
+    @apply grid gap-3;
   }
 
   .dashboard-nav-scroll {
@@ -168,7 +168,7 @@ summary::-webkit-details-marker {
   }
 
   .form-panel {
-    @apply rounded-[1.35rem] border border-white/70 bg-white/[0.88] p-4 shadow-fb backdrop-blur-xl sm:p-5 lg:p-6;
+    @apply rounded-[1.2rem] border border-white/70 bg-white/[0.9] p-4 shadow-fb backdrop-blur-xl sm:p-5;
     scroll-margin-top: 6.5rem;
   }
 
@@ -177,11 +177,11 @@ summary::-webkit-details-marker {
   }
 
   .form-grid {
-    @apply mt-4 grid gap-3 sm:grid-cols-2 sm:gap-3;
+    @apply mt-4 grid gap-3 md:grid-cols-2;
   }
 
   .form-grid-compact {
-    @apply mt-4 grid gap-2.5 sm:grid-cols-2 sm:gap-3;
+    @apply mt-4 grid gap-2.5 md:grid-cols-2 md:gap-3;
   }
 
   .form-actions {
@@ -189,11 +189,11 @@ summary::-webkit-details-marker {
   }
 
   .surface-note {
-    @apply rounded-[1.05rem] border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm leading-6 text-slate-700;
+    @apply rounded-[1rem] border border-slate-200 bg-slate-50/85 px-4 py-3 text-sm leading-6 text-slate-700;
   }
 
   .surface-note-sky {
-    @apply rounded-[1.05rem] border border-sky-100 bg-sky-50/90 px-4 py-3 text-sm leading-6 text-slate-700;
+    @apply rounded-[1rem] border border-sky-100 bg-sky-50/90 px-4 py-3 text-sm leading-6 text-slate-700;
   }
 
   .dark-panel {
@@ -309,6 +309,66 @@ summary::-webkit-details-marker {
 
   .dashboard-wide-shell {
     @apply mx-auto w-full max-w-[1600px] px-3 sm:px-5 lg:px-8;
+  }
+
+  .portal-shell {
+    @apply mx-auto w-full max-w-[1520px] px-3 sm:px-5 lg:px-8;
+  }
+
+  .portal-app-grid {
+    @apply grid gap-4 lg:grid-cols-[236px_minmax(0,1fr)] xl:grid-cols-[236px_minmax(0,1fr)_296px];
+  }
+
+  .portal-main-grid {
+    @apply grid gap-4;
+  }
+
+  .portal-right-rail {
+    @apply grid gap-4;
+  }
+
+  .portal-student-switcher {
+    @apply grid gap-2;
+  }
+
+  .portal-student-button {
+    @apply flex w-full items-start justify-between gap-3 rounded-[1rem] border border-slate-200 bg-white px-3.5 py-3 text-left transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-2;
+  }
+
+  .portal-student-button[data-active="true"] {
+    @apply border-sky-200 bg-sky-50;
+  }
+
+  .overview-bar {
+    @apply rounded-[1.2rem] border border-fb-bg/10 bg-fb-bg px-4 py-4 text-white shadow-fb sm:px-5 sm:py-5;
+  }
+
+  .overview-grid {
+    @apply mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3;
+  }
+
+  .overview-stat {
+    @apply rounded-[1rem] border border-white/10 bg-white/[0.06] px-3.5 py-3;
+  }
+
+  .dashboard-compact-grid {
+    @apply grid gap-4 lg:grid-cols-2;
+  }
+
+  .dashboard-split-grid {
+    @apply grid gap-4 xl:grid-cols-[1.05fr_0.95fr];
+  }
+
+  .dashboard-list {
+    @apply grid gap-2.5;
+  }
+
+  .dashboard-list-item {
+    @apply rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3;
+  }
+
+  .metric-pill {
+    @apply inline-flex items-center rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase;
   }
 
   .admin-app-grid {

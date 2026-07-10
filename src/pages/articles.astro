@@ -1,0 +1,74 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "FlyBridge Articles",
+  description: "Published FlyBridge articles and guidance.",
+  url: new URL("/articles", site.url).toString()
+};
+---
+
+<BaseLayout title="Articles" description="Published FlyBridge articles and guidance." path="/articles" schema={schema}>
+  <section class="container-shell section-shell-tight">
+    <div class="space-y-4">
+      <span class="eyebrow">Articles</span>
+      <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[3rem]">Articles and guidance.</h1>
+      <p class="max-w-3xl body-copy-compact">Published FlyBridge writing appears here when articles are available.</p>
+    </div>
+  </section>
+
+  <section class="container-shell section-shell-tight pt-0">
+    <div class="dashboard-card-stack" data-articles-list>
+      <article class="dashboard-section text-sm text-fb-ink-soft">Loading articles...</article>
+    </div>
+  </section>
+
+  <script>
+    import { createBrowserSupabaseClient } from "../lib/supabase";
+
+    const list = document.querySelector("[data-articles-list]");
+
+    async function loadArticles() {
+      if (!(list instanceof HTMLElement)) return;
+      try {
+        const client = createBrowserSupabaseClient();
+        const { data, error } = await client
+          .from("articles")
+          .select("id,title,slug,excerpt,published_at")
+          .eq("status", "published")
+          .order("published_at", { ascending: false });
+
+        if (error) throw error;
+        const articles = data ?? [];
+
+        if (articles.length === 0) {
+          list.innerHTML = `<article class="dashboard-section text-sm text-fb-ink-soft">No data available.</article>`;
+          return;
+        }
+
+        list.innerHTML = articles
+          .map((article) => {
+            const published = article.published_at
+              ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(article.published_at))
+              : "Date not provided";
+            return `
+              <article class="dashboard-section">
+                <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">${published}</p>
+                <h2 class="mt-2 text-xl font-semibold text-fb-ink">${article.title}</h2>
+                <p class="mt-2 text-sm text-fb-ink-soft">FlyBridge Education</p>
+                <p class="mt-3 text-sm leading-6 text-fb-ink-soft">${article.excerpt ?? "No data available."}</p>
+              </article>
+            `;
+          })
+          .join("");
+      } catch {
+        list.innerHTML = `<article class="dashboard-section text-sm text-fb-ink-soft">No data available.</article>`;
+      }
+    }
+
+    loadArticles();
+  </script>
+</BaseLayout>

@@ -1,16 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHero from "../components/PageHero.astro";
-import CtaBanner from "../components/CtaBanner.astro";
 import FormShell from "../components/FormShell.astro";
-import SectionHeading from "../components/SectionHeading.astro";
-import { assessmentFeatures, site } from "../data/site";
+import { site } from "../data/site";
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Book a Free Assessment",
-  description: "Book a free assessment with FlyBridge Education and request a preferred slot while calendar integration is being finalised.",
+  description: "Book a free assessment with FlyBridge Education.",
   url: new URL("/book-assessment", site.url).toString()
 };
 
@@ -20,80 +17,45 @@ const fields = [
   { label: "Year group", name: "year-group", placeholder: "For example: Year 10", required: true },
   { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com", required: true, autocomplete: "email" },
   { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to reach you", autocomplete: "tel" },
-  { label: "Preferred assessment time", name: "preferred-time", placeholder: "For example: weekday evenings or Saturday morning", required: true },
-  { label: "Focus areas", name: "focus-areas", type: "textarea" as const, placeholder: "Share current grades, topics of concern, or anything important before the assessment.", helper: "This helps FlyBridge make the first conversation more useful from the start." }
-] as const;
-
-const trustPoints = [
-  {
-    title: "Useful first step",
-    body: "The assessment is meant to clarify the best support route, not push families into a rushed decision."
-  },
-  {
-    title: "Easy to replace later",
-    body: "This booking layout is already structured so a calendar tool can be added later without redesigning the page."
-  }
+  { label: "Preferred assessment time", name: "preferred-time", placeholder: "Weekday evenings, Saturday morning, etc.", required: true },
+  { label: "Focus areas", name: "focus-areas", type: "textarea" as const, placeholder: "Share current grades, topics of concern or anything important before the assessment.", span: "full" as const }
 ] as const;
 ---
 
 <BaseLayout
   title="Book a Free Assessment"
-  description="Book a free assessment with FlyBridge Education and request a preferred slot while calendar integration is being finalised."
+  description="Book a free assessment with FlyBridge Education."
   path="/book-assessment"
   schema={schema}
 >
-  <PageHero
-    eyebrow="Book assessment"
-    title="Book a free assessment and start with clarity."
-    body="The assessment helps FlyBridge understand your child's current position, priorities and the most useful next step before any lessons begin."
-    primaryLabel="WhatsApp to Arrange"
-    primaryHref={site.whatsappHref}
-    secondaryLabel="Request a Callback"
-    secondaryHref={site.callbackHref}
-    imageSrc={site.images.assessmentReport}
-    imageAlt="A premium assessment report image representing the booking and assessment process."
-    imageBadge="Assessment overview"
-  />
-
-  <section class="container-shell section-shell pt-0">
-    <div class="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+  <section class="container-shell section-shell-tight">
+    <div class="grid gap-5 lg:grid-cols-[0.86fr_1.14fr]">
       <div class="space-y-4">
-        <SectionHeading
-          eyebrow="What the assessment covers"
-          title="The free assessment gives parents clarity before any lessons begin."
-          body="It is designed to reduce guesswork, explain the likely best format, and show how FlyBridge would approach support if you move forward."
-        />
-        <div class="surface-note-sky">
-          This is the strongest first step if you already know your child needs subject-specific help and you want a tailored recommendation rather than a generic plan.
-        </div>
-        <div class="grid gap-3">
-          {assessmentFeatures.map((item) => (
-            <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
-          ))}
+        <span class="eyebrow">Book assessment</span>
+        <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.5rem]">Book a free assessment.</h1>
+        <p class="max-w-2xl body-copy-compact">Use the form to request an assessment slot while calendar integration is still being finalised.</p>
+        <div class="dashboard-list">
+          <div class="dashboard-list-item">
+            <p class="text-sm font-semibold text-fb-ink">What the assessment covers</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Current attainment, confidence, exam board, weak areas and the most useful lesson format.</p>
+          </div>
+          <div class="dashboard-list-item">
+            <p class="text-sm font-semibold text-fb-ink">What happens next</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">FlyBridge reviews the request and follows up using the details and preferred times you provide.</p>
+          </div>
         </div>
       </div>
       <FormShell
-        title="Request an assessment slot"
-        body="Complete the form below and FlyBridge will open a pre-filled email draft with your preferred times, so arranging the assessment stays quick while the final calendar integration is being added."
+        title="Assessment request"
+        body="Submitting opens a pre-filled email draft so the assessment request can be sent immediately."
         fields={fields}
         submitLabel="Request assessment"
-        helper="This page is intentionally structured so a calendar tool can replace this form later without redesigning the overall experience."
+        helper="This placeholder booking flow is structured so Calendly or Google Calendar can replace it later."
         subject="FlyBridge free assessment request"
         recipientEmail={site.email}
         secondaryLabel="WhatsApp FlyBridge"
         secondaryHref={site.whatsappHref}
-        trustPoints={trustPoints}
       />
     </div>
   </section>
-
-  <CtaBanner
-    eyebrow="Ready when you are"
-    title="The assessment is the best first step for understanding what support will actually help."
-    body="If you already know you would like to begin, send a message and FlyBridge can help you arrange the next available slot."
-    actions={[
-      { label: "WhatsApp", href: site.whatsappHref },
-      { label: "Email", href: `mailto:${site.email}`, variant: "secondary" }
-    ]}
-  />
 </BaseLayout>

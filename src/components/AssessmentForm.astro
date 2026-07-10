@@ -10,14 +10,7 @@ const { formId, title = "Add assessment" } = Astro.props;
 <form id={formId} class="form-panel" data-assessment-form>
   <div class="form-heading">
     <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
-    <p class="body-copy">Log checkpoints quickly so parents can see measurable movement without wading through too much detail.</p>
-  </div>
-  <div class="surface-note mt-4">
-    Short notes are enough here. The goal is to show what the score means, not to overload the portal with raw data.
-  </div>
-  <div class="mt-4 flex flex-wrap gap-2">
-    <span class="mini-chip">Checkpoint clarity</span>
-    <span class="mini-chip">Scores in context</span>
+    <p class="body-copy-compact">Add the latest checkpoint and enough context for a parent to understand it quickly.</p>
   </div>
   <div class="form-grid-compact">
     <label>
@@ -47,7 +40,7 @@ const { formId, title = "Add assessment" } = Astro.props;
     <label class="sm:col-span-2">
       <span class="label-shell">Notes</span>
       <textarea class="input-shell min-h-[4.5rem] resize-y" name="notes" placeholder="Optional notes for context or interpretation"></textarea>
-      <span class="helper-shell">For example: stronger recall than last week, timing still needs practice, or confidence improving.</span>
+      <span class="helper-shell">Use a short note only if the score needs explanation.</span>
     </label>
   </div>
   <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
