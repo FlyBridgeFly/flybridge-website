@@ -183,7 +183,7 @@ export function getProfileName(profile: ProfileRow) {
 }
 
 export function getRoleLabel(role?: ProfileRole | null) {
-  if (role === "admin") return "Admin access";
+  if (role === "admin") return "Administrator";
   if (role === "tutor") return "Tutor access";
   if (role === "parent") return "Parent access";
   return "Portal access";
@@ -277,7 +277,7 @@ function setRoleRedirect(role?: ProfileRole | null, hrefOverride?: string, label
   const href = hrefOverride ?? getRoleHome(role);
   const label =
     labelOverride ??
-    (role === "admin" ? "Open admin dashboard" : role === "tutor" ? "Open tutor dashboard" : "Open parent portal");
+    (role === "admin" ? "Open admin workspace" : role === "tutor" ? "Open tutor dashboard" : "Open parent portal");
   document.querySelectorAll<HTMLAnchorElement>("[data-role-redirect]").forEach((node) => {
     node.href = href;
     node.textContent = label;
@@ -371,8 +371,8 @@ export async function guardPage(requiredRoles: ProfileRole[], options: GuardOpti
   const role = profile.role ?? "parent";
   if (!requiredRoles.includes(role)) {
     if (role === "admin" && options.adminRedirectHome) {
-      setGuardMessage(options.adminRedirectMessage ?? "This account uses the Admin Dashboard.");
-      setRoleRedirect("admin", options.adminRedirectHome, "Open admin dashboard");
+      setGuardMessage(options.adminRedirectMessage ?? "This account uses the FlyBridge admin workspace.");
+      setRoleRedirect("admin", options.adminRedirectHome, "Open admin workspace");
     } else {
       setGuardMessage(
         options.unauthorizedMessage ?? "Your account is signed in, but this page is not the right portal view for your access level."
@@ -755,8 +755,11 @@ export function renderStudentCards(
     .map((student) => {
       const studentName = getStudentName(student);
       const progress = getProgressStatusMeta(String(student.progress_status ?? ""));
+      const isActive = student.active !== false;
       return `
-        <article class="card-panel p-4 sm:p-5" data-student-card data-student-id="${escapeHtml(student.id)}">
+        <article class="card-panel p-4 sm:p-5" data-student-card data-student-id="${escapeHtml(student.id)}" data-student-name="${escapeHtml(
+          studentName.toLowerCase()
+        )}" data-student-active="${isActive ? "active" : "inactive"}">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div class="min-w-0">
               <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">${escapeHtml(
@@ -766,6 +769,11 @@ export function renderStudentCards(
               <p class="mt-2 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(student.school ?? "School not recorded")}</p>
             </div>
             <div class="flex flex-wrap gap-2 sm:justify-end">
+              <span class="rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase ${
+                isActive ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-slate-100 text-slate-600"
+              }">
+                ${isActive ? "Active" : "Inactive"}
+              </span>
               <span class="rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase ${progress.badgeClass}">
                 ${escapeHtml(progress.label)}
               </span>
@@ -780,6 +788,15 @@ export function renderStudentCards(
           ${
             student.notes
               ? `<p class="mt-4 break-words rounded-[1rem] border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm leading-6 text-fb-ink-soft">${escapeHtml(String(student.notes))}</p>`
+              : ""
+          }
+          ${
+            options.editable
+              ? `<div class="mt-4 flex flex-wrap gap-2">
+                  <button type="button" class="quick-add-chip" data-student-action="report" data-student-id="${escapeHtml(student.id)}">Add report</button>
+                  <button type="button" class="quick-add-chip" data-student-action="assessment" data-student-id="${escapeHtml(student.id)}">Add assessment</button>
+                  <button type="button" class="quick-add-chip" data-student-action="target" data-student-id="${escapeHtml(student.id)}">Add target</button>
+                </div>`
               : ""
           }
         </article>
@@ -866,6 +883,13 @@ export function renderProfileCards(
         "created_at",
         "expires_at"
       )[0] as ParentInviteRow | undefined;
+      const status = String(profile.status ?? "active");
+      const statusBadgeClass =
+        status === "suspended"
+          ? "border-rose-200 bg-rose-50 text-rose-700"
+          : status === "inactive"
+            ? "border-amber-200 bg-amber-50 text-amber-700"
+            : "border-emerald-200 bg-emerald-50 text-emerald-700";
 
       const relatedStudentsMarkup = relatedStudents.length
         ? relatedStudents
@@ -886,9 +910,14 @@ export function renderProfileCards(
               <h3 class="mt-2 break-words text-lg font-semibold text-fb-ink sm:text-xl">${escapeHtml(getProfileName(profile))}</h3>
               <p class="mt-2 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(profile.email ?? "Email not recorded")}</p>
             </div>
-            <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase">
-              ${relatedStudents.length} linked student${relatedStudents.length === 1 ? "" : "s"}
-            </span>
+            <div class="flex flex-wrap gap-2 sm:justify-end">
+              <span class="rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase ${statusBadgeClass}">
+                ${escapeHtml(status)}
+              </span>
+              <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase">
+                ${relatedStudents.length} linked student${relatedStudents.length === 1 ? "" : "s"}
+              </span>
+            </div>
           </div>
           <div class="mt-4 space-y-3">
             ${
@@ -896,6 +925,9 @@ export function renderProfileCards(
                 ? `<div class="flex flex-wrap gap-2">${relatedStudentsMarkup}</div>`
                 : `<p class="text-sm leading-7 text-fb-ink-soft">No student links yet.</p>`
             }
+            <div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm text-fb-ink-soft">
+              Account status: ${escapeHtml(status)}${profile.last_login_at ? ` • Last login ${escapeHtml(formatDate(profile.last_login_at))}` : ""}
+            </div>
             ${
               options.heading === "parent"
                 ? `<div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm text-fb-ink-soft">

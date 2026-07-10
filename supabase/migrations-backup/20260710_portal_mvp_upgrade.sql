@@ -3,11 +3,13 @@ alter table if exists public.profiles
   add column if not exists temporary_password_created_at timestamptz,
   add column if not exists last_login_at timestamptz,
   add column if not exists status text not null default 'active';
+
 alter table if exists public.students
   add column if not exists progress_status text not null default 'settling_in',
   add column if not exists progress_status_note text,
   add column if not exists recall_average numeric,
   add column if not exists active boolean not null default true;
+
 do $$
 begin
   if not exists (
@@ -20,6 +22,7 @@ begin
       check (progress_status in ('settling_in', 'below_target', 'on_track', 'above_target', 'needs_attention'));
   end if;
 end $$;
+
 create table if not exists public.lessons (
   id uuid primary key default gen_random_uuid(),
   student_id uuid references public.students(id) on delete cascade,
@@ -34,6 +37,7 @@ create table if not exists public.lessons (
   updated_at timestamptz not null default now(),
   constraint lessons_status_check check (status in ('scheduled', 'completed', 'cancelled', 'missed'))
 );
+
 create table if not exists public.articles (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -47,8 +51,10 @@ create table if not exists public.articles (
   updated_at timestamptz not null default now(),
   constraint articles_status_check check (status in ('draft', 'published'))
 );
+
 alter table public.lessons enable row level security;
 alter table public.articles enable row level security;
+
 drop policy if exists "admins manage lessons" on public.lessons;
 create policy "admins manage lessons"
 on public.lessons
@@ -65,6 +71,7 @@ with check (
     where profiles.id = auth.uid() and profiles.role = 'admin'
   )
 );
+
 drop policy if exists "tutors view assigned lessons" on public.lessons;
 create policy "tutors view assigned lessons"
 on public.lessons
@@ -78,12 +85,14 @@ using (
       and tutor_student_links.student_id = lessons.student_id
   )
 );
+
 drop policy if exists "tutors manage own lessons" on public.lessons;
 create policy "tutors manage own lessons"
 on public.lessons
 for all
 using (tutor_id = auth.uid())
 with check (tutor_id = auth.uid());
+
 drop policy if exists "parents view linked completed lessons" on public.lessons;
 create policy "parents view linked completed lessons"
 on public.lessons
@@ -97,6 +106,7 @@ using (
       and parent_student_links.student_id = lessons.student_id
   )
 );
+
 drop policy if exists "admins manage articles" on public.articles;
 create policy "admins manage articles"
 on public.articles
@@ -113,6 +123,7 @@ with check (
     where profiles.id = auth.uid() and profiles.role = 'admin'
   )
 );
+
 drop policy if exists "tutors manage own articles" on public.articles;
 create policy "tutors manage own articles"
 on public.articles
@@ -131,6 +142,7 @@ with check (
     where profiles.id = auth.uid() and profiles.role in ('tutor', 'admin')
   )
 );
+
 drop policy if exists "public read published articles" on public.articles;
 create policy "public read published articles"
 on public.articles

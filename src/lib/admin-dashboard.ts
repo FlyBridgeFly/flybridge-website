@@ -17,6 +17,8 @@ import {
   generateParentInvite,
   getFriendlyErrorMessage,
   guardPage,
+  linkParentToStudent,
+  linkTutorToStudent,
   readFormValues,
   renderAssessmentList,
   renderProfileCards,
@@ -24,12 +26,12 @@ import {
   renderStudentCards,
   resetPortalPassword,
   saveTargetRecord,
-  setStudentSelection,
   setStatusMessage,
-  updateStudentRecord,
-  linkParentToStudent,
-  linkTutorToStudent
+  setStudentSelection,
+  updateStudentRecord
 } from "./portal-client";
+
+type QuickAddTarget = "student" | "tutor" | "parent" | "lesson" | "report" | "assessment" | "target";
 
 export async function bootstrapAdminDashboard() {
   const { profile } = await guardPage(["admin"]);
@@ -53,17 +55,79 @@ export async function bootstrapAdminDashboard() {
   const tutorResetForm = document.querySelector<HTMLFormElement>("[data-tutor-reset-form]");
   const invitePreview = document.querySelector<HTMLElement>("[data-parent-invite-preview]");
   const resetStudentButton = document.querySelector<HTMLElement>("[data-student-reset]");
+  const studentSearch = document.querySelector<HTMLInputElement>("[data-student-search]");
+  const studentStatusFilter = document.querySelector<HTMLSelectElement>("[data-student-status-filter]");
+  const studentFilterEmpty = document.querySelector<HTMLElement>("[data-student-filter-empty]");
+  const quickAddDialog = document.querySelector<HTMLElement>("[data-quick-add-dialog]");
+  const quickAddOpen = document.querySelector<HTMLElement>("[data-quick-add-open]");
+  const quickAddClose = document.querySelector<HTMLElement>("[data-quick-add-close]");
 
   const studentCount = document.querySelector<HTMLElement>("[data-student-count]");
   const parentCount = document.querySelector<HTMLElement>("[data-parent-count]");
   const tutorCount = document.querySelector<HTMLElement>("[data-tutor-count]");
   const reportCount = document.querySelector<HTMLElement>("[data-report-count]");
 
+  const quickAddConfig: Record<QuickAddTarget, { tab: "students" | "parents" | "tutors"; selector: string }> = {
+    student: { tab: "students", selector: "[data-student-form]" },
+    tutor: { tab: "tutors", selector: "[data-tutor-account-form]" },
+    parent: { tab: "parents", selector: "[data-parent-account-form]" },
+    lesson: { tab: "students", selector: "[data-lesson-report-form]" },
+    report: { tab: "students", selector: "[data-lesson-report-form]" },
+    assessment: { tab: "students", selector: "[data-assessment-form]" },
+    target: { tab: "students", selector: "[data-target-form]" }
+  };
+
   const resetStudentForm = () => {
     if (!studentForm) return;
     studentForm.reset();
     const idField = studentForm.querySelector<HTMLInputElement>('input[name="student-id"]');
     if (idField) idField.value = "";
+  };
+
+  const openQuickAdd = () => {
+    if (!quickAddDialog) return;
+    quickAddDialog.dataset.open = "true";
+    quickAddDialog.setAttribute("aria-hidden", "false");
+    document.body.classList.add("menu-open");
+  };
+
+  const closeQuickAdd = () => {
+    if (!quickAddDialog) return;
+    quickAddDialog.dataset.open = "false";
+    quickAddDialog.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("menu-open");
+  };
+
+  const applyStudentFilters = () => {
+    if (!studentsContainer) return;
+    const query = studentSearch?.value.trim().toLowerCase() ?? "";
+    const status = studentStatusFilter?.value ?? "all";
+    const cards = Array.from(studentsContainer.querySelectorAll<HTMLElement>("[data-student-card]"));
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const name = (card.dataset.studentName ?? "").toLowerCase();
+      const text = card.textContent?.toLowerCase() ?? "";
+      const cardStatus = card.dataset.studentActive ?? "active";
+      const matchesQuery = !query || name.includes(query) || text.includes(query);
+      const matchesStatus = status === "all" || cardStatus === status;
+      const visible = matchesQuery && matchesStatus;
+      card.classList.toggle("hidden", !visible);
+      if (visible) visibleCount += 1;
+    });
+
+    studentFilterEmpty?.classList.toggle("hidden", visibleCount !== 0);
+  };
+
+  const jumpToSection = (target: QuickAddTarget, studentId?: string) => {
+    const config = quickAddConfig[target];
+    document.querySelector<HTMLElement>(`[data-admin-tab][data-tab="${config.tab}"]`)?.click();
+    if (studentId) {
+      setStudentSelection(studentId);
+    }
+    window.setTimeout(() => {
+      document.querySelector<HTMLElement>(config.selector)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
   };
 
   async function refresh() {
@@ -121,6 +185,17 @@ export async function bootstrapAdminDashboard() {
           studentForm.scrollIntoView({ behavior: "smooth", block: "start" });
         });
       });
+
+      studentsContainer.querySelectorAll<HTMLElement>("[data-student-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = button.dataset.studentAction as QuickAddTarget | undefined;
+          const studentId = button.dataset.studentId;
+          if (!target) return;
+          jumpToSection(target, studentId);
+        });
+      });
+
+      applyStudentFilters();
     }
 
     if (assessmentsContainer) {
@@ -150,6 +225,8 @@ export async function bootstrapAdminDashboard() {
           if (statusField) statusField.value = data.targetStatus ?? "open";
           if (dueField) dueField.value = data.targetDue ?? "";
           if (notesField) notesField.value = data.targetNotes ?? "";
+
+          targetForm.scrollIntoView({ behavior: "smooth", block: "start" });
         });
       });
     }
@@ -179,6 +256,24 @@ export async function bootstrapAdminDashboard() {
 
   activateTabs("[data-admin-tab]", "[data-admin-panel]", "students");
   resetStudentButton?.addEventListener("click", resetStudentForm);
+  studentSearch?.addEventListener("input", applyStudentFilters);
+  studentStatusFilter?.addEventListener("change", applyStudentFilters);
+  quickAddOpen?.addEventListener("click", openQuickAdd);
+  quickAddClose?.addEventListener("click", closeQuickAdd);
+  quickAddDialog?.addEventListener("click", (event) => {
+    if (event.target === quickAddDialog) closeQuickAdd();
+  });
+  quickAddDialog?.querySelectorAll<HTMLElement>("[data-quick-add-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.quickAddTarget as QuickAddTarget | undefined;
+      if (!target) return;
+      closeQuickAdd();
+      jumpToSection(target);
+    });
+  });
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeQuickAdd();
+  });
 
   await refresh();
 

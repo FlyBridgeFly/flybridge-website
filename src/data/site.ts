@@ -3,7 +3,7 @@ export const site = {
   shortName: "FlyBridge",
   tagline: "Helping students bridge the gap to GCSE success.",
   description:
-    "Cambridge-trained GCSE Science tuition for ambitious students aiming for Grades 7-9, with free assessment, structured parent reporting and personalised online support.",
+    "Thoughtful online tuition in science, mathematics and languages, with free assessment, clear reporting and supportive teaching for families across the UK.",
   url: "https://flybridgeeducation.co.uk",
   email: "admin@flybridgeeducation.co.uk",
   phone: "07729 467146",
@@ -118,7 +118,7 @@ export const heroMetrics = [
 ] as const;
 
 export const heroSupportPoints = [
-  "Cambridge-trained GCSE Science tuition",
+  "Science specialists with Cambridge training",
   "Free assessment before lessons begin",
   "Parent reporting built into the service"
 ] as const;
@@ -130,7 +130,7 @@ export const parentReasons = [
   },
   {
     title: "Academic credibility",
-    body: "Cambridge-trained expertise gives parents confidence that lessons are rigorous, thoughtful and built around long-term understanding."
+    body: "FlyBridge was founded by two science educators with Cambridge teacher training, giving families confidence in the thinking behind each lesson."
   },
   {
     title: "Clear progress systems",
@@ -144,16 +144,16 @@ export const parentReasons = [
 
 export const tutorHighlights = [
   {
-    title: "Cambridge training",
-    body: "A strong academic foundation that supports precise explanations, high standards and thoughtful lesson design."
+    title: "Built by educators",
+    body: "FlyBridge was founded by Mr Mubarak and his mother, both science education specialists with teacher training from the University of Cambridge."
   },
   {
-    title: "GCSE science focus",
-    body: "Sessions are built around the specific challenges students face in science: recall, application, calculations, extended responses and exam technique."
+    title: "Research-informed teaching",
+    body: "Mr Mubarak later completed a Master of Education at Cambridge, helping shape a clear, evidence-aware approach to lesson design and communication."
   },
   {
-    title: "Supportive teaching style",
-    body: "Students are challenged without feeling overwhelmed, with patient explanations and a clear path through difficult topics."
+    title: "Carefully selected tutors",
+    body: "As FlyBridge grows, it works with experienced teachers across the country so more families can access structured, supportive subject teaching."
   }
 ] as const;
 
@@ -244,28 +244,28 @@ export const pricingFeatures = [
 
 export const aboutSections = [
   {
-    title: "Cambridge training",
-    body: "FlyBridge is grounded in strong academic training, bringing clarity, rigour and careful thinking to every lesson."
+    title: "Experienced teaching",
+    body: "Lessons are shaped by classroom experience as well as subject knowledge, so support stays practical, calm and clearly explained."
   },
   {
-    title: "Teaching philosophy",
-    body: "The goal is not just to cover content, but to build understanding, confidence and the ability to perform under exam conditions."
+    title: "Clear parent communication",
+    body: "Families should never feel unsure about what is being covered, how the student is doing or what the next step should be."
   },
   {
-    title: "Experience",
-    body: "Support is designed around the patterns seen again and again in GCSE science: uneven topic knowledge, weak exam technique and fragile confidence."
+    title: "Structured progress tracking",
+    body: "Reporting, checkpoints and targets are organised so progress is easier to notice and easier to act on."
   },
   {
-    title: "Personal approach",
-    body: "Students respond best when teaching feels structured, calm and encouraging. FlyBridge combines high standards with a supportive tone."
+    title: "Carefully selected tutors",
+    body: "FlyBridge works with experienced educators across subject areas, choosing people who can teach clearly and communicate well with families."
   },
   {
     title: "Qualifications",
-    body: "Lessons reflect a premium, academically informed approach with careful attention to curriculum demands and learning progression."
+    body: "Mr Mubarak completed both a PGCE and a Master of Education at the University of Cambridge, while his mother also completed her PGCE there."
   },
   {
     title: "Mission",
-    body: "FlyBridge exists to help students bridge the gap between where they are now and the grades they are capable of achieving."
+    body: "FlyBridge exists to help students bridge the gap between where they are now and the confidence, understanding and outcomes they are capable of reaching."
   }
 ] as const;
 

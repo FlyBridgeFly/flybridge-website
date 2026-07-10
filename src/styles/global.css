@@ -106,11 +106,11 @@ summary::-webkit-details-marker {
   }
 
   .section-shell {
-    @apply py-7 sm:py-9 lg:py-11;
+    @apply py-6 sm:py-8 lg:py-10;
   }
 
   .section-shell-tight {
-    @apply py-5 sm:py-7 lg:py-9;
+    @apply py-4 sm:py-6 lg:py-8;
   }
 
   .dashboard-shell {
@@ -118,7 +118,7 @@ summary::-webkit-details-marker {
   }
 
   .dashboard-section {
-    @apply rounded-[1.35rem] border border-white/70 bg-white/[0.84] p-4 shadow-fb backdrop-blur-xl sm:p-5 lg:p-6;
+    @apply rounded-[1.35rem] border border-white/70 bg-white/[0.88] p-4 shadow-fb backdrop-blur-xl sm:p-5 lg:p-6;
   }
 
   .dashboard-section-heading {
@@ -130,7 +130,7 @@ summary::-webkit-details-marker {
   }
 
   .dashboard-card-grid {
-    @apply grid gap-3.5 md:grid-cols-2 lg:gap-4;
+    @apply grid gap-3 md:grid-cols-2 lg:gap-4;
   }
 
   .dashboard-card-stack {
@@ -156,7 +156,7 @@ summary::-webkit-details-marker {
   }
 
   .tab-button {
-    @apply min-w-[13rem] rounded-[1.05rem] border border-transparent bg-white px-4 py-3 text-left text-sm font-semibold text-fb-ink transition duration-200 hover:border-slate-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-2 md:min-w-0;
+    @apply min-w-[12rem] rounded-[1.05rem] border border-transparent bg-white px-4 py-3 text-left text-sm font-semibold text-fb-ink transition duration-200 hover:border-slate-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-2 md:min-w-0;
   }
 
   .eyebrow {
@@ -177,7 +177,7 @@ summary::-webkit-details-marker {
   }
 
   .form-grid {
-    @apply mt-4 grid gap-3 sm:grid-cols-2 sm:gap-3.5;
+    @apply mt-4 grid gap-3 sm:grid-cols-2 sm:gap-3;
   }
 
   .form-grid-compact {
@@ -215,11 +215,11 @@ summary::-webkit-details-marker {
   }
 
   .cta-button {
-    @apply inline-flex items-center justify-center rounded-full bg-fb-bg px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-fb-accent focus:ring-offset-2;
+    @apply inline-flex items-center justify-center rounded-full bg-fb-bg px-5 py-2.5 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-fb-accent focus:ring-offset-2;
   }
 
   .ghost-button {
-    @apply inline-flex items-center justify-center rounded-full border border-slate-200 bg-white/80 px-5 py-3 text-sm font-semibold text-fb-ink transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-fb-accent focus:ring-offset-2;
+    @apply inline-flex items-center justify-center rounded-full border border-slate-200 bg-white/80 px-5 py-2.5 text-sm font-semibold text-fb-ink transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-fb-accent focus:ring-offset-2;
   }
 
   .label-shell {
@@ -231,7 +231,7 @@ summary::-webkit-details-marker {
   }
 
   .input-shell {
-    @apply w-full rounded-[0.95rem] border border-slate-200 bg-white px-4 py-3 text-sm text-fb-ink outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-100;
+    @apply w-full rounded-[0.95rem] border border-slate-200 bg-white px-4 py-2.5 text-sm text-fb-ink outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-100;
   }
 
   .input-shell:user-invalid {
@@ -305,6 +305,38 @@ summary::-webkit-details-marker {
 
   .focus-pill {
     @apply focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-2;
+  }
+
+  .dashboard-wide-shell {
+    @apply mx-auto w-full max-w-[1600px] px-3 sm:px-5 lg:px-8;
+  }
+
+  .admin-app-grid {
+    @apply grid gap-4 2xl:gap-5;
+  }
+
+  .admin-toolbar {
+    @apply flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between;
+  }
+
+  .admin-filter-grid {
+    @apply grid gap-3 md:grid-cols-[minmax(0,1fr)_13rem];
+  }
+
+  .quick-add-chip {
+    @apply inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-fb-ink transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-2;
+  }
+
+  .dialog-shell {
+    @apply fixed inset-0 z-[70] hidden items-end bg-slate-950/35 p-3 backdrop-blur-[3px] sm:items-center sm:justify-center sm:p-6;
+  }
+
+  .dialog-shell[data-open="true"] {
+    display: flex;
+  }
+
+  .dialog-panel {
+    @apply w-full max-w-2xl rounded-[1.5rem] border border-white/70 bg-white/[0.97] p-5 shadow-2xl shadow-slate-900/15 backdrop-blur-xl sm:p-6;
   }
 }
 

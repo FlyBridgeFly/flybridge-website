@@ -40,6 +40,23 @@ PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 These values are read by `src/lib/supabase.ts`. Do not hardcode them into source files.
 
+### Apply the portal profile migration
+
+Before using parent or tutor account creation, apply the profile field migration so the `profiles` table includes:
+
+- `must_change_password`
+- `temporary_password_created_at`
+- `last_login_at`
+- `status`
+
+Run:
+
+```bash
+supabase db push
+```
+
+If you are not using the CLI workflow, run the SQL from `supabase/migrations/20260710_portal_profile_fields.sql` in the Supabase SQL Editor instead.
+
 ### Create an admin user
 
 1. Create the user manually in Supabase Auth.

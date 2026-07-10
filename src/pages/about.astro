@@ -23,8 +23,8 @@ const schema = {
 >
   <PageHero
     eyebrow="About FlyBridge"
-    title="A premium science tuition company built on academic depth, clear teaching and genuine care."
-    body="FlyBridge was created for families who want more than generic tutoring. The aim is to deliver carefully structured science support that feels credible, calm and effective."
+    title="Built by educators, shaped by family."
+    body="FlyBridge Education was founded by Mr Mubarak and his mother, two science education specialists whose shared goal was to help students understand demanding subjects with greater clarity and confidence."
     primaryLabel="Book Free Assessment"
     primaryHref={site.assessmentHref}
     secondaryLabel="Request a Callback"
@@ -37,12 +37,18 @@ const schema = {
 
   <section class="container-shell section-shell pt-0">
     <SectionHeading
-      eyebrow="What shapes the approach"
-      title="Why FlyBridge teaches the way it does."
-      body="Every part of the experience is designed to help students feel more capable while giving parents confidence that progress is being built with intention."
+      eyebrow="Company story"
+      title="A teaching network grounded in subject expertise and family values."
+      body="What began as a shared educational commitment has grown into a broader teaching offer for families who want structure, clarity and steady communication."
     />
     <div class="surface-note-sky mt-5">
-      FlyBridge is built around two promises at once: students get calm, academically rigorous teaching, and parents get clearer visibility into progress through structured communication and reporting.
+      FlyBridge Education was founded by Mr Mubarak and his mother, two science education specialists with teacher training from the University of Cambridge. Mr Mubarak later completed a Master of Education at Cambridge, strengthening the research-informed approach behind FlyBridge.
+    </div>
+    <div class="mt-4 rounded-[1.2rem] border border-slate-200 bg-white/85 px-5 py-5 shadow-fb">
+      <p class="max-w-4xl text-base leading-7 text-fb-ink-soft">
+        What began as a shared commitment to helping students understand science with greater clarity has grown into a wider teaching network.
+        FlyBridge works with carefully selected educators across the country to provide structured, supportive tuition across science, mathematics and languages.
+      </p>
     </div>
     <div class="mt-6 grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
       <div class="image-panel">
@@ -65,9 +71,28 @@ const schema = {
     </div>
   </section>
 
+  <section class="container-shell section-shell pt-0">
+    <div class="grid gap-4 lg:grid-cols-2">
+      <article class="card-panel p-5 sm:p-6">
+        <span class="mini-chip">How FlyBridge works</span>
+        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-fb-ink">Teaching that feels personal, not improvised.</h2>
+        <p class="mt-3 body-copy">
+          FlyBridge combines experienced teaching, clear parent communication, structured progress tracking and carefully selected tutors. The aim is to make support feel dependable for families and easier to sustain for students.
+        </p>
+      </article>
+      <article class="card-panel p-5 sm:p-6">
+        <span class="mini-chip">What families can expect</span>
+        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-fb-ink">A clear next step from the first conversation.</h2>
+        <p class="mt-3 body-copy">
+          Free assessments, focused lesson plans, organised follow-up work and concise reporting all exist for the same reason: to help families understand where support is going and why it matters.
+        </p>
+      </article>
+    </div>
+  </section>
+
   <CtaBanner
     eyebrow="Next step"
-    title="If the teaching philosophy feels right, the best next step is a free assessment."
+    title="If the approach feels right, the best next step is a free assessment."
     body="That first conversation helps parents understand how support would be tailored and whether FlyBridge is the right fit."
     actions={[
       { label: "Book Free Assessment", href: site.assessmentHref },

@@ -11,6 +11,8 @@ interface Props {
   image?: string;
   noindex?: boolean;
   schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+  showHeader?: boolean;
+  showFooter?: boolean;
 }
 
 const {
@@ -19,7 +21,9 @@ const {
   path = "/",
   image = site.images.ogImage,
   noindex = false,
-  schema
+  schema,
+  showHeader = true,
+  showFooter = true
 } = Astro.props;
 
 const pageTitle = `${title} | ${site.name}`;
@@ -80,10 +84,10 @@ const orgSchema = {
   </head>
   <body class="antialiased overflow-x-hidden">
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <Header currentPath={path} />
+    {showHeader && <Header currentPath={path} />}
     <main id="main-content" class="overflow-x-hidden pt-1 sm:pt-2">
       <slot />
     </main>
-    <Footer />
+    {showFooter && <Footer />}
   </body>
 </html>

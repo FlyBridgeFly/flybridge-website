@@ -8,7 +8,7 @@ import {
 export async function bootstrapParentPortal() {
   const { profile } = await guardPage(["parent"], {
     adminRedirectHome: "/admin",
-    adminRedirectMessage: "This account uses the Admin Dashboard.",
+    adminRedirectMessage: "This account uses the FlyBridge admin workspace.",
     unauthorizedMessage: "Your account is signed in, but parent-only reporting is available from the Parent Portal."
   });
   const container = document.querySelector<HTMLElement>("[data-parent-dashboard]");

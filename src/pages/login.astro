@@ -6,87 +6,58 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "FlyBridge Portal Login",
-  description: "Sign in to the FlyBridge tutor or parent reporting portal.",
+  description: "Sign in to the FlyBridge portal.",
   url: new URL("/login", site.url).toString()
 };
 ---
 
 <BaseLayout
   title="Portal Login"
-  description="Sign in to the FlyBridge tutor or parent reporting portal."
+  description="Sign in to the FlyBridge portal."
   path="/login"
   schema={schema}
 >
   <section class="container-shell pb-8 pt-5 sm:pb-10 sm:pt-6">
-    <div class="mx-auto grid max-w-5xl gap-5 lg:grid-cols-[0.94fr_1.06fr] lg:gap-6">
+    <div class="mx-auto grid max-w-4xl gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:gap-6">
       <div class="card-panel p-5 sm:p-6">
         <span class="eyebrow">FlyBridge portal</span>
-        <h1 class="mt-4 text-[1.95rem] font-semibold tracking-tight text-fb-ink sm:text-[2.45rem]">Sign in to continue.</h1>
-        <p class="mt-3 body-copy">
-          This login is used for tutors and parents, with secure role-based routing behind the scenes. Admin access stays private and is only available through a direct FlyBridge admin route.
+        <h1 class="mt-4 text-[1.95rem] font-semibold tracking-tight text-fb-ink sm:text-[2.45rem]">Welcome back</h1>
+        <p class="mt-3 body-copy">Sign in to access your FlyBridge portal.</p>
+        <p class="mt-3 text-sm leading-6 text-fb-ink-soft sm:text-base">
+          Parents can view lesson updates and progress. Tutors can manage their students, lessons and feedback.
         </p>
-        <div class="mt-5 grid gap-3 md:grid-cols-3 lg:grid-cols-1">
-          <div class="rounded-[1.15rem] border border-slate-200 bg-slate-50/80 p-4">
-            <p class="text-sm font-semibold text-fb-ink">Admin</p>
-            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">View all students, assign tutors, create reports and manage assessment activity.</p>
-          </div>
-          <div class="rounded-[1.15rem] border border-slate-200 bg-white p-4">
-            <p class="text-sm font-semibold text-fb-ink">Tutor</p>
-            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">See assigned students only, then record lesson reports, assessments and targets.</p>
-          </div>
-          <div class="rounded-[1.15rem] border border-slate-200 bg-white p-4">
-            <p class="text-sm font-semibold text-fb-ink">Parent</p>
-            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Read linked student reports, assessments and targets in one calm dashboard.</p>
-          </div>
+        <div class="surface-note mt-5">
+          If you need help accessing your account, contact FlyBridge and we will guide you through the next step.
         </div>
-        <div class="surface-note-sky mt-5">
-          Parent and tutor accounts are created by FlyBridge through the secure admin portal. If you are waiting for access, contact FlyBridge and we can confirm your portal invitation.
-        </div>
-        <div class="mt-4 flex flex-wrap gap-2">
-          <span class="mini-chip">/login</span>
-          <span class="mini-chip">/tutor</span>
-          <span class="mini-chip">/parent-portal</span>
-          <span class="mini-chip">Private admin route</span>
-        </div>
-        <div class="mt-5 grid gap-3 sm:grid-cols-2">
-          <a class="rounded-[1rem] border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-fb-ink transition hover:border-slate-300" href="/tutor">
-            Tutor
-          </a>
-          <a class="rounded-[1rem] border border-slate-200 bg-white px-4 py-3 text-center text-sm font-semibold text-fb-ink transition hover:border-slate-300" href="/parent-portal">
-            Parent Portal
-          </a>
+        <div class="mt-5 grid gap-3">
+          <div class="rounded-[1.1rem] border border-slate-200 bg-white px-4 py-4">
+            <p class="text-sm font-semibold text-fb-ink">Parents</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">See concise lesson summaries, assessment updates and current targets for linked students.</p>
+          </div>
+          <div class="rounded-[1.1rem] border border-slate-200 bg-white px-4 py-4">
+            <p class="text-sm font-semibold text-fb-ink">Tutors</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Work from one focused dashboard to record lessons, checkpoints and next steps.</p>
+          </div>
         </div>
       </div>
 
       <form class="card-panel p-5 sm:p-6" data-login-form>
         <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Portal login</h2>
-        <p class="mt-3 body-copy">
-          Use the email address and password that FlyBridge set up for your portal account.
-        </p>
+        <p class="mt-3 body-copy">Use the email address and password linked to your FlyBridge portal.</p>
         <div class="form-grid !mt-6 !grid-cols-1">
           <label>
             <span class="label-shell">Email</span>
             <input class="input-shell" name="email" type="email" placeholder="parent@example.com" required autocomplete="email" inputmode="email" />
-            <span class="helper-shell">Use the same invited email address FlyBridge used when setting up the account.</span>
           </label>
           <label>
             <span class="label-shell">Password</span>
             <input class="input-shell" name="password" type="password" placeholder="Your password" required autocomplete="current-password" />
-            <span class="helper-shell">If you were given a temporary password, use that first and update it later in your usual workflow.</span>
           </label>
         </div>
         <p class="status-message mt-4 hidden" data-login-feedback role="status" aria-live="polite"></p>
         <div class="form-actions">
           <button class="cta-button w-full sm:w-auto" type="submit">Sign in</button>
           <a class="ghost-button w-full sm:w-auto" href="/forgot-password">Forgot password?</a>
-        </div>
-        <div class="surface-note mt-4">
-          You can head directly to the Tutor or Parent Portal routes above. If you are not signed in yet, FlyBridge will route you back here safely.
-        </div>
-        <div class="mt-4 flex flex-wrap gap-2">
-          <span class="mini-chip">Secure portal access</span>
-          <span class="mini-chip">Role-based routing</span>
-          <span class="mini-chip">Password reset available</span>
         </div>
       </form>
     </div>

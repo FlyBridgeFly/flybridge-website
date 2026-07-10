@@ -17,7 +17,7 @@ import {
 export async function bootstrapTutorDashboard() {
   const { profile } = await guardPage(["tutor"], {
     adminRedirectHome: "/admin",
-    adminRedirectMessage: "This account uses the Admin Dashboard.",
+    adminRedirectMessage: "This account uses the FlyBridge admin workspace.",
     unauthorizedMessage: "Your account is signed in, but tutor-only tools are available from the Tutor Dashboard."
   });
 
