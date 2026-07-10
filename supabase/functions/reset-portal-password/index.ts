@@ -1,11 +1,12 @@
 import {
   corsHeaders,
+  failureResponse,
   generateTemporaryPassword,
-  jsonResponse,
   parseBody,
   requireAdmin,
   requireString,
   sendPortalCredentialsEmail,
+  successResponse,
   updatePortalPassword
 } from "../_shared/admin.ts";
 
@@ -47,14 +48,17 @@ Deno.serve(async (request) => {
           message: "Password reset completed, but no email address was found on the selected profile."
         };
 
-    return jsonResponse(200, {
-      message: emailResult.sent
+    return successResponse(
+      emailResult.sent
         ? "Temporary password reset successfully and emailed to the portal user."
-        : emailResult.message
-    });
+        : emailResult.message,
+      {
+        role: profile.role,
+        userId,
+        email: profile.email ?? null
+      }
+    );
   } catch (error) {
-    return jsonResponse(400, {
-      message: error instanceof Error ? error.message : "Unable to reset the portal password."
-    });
+    return failureResponse(400, error instanceof Error ? error.message : "Unable to reset the portal password.");
   }
 });

@@ -21,8 +21,8 @@ const schema = {
     <div class="mx-auto grid max-w-4xl gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:gap-6">
       <div class="card-panel p-5 sm:p-6">
         <span class="eyebrow">FlyBridge portal</span>
-        <h1 class="mt-4 text-[1.95rem] font-semibold tracking-tight text-fb-ink sm:text-[2.45rem]">Welcome back</h1>
-        <p class="mt-3 body-copy">Sign in to access your FlyBridge portal.</p>
+        <h1 class="mt-4 text-[1.95rem] font-semibold tracking-tight text-fb-ink sm:text-[2.45rem]" data-login-heading>Welcome back</h1>
+        <p class="mt-3 body-copy" data-login-body>Sign in to access your FlyBridge portal.</p>
         <p class="mt-3 text-sm leading-6 text-fb-ink-soft sm:text-base">
           Parents can view lesson updates and progress. Tutors can manage their students, lessons and feedback.
         </p>
@@ -65,6 +65,21 @@ const schema = {
 
   <script>
     import { bootstrapLoginPage, getFriendlyErrorMessage } from "../lib/portal-client";
+
+    const params = new URLSearchParams(window.location.search);
+    const portal = params.get("portal");
+    const heading = document.querySelector("[data-login-heading]");
+    const body = document.querySelector("[data-login-body]");
+
+    if (heading instanceof HTMLElement && body instanceof HTMLElement) {
+      if (portal === "parent") {
+        heading.textContent = "Parent portal login";
+        body.textContent = "Sign in to access your FlyBridge parent portal.";
+      } else if (portal === "tutor") {
+        heading.textContent = "Tutor portal login";
+        body.textContent = "Sign in to access your FlyBridge tutor portal.";
+      }
+    }
 
     bootstrapLoginPage().catch(async (error) => {
       const feedback = document.querySelector("[data-login-feedback]");

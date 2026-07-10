@@ -22,6 +22,22 @@ export function jsonResponse(status: number, payload: Record<string, unknown>) {
   });
 }
 
+export function successResponse(message: string, payload: Record<string, unknown> = {}) {
+  return jsonResponse(200, {
+    success: true,
+    message,
+    ...payload
+  });
+}
+
+export function failureResponse(status: number, message: string, payload: Record<string, unknown> = {}) {
+  return jsonResponse(status, {
+    success: false,
+    message,
+    ...payload
+  });
+}
+
 export async function parseBody(request: Request) {
   try {
     return (await request.json()) as Record<string, unknown>;

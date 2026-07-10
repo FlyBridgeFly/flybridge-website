@@ -103,6 +103,35 @@ const isPortalActive =
         </details>
       </nav>
       <div class="flex shrink-0 items-center gap-2">
+        <details class="group relative" data-header-dropdown>
+          <summary
+            class="focus-pill grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-slate-200 bg-white/80 text-fb-ink backdrop-blur"
+            aria-label="Open account menu"
+          >
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" aria-hidden="true">
+              <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="1.7"></path>
+              <path d="M4.5 21C5.54086 17.7161 8.47243 15.5 12 15.5C15.5276 15.5 18.4591 17.7161 19.5 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+            </svg>
+          </summary>
+          <div class="absolute right-0 top-[3rem] z-20 w-[min(16rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] rounded-[1.25rem] border border-white/70 bg-white/[0.97] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+            <div class="space-y-1" data-account-signed-out>
+              <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/login?portal=parent">
+                Parent login
+              </a>
+              <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/login?portal=tutor">
+                Tutor login
+              </a>
+            </div>
+            <div class="hidden space-y-1" data-account-signed-in>
+              <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-dashboard href="/login">
+                Open dashboard
+              </a>
+              <button class="block w-full rounded-[0.95rem] px-4 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-signout type="button">
+                Sign out
+              </button>
+            </div>
+          </div>
+        </details>
         <a class="cta-button shrink-0 px-3.5 py-2 text-sm sm:px-5 sm:py-2.5" href={site.assessmentHref}>
           <span class="sm:hidden">Book</span>
           <span class="hidden sm:inline">Book Assessment</span>
@@ -346,4 +375,60 @@ const isPortalActive =
     dropdowns.forEach((dropdown) => dropdown.removeAttribute("open"));
     document.body.classList.remove("menu-open");
   });
+</script>
+
+<script>
+  import { createBrowserSupabaseClient } from "../lib/supabase";
+  import { fetchProfile, getRoleHome } from "../lib/portal-client";
+
+  const client = createBrowserSupabaseClient();
+  const signedOutSections = document.querySelectorAll<HTMLElement>("[data-account-signed-out]");
+  const signedInSections = document.querySelectorAll<HTMLElement>("[data-account-signed-in]");
+  const dashboardLinks = document.querySelectorAll<HTMLAnchorElement>("[data-account-dashboard]");
+  const signOutButtons = document.querySelectorAll<HTMLButtonElement>("[data-account-signout]");
+
+  const toggleAccountState = (signedIn: boolean, href = "/login") => {
+    signedOutSections.forEach((node) => node.classList.toggle("hidden", signedIn));
+    signedInSections.forEach((node) => node.classList.toggle("hidden", !signedIn));
+    dashboardLinks.forEach((link) => {
+      link.href = href;
+    });
+  };
+
+  const syncAccountMenu = async () => {
+    const {
+      data: { session }
+    } = await client.auth.getSession();
+
+    if (!session?.user) {
+      toggleAccountState(false);
+      return;
+    }
+
+    try {
+      const profile = await fetchProfile(session.user.id);
+      if (!profile?.role) {
+        toggleAccountState(false);
+        return;
+      }
+      const href = getRoleHome(profile.role);
+      toggleAccountState(true, href);
+    } catch {
+      toggleAccountState(false);
+    }
+  };
+
+  signOutButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      window.sessionStorage.removeItem("flybridge-temp-password");
+      await client.auth.signOut();
+      window.location.href = "/login?reason=signed-out";
+    });
+  });
+
+  client.auth.onAuthStateChange(() => {
+    void syncAccountMenu();
+  });
+
+  void syncAccountMenu();
 </script>

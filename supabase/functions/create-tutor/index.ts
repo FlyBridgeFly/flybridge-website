@@ -1,13 +1,14 @@
 import {
   corsHeaders,
   createAuthUser,
+  failureResponse,
   generateTemporaryPassword,
-  jsonResponse,
   optionalString,
   parseBody,
   requireAdmin,
   requireString,
-  sendPortalCredentialsEmail
+  sendPortalCredentialsEmail,
+  successResponse
 } from "../_shared/admin.ts";
 
 Deno.serve(async (request) => {
@@ -35,16 +36,18 @@ Deno.serve(async (request) => {
       password
     });
 
-    return jsonResponse(200, {
-      message: emailResult.sent
+    return successResponse(
+      emailResult.sent
         ? "Tutor account created successfully and login details were emailed."
         : emailResult.message,
-      tutorId: user.id,
-      email
-    });
+      {
+        role: "tutor",
+        userId: user.id,
+        tutorId: user.id,
+        email
+      }
+    );
   } catch (error) {
-    return jsonResponse(400, {
-      message: error instanceof Error ? error.message : "Unable to create tutor."
-    });
+    return failureResponse(400, error instanceof Error ? error.message : "Unable to create tutor.");
   }
 });

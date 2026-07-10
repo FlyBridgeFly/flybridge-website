@@ -126,6 +126,15 @@ export async function getFriendlyErrorMessage(error: unknown, fallback = "Someth
   return mapFriendlyErrorMessage(message, fallback);
 }
 
+function debugAuth(label: string, payload?: Record<string, unknown>) {
+  if (!import.meta.env.DEV) return;
+  if (payload) {
+    console.info(`[FlyBridge auth] ${label}`, payload);
+    return;
+  }
+  console.info(`[FlyBridge auth] ${label}`);
+}
+
 function byRecentDate<T extends Record<string, unknown>>(items: T[], ...keys: string[]) {
   return [...items].sort((a, b) => {
     const aDate = keys.map((key) => a[key]).find(Boolean);
@@ -261,12 +270,14 @@ export function getRoleHome(role?: ProfileRole | null) {
 }
 
 export function redirectForRole(role?: ProfileRole | null, mustChangePassword?: boolean | null) {
-  if (mustChangePassword) {
-    window.location.href = "/change-password";
-    return;
-  }
-
-  window.location.href = getRoleHome(role);
+  const nextPath = mustChangePassword ? "/change-password" : getRoleHome(role);
+  if (window.location.pathname === nextPath) return;
+  debugAuth("Routing to next portal page", {
+    role: role ?? "parent",
+    mustChangePassword: Boolean(mustChangePassword),
+    nextPath
+  });
+  window.location.href = nextPath;
 }
 
 export function redirectForProfile(profile?: Pick<ProfileRow, "role" | "must_change_password"> | null) {
@@ -294,6 +305,7 @@ function hideRoleRedirect() {
 export function wireLogout(client: ReturnType<typeof createBrowserSupabaseClient>) {
   document.querySelectorAll<HTMLElement>("[data-logout]").forEach((node) => {
     node.addEventListener("click", async () => {
+      clearStoredTemporaryPassword();
       await client.auth.signOut();
       redirectToLogin("signed-out");
     });
@@ -342,6 +354,60 @@ export async function fetchProfile(userId: string) {
   return (data as ProfileRow | null) ?? null;
 }
 
+async function requireProfile(userId: string) {
+  const profile = await fetchProfile(userId);
+  if (!profile) {
+    throw new Error("Profile not found.");
+  }
+  return profile;
+}
+
+async function syncPortalAuthState({
+  markPasswordChanged = false,
+  updateLastLogin = true,
+  loginTime = new Date().toISOString()
+}: {
+  markPasswordChanged?: boolean;
+  updateLastLogin?: boolean;
+  loginTime?: string;
+}) {
+  const client = createBrowserSupabaseClient();
+  const payload = {
+    mark_password_changed: markPasswordChanged,
+    update_last_login: updateLastLogin,
+    login_time: loginTime
+  };
+
+  debugAuth("Calling sync_portal_auth_state", payload);
+  const { data, error } = await client.rpc("sync_portal_auth_state", payload);
+  if (error) throw error;
+  return (data as ProfileRow | null) ?? null;
+}
+
+function getStoredTemporaryPassword() {
+  return window.sessionStorage.getItem("flybridge-temp-password") ?? "";
+}
+
+function storeTemporaryPassword(password: string) {
+  if (!password) return;
+  window.sessionStorage.setItem("flybridge-temp-password", password);
+}
+
+function clearStoredTemporaryPassword() {
+  window.sessionStorage.removeItem("flybridge-temp-password");
+}
+
+function setFormPending(form: HTMLFormElement | null, pending: boolean, idleLabel?: string, busyLabel?: string) {
+  if (!form) return;
+  form.setAttribute("aria-busy", String(pending));
+  const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+  if (!submit) return;
+  const originalLabel = submit.dataset.idleLabel ?? idleLabel ?? submit.textContent?.trim() ?? "Submit";
+  submit.dataset.idleLabel = originalLabel;
+  submit.disabled = pending;
+  submit.textContent = pending ? busyLabel ?? "Saving..." : originalLabel;
+}
+
 export async function guardPage(requiredRoles: ProfileRole[], options: GuardOptions = {}) {
   const client = createBrowserSupabaseClient();
   showNode("[data-role-loading]", true);
@@ -369,6 +435,20 @@ export async function guardPage(requiredRoles: ProfileRole[], options: GuardOpti
   }
 
   const role = profile.role ?? "parent";
+  const pathname = window.location.pathname;
+
+  if (profile.must_change_password) {
+    if (pathname !== "/change-password") {
+      debugAuth("Redirecting to forced password change", {
+        userId: session.user.id,
+        role,
+        pathname
+      });
+      window.location.href = "/change-password";
+      throw new Error("Password change required.");
+    }
+  }
+
   if (!requiredRoles.includes(role)) {
     if (role === "admin" && options.adminRedirectHome) {
       setGuardMessage(options.adminRedirectMessage ?? "This account uses the FlyBridge admin workspace.");
@@ -382,11 +462,6 @@ export async function guardPage(requiredRoles: ProfileRole[], options: GuardOpti
     setBusy("[data-role-loading]", false);
     showNode("[data-role-error]", true);
     throw new Error("Unauthorized role.");
-  }
-
-  if (profile.must_change_password && window.location.pathname !== "/change-password") {
-    window.location.href = "/change-password";
-    throw new Error("Password change required.");
   }
 
   setText("[data-session-name]", getProfileName(profile));
@@ -1377,7 +1452,23 @@ export async function bootstrapLoginPage() {
   } = await client.auth.getSession();
 
   if (session?.user) {
-    const profile = await fetchProfile(session.user.id);
+    let profile: ProfileRow;
+    try {
+      profile = await requireProfile(session.user.id);
+    } catch {
+      await client.auth.signOut();
+      setStatusMessage(
+        feedback,
+        "error",
+        "We found your account, but FlyBridge has not finished setting up your portal profile yet. Please contact FlyBridge."
+      );
+      return;
+    }
+    debugAuth("Existing session found on login page", {
+      userId: session.user.id,
+      mustChangePassword: Boolean(profile.must_change_password),
+      role: profile.role ?? "parent"
+    });
     redirectForProfile(profile);
     return;
   }
@@ -1387,6 +1478,7 @@ export async function bootstrapLoginPage() {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readFormValues(form);
+    setFormPending(form, true, "Sign in", "Signing in...");
     setStatusMessage(feedback, "info", "Signing you in...");
     const { error, data } = await client.auth.signInWithPassword({
       email: values.email,
@@ -1394,6 +1486,7 @@ export async function bootstrapLoginPage() {
     });
 
     if (error) {
+      setFormPending(form, false, "Sign in");
       setStatusMessage(
         feedback,
         "error",
@@ -1403,11 +1496,45 @@ export async function bootstrapLoginPage() {
     }
 
     if (!data.user) {
+      setFormPending(form, false, "Sign in");
       setStatusMessage(feedback, "error", "We could not verify your account. Please try again.");
       return;
     }
 
-    const profile = await fetchProfile(data.user.id);
+    let profile: ProfileRow;
+    try {
+      profile = await requireProfile(data.user.id);
+    } catch {
+      await client.auth.signOut();
+      setFormPending(form, false, "Sign in");
+      setStatusMessage(
+        feedback,
+        "error",
+        "Your login worked, but no FlyBridge portal profile was found for this account. Please contact FlyBridge."
+      );
+      return;
+    }
+
+    debugAuth("Login succeeded", {
+      userId: data.user.id,
+      mustChangePassword: Boolean(profile.must_change_password),
+      role: profile.role ?? "parent"
+    });
+
+    if (!profile.must_change_password) {
+      try {
+        await syncPortalAuthState({
+          markPasswordChanged: false,
+          updateLastLogin: true
+        });
+      } catch {
+        // Non-blocking for standard sign-in. The dashboard should still open.
+      }
+      clearStoredTemporaryPassword();
+    } else {
+      storeTemporaryPassword(values.password);
+    }
+
     redirectForProfile(profile);
   });
 }
@@ -1422,6 +1549,7 @@ export async function bootstrapForgotPasswordPage() {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readFormValues(form);
+    setFormPending(form, true, "Send reset link", "Sending reset link...");
     setStatusMessage(feedback, "info", "Sending reset link...");
 
     const { error } = await client.auth.resetPasswordForEmail(values.email, {
@@ -1429,6 +1557,7 @@ export async function bootstrapForgotPasswordPage() {
     });
 
     if (error) {
+      setFormPending(form, false, "Send reset link");
       setStatusMessage(
         feedback,
         "error",
@@ -1443,6 +1572,7 @@ export async function bootstrapForgotPasswordPage() {
       "If that email is linked to a FlyBridge portal account, a reset link has been sent."
     );
     form.reset();
+    setFormPending(form, false, "Send reset link");
   });
 }
 
@@ -1450,6 +1580,7 @@ async function bootstrapPasswordUpdatePage(formSelector: string, feedbackSelecto
   const client = createBrowserSupabaseClient();
   const form = document.querySelector<HTMLFormElement>(formSelector);
   const feedback = document.querySelector<HTMLElement>(feedbackSelector);
+  const retryButton = document.querySelector<HTMLButtonElement>("[data-profile-sync-retry]");
 
   const {
     data: { session }
@@ -1462,21 +1593,126 @@ async function bootstrapPasswordUpdatePage(formSelector: string, feedbackSelecto
 
   if (!form) return;
 
+  let profile: ProfileRow;
+  try {
+    profile = await requireProfile(session.user.id);
+  } catch {
+    setStatusMessage(
+      feedback,
+      "error",
+      "We found your account, but no FlyBridge portal profile is available yet. Please contact FlyBridge."
+    );
+    return;
+  }
+
+  if (successReason === "password-changed" && !profile.must_change_password) {
+    redirectForRole(profile.role ?? "parent", false);
+    return;
+  }
+
+  debugAuth("Loaded password change page", {
+    userId: session.user.id,
+    mustChangePassword: Boolean(profile.must_change_password),
+    role: profile.role ?? "parent"
+  });
+
+  let retryState: { loginTime: string } | null = null;
+
+  const syncProfileAfterPasswordChange = async (loginTime: string) => {
+    let syncedProfile: ProfileRow | null = null;
+
+    try {
+      syncedProfile = await syncPortalAuthState({
+        markPasswordChanged: true,
+        updateLastLogin: true,
+        loginTime
+      });
+      debugAuth("sync_portal_auth_state succeeded", {
+        userId: session.user.id,
+        returnedMustChangePassword: syncedProfile?.must_change_password ?? null
+      });
+    } catch (error) {
+      debugAuth("sync_portal_auth_state failed", {
+        userId: session.user.id,
+        error: await extractErrorMessage(error)
+      });
+      throw error;
+    }
+
+    const refreshedProfile = await requireProfile(session.user.id);
+    debugAuth("Profile re-fetched after sync", {
+      userId: session.user.id,
+      beforeMustChangePassword: Boolean(profile.must_change_password),
+      afterMustChangePassword: Boolean(refreshedProfile.must_change_password)
+    });
+
+    if (refreshedProfile.must_change_password) {
+      throw new Error("Password changed, but the portal still marks this account as requiring a password change.");
+    }
+
+    const { error: refreshError } = await client.auth.refreshSession();
+    if (refreshError) {
+      throw refreshError;
+    }
+
+    clearStoredTemporaryPassword();
+    retryState = null;
+    retryButton?.classList.add("hidden");
+    return refreshedProfile;
+  };
+
+  if (form.dataset.authBound === "true") return;
+  form.dataset.authBound = "true";
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readFormValues(form);
+    const nextPassword = values.password.trim();
+    const confirmPassword = values["confirm-password"].trim();
+    const temporaryPassword = getStoredTemporaryPassword();
 
-    if (values.password !== values["confirm-password"]) {
+    if (!nextPassword) {
+      setStatusMessage(feedback, "error", "Enter a new password before continuing.");
+      return;
+    }
+
+    if (nextPassword.length < 8) {
+      setStatusMessage(feedback, "error", "Use at least 8 characters for the new password.");
+      return;
+    }
+
+    if (nextPassword !== confirmPassword) {
       setStatusMessage(feedback, "error", "The new passwords do not match yet.");
       return;
     }
 
+    if (temporaryPassword && nextPassword === temporaryPassword) {
+      setStatusMessage(feedback, "error", "Choose a different password from the temporary one you just used.");
+      return;
+    }
+
+    setFormPending(
+      form,
+      true,
+      successReason === "password-reset-complete" ? "Save new password" : "Update password",
+      "Saving password..."
+    );
     setStatusMessage(feedback, "info", "Updating your password...");
     const { error } = await client.auth.updateUser({
-      password: values.password
+      password: nextPassword
+    });
+
+    debugAuth(error ? "updateUser failed" : "updateUser succeeded", {
+      userId: session.user.id,
+      error: error ? await extractErrorMessage(error) : null
     });
 
     if (error) {
+      setFormPending(
+        form,
+        false,
+        successReason === "password-reset-complete" ? "Save new password" : "Update password"
+      );
       setStatusMessage(
         feedback,
         "error",
@@ -1485,22 +1721,72 @@ async function bootstrapPasswordUpdatePage(formSelector: string, feedbackSelecto
       return;
     }
 
-    const profile = await fetchProfile(session.user.id);
-    await client
-      .from("profiles")
-      .update({
-        must_change_password: false
-      })
-      .eq("id", session.user.id);
+    const loginTime = new Date().toISOString();
+    retryState = { loginTime };
+    try {
+      const updatedProfile = await syncProfileAfterPasswordChange(loginTime);
+      form.reset();
+      setStatusMessage(
+        feedback,
+        "success",
+        successReason === "password-reset-complete"
+          ? "Password saved successfully. Redirecting you back to login..."
+          : "Password updated successfully. Redirecting you to your dashboard..."
+      );
+      const nextRoute =
+        successReason === "password-reset-complete" ? "/login?reason=password-reset-complete" : getRoleHome(updatedProfile.role);
+      debugAuth("Password flow redirect chosen", {
+        userId: session.user.id,
+        role: updatedProfile.role ?? "parent",
+        nextRoute
+      });
+      window.setTimeout(() => {
+        if (successReason === "password-reset-complete") {
+          redirectToLogin(successReason);
+          return;
+        }
+        redirectForRole(updatedProfile.role ?? profile.role ?? "parent", false);
+      }, 1200);
+    } catch (profileSyncError) {
+      setFormPending(
+        form,
+        false,
+        successReason === "password-reset-complete" ? "Save new password" : "Update password"
+      );
+      setStatusMessage(
+        feedback,
+        "error",
+        import.meta.env.DEV
+          ? `Password updated, but portal sync failed: ${(await extractErrorMessage(profileSyncError)) || "Unknown sync error."}`
+          : "Your password was updated, but FlyBridge could not finish the portal setup. Please retry the portal sync below."
+      );
+      retryButton?.classList.remove("hidden");
+      return;
+    }
+  });
 
-    setStatusMessage(feedback, "success", "Password updated. Redirecting you to your dashboard...");
-    window.setTimeout(() => {
-      if (successReason === "password-reset-complete") {
-        redirectToLogin(successReason);
-        return;
-      }
-      redirectForRole(profile?.role ?? "parent", false);
-    }, 800);
+  retryButton?.addEventListener("click", async () => {
+    if (!retryState) return;
+    setFormPending(form, true, successReason === "password-reset-complete" ? "Save new password" : "Update password", "Retrying sync...");
+    retryButton.classList.add("hidden");
+    setStatusMessage(feedback, "info", "Retrying portal setup...");
+    try {
+      const updatedProfile = await syncProfileAfterPasswordChange(retryState.loginTime);
+      setStatusMessage(feedback, "success", "Portal setup completed. Redirecting now...");
+      window.setTimeout(() => {
+        redirectForRole(updatedProfile.role ?? profile.role ?? "parent", false);
+      }, 900);
+    } catch (retryError) {
+      setFormPending(form, false, successReason === "password-reset-complete" ? "Save new password" : "Update password");
+      setStatusMessage(
+        feedback,
+        "error",
+        import.meta.env.DEV
+          ? `Retry failed: ${(await extractErrorMessage(retryError)) || "Unknown sync error."}`
+          : "The password has changed, but the portal still could not finish setup. Please contact FlyBridge."
+      );
+      retryButton.classList.remove("hidden");
+    }
   });
 }
 
