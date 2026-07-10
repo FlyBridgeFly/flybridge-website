@@ -238,6 +238,12 @@ function showNode(selector: string, visible: boolean) {
   });
 }
 
+function setBusy(selector: string, busy: boolean) {
+  document.querySelectorAll<HTMLElement>(selector).forEach((node) => {
+    node.setAttribute("aria-busy", String(busy));
+  });
+}
+
 function setGuardMessage(message: string) {
   setText("[data-role-error-message]", message);
 }
@@ -341,6 +347,7 @@ export async function guardPage(requiredRoles: ProfileRole[], options: GuardOpti
   showNode("[data-role-loading]", true);
   showNode("[data-role-error]", false);
   showNode("[data-role-guard]", false);
+  setBusy("[data-role-loading]", true);
   hideRoleRedirect();
 
   const {
@@ -356,6 +363,7 @@ export async function guardPage(requiredRoles: ProfileRole[], options: GuardOpti
   if (!profile) {
     setGuardMessage("We found your account, but FlyBridge has not finished setting up your portal access yet.");
     showNode("[data-role-loading]", false);
+    setBusy("[data-role-loading]", false);
     showNode("[data-role-error]", true);
     throw new Error("Profile not found.");
   }
@@ -371,6 +379,7 @@ export async function guardPage(requiredRoles: ProfileRole[], options: GuardOpti
       );
     }
     showNode("[data-role-loading]", false);
+    setBusy("[data-role-loading]", false);
     showNode("[data-role-error]", true);
     throw new Error("Unauthorized role.");
   }
@@ -384,6 +393,7 @@ export async function guardPage(requiredRoles: ProfileRole[], options: GuardOpti
   setText("[data-session-role]", getRoleLabel(role));
   setText("[data-session-email]", profile.email ?? session.user.email ?? "");
   showNode("[data-role-loading]", false);
+  setBusy("[data-role-loading]", false);
   showNode("[data-role-guard]", true);
   wireLogout(client);
 
@@ -716,8 +726,9 @@ export async function resetPortalPassword(values: {
 }
 
 export function renderEmptyState(container: HTMLElement, title: string, body: string) {
+  container.setAttribute("aria-busy", "false");
   container.innerHTML = `
-    <article class="card-panel border-dashed p-5 text-center sm:p-6">
+    <article class="card-panel border-dashed p-4 text-center sm:p-5">
       <span class="mini-chip">FlyBridge portal</span>
       <h3 class="mt-3 text-lg font-semibold text-fb-ink sm:text-xl">${escapeHtml(title)}</h3>
       <p class="mt-2 text-sm leading-6 text-fb-ink-soft sm:text-base">${escapeHtml(body)}</p>
@@ -728,10 +739,15 @@ export function renderEmptyState(container: HTMLElement, title: string, body: st
 export function renderStudentCards(
   container: HTMLElement,
   students: StudentRow[],
-  options: { compact?: boolean; showAssignments?: boolean; tutorLinks?: LinkRow[]; editable?: boolean } = {}
+  options: { editable?: boolean } = {}
 ) {
+  container.setAttribute("aria-busy", "false");
   if (students.length === 0) {
-    renderEmptyState(container, "No students yet", "Once students are added to FlyBridge, they will appear here automatically.");
+    renderEmptyState(
+      container,
+      "No students yet",
+      "Once FlyBridge student records are added, they will appear here automatically."
+    );
     return;
   }
 
@@ -739,9 +755,6 @@ export function renderStudentCards(
     .map((student) => {
       const studentName = getStudentName(student);
       const progress = getProgressStatusMeta(String(student.progress_status ?? ""));
-      const assignments = options.showAssignments
-        ? options.tutorLinks?.filter((link) => link.student_id === student.id).length ?? 0
-        : null;
       return `
         <article class="card-panel p-4 sm:p-5" data-student-card data-student-id="${escapeHtml(student.id)}">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -756,11 +769,6 @@ export function renderStudentCards(
               <span class="rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] uppercase ${progress.badgeClass}">
                 ${escapeHtml(progress.label)}
               </span>
-              ${
-                assignments !== null
-                  ? `<span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase">${assignments} tutor link${assignments === 1 ? "" : "s"}</span>`
-                  : ""
-              }
               <button type="button" class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase transition hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-2" data-student-fill data-student-id="${escapeHtml(student.id)}" aria-label="Use ${escapeHtml(studentName)} in dashboard forms">Use in forms</button>
               ${
                 options.editable
@@ -781,8 +789,13 @@ export function renderStudentCards(
 }
 
 export function renderAssessmentList(container: HTMLElement, assessments: AssessmentRow[], studentsById: Map<string, StudentRow>) {
+  container.setAttribute("aria-busy", "false");
   if (assessments.length === 0) {
-    renderEmptyState(container, "No assessments yet", "Assessments created by tutors or admins will appear here.");
+    renderEmptyState(
+      container,
+      "No assessments yet",
+      "Assessments created by tutors or admins will appear here once progress checkpoints are recorded."
+    );
     return;
   }
 
@@ -791,7 +804,7 @@ export function renderAssessmentList(container: HTMLElement, assessments: Assess
     .map((assessment) => {
       const student = assessment.student_id ? studentsById.get(String(assessment.student_id)) : undefined;
       return `
-        <article class="card-panel p-5">
+        <article class="card-panel p-4 sm:p-5">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div class="min-w-0">
               <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">${escapeHtml(
@@ -825,13 +838,14 @@ export function renderProfileCards(
     invites?: ParentInviteRow[];
   } = { heading: "tutor" }
 ) {
+  container.setAttribute("aria-busy", "false");
   if (profiles.length === 0) {
     renderEmptyState(
       container,
       options.heading === "parent" ? "No parent accounts yet" : "No tutor accounts yet",
       options.heading === "parent"
-        ? "Create a parent account and it will appear here once access is ready."
-        : "Create a tutor account and it will appear here once access is ready."
+        ? "Create a parent account and it will appear here once FlyBridge access is ready."
+        : "Create a tutor account and it will appear here once FlyBridge access is ready."
     );
     return;
   }
@@ -863,7 +877,7 @@ export function renderProfileCards(
         : "";
 
       return `
-        <article class="card-panel p-5 sm:p-6">
+        <article class="card-panel p-4 sm:p-5">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div class="min-w-0">
               <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">${escapeHtml(
@@ -885,7 +899,7 @@ export function renderProfileCards(
             ${
               options.heading === "parent"
                 ? `<div class="rounded-[1rem] border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm text-fb-ink-soft">
-                    Access status: ${escapeHtml(latestInvite?.status ?? "Profile created")}
+                    Access status: ${escapeHtml(latestInvite?.status ?? "Profile created and ready to link")}
                     ${inviteCount ? ` • ${inviteCount} invite${inviteCount === 1 ? "" : "s"} generated` : ""}
                   </div>`
                 : ""
@@ -967,8 +981,9 @@ export function renderReportTimeline(
   reports: LessonReportRow[],
   studentsById: Map<string, StudentRow>
 ) {
+  container.setAttribute("aria-busy", "false");
   if (reports.length === 0) {
-    renderEmptyState(container, "No lesson reports yet", "Lesson reports will appear here once tutors begin logging sessions.");
+    renderEmptyState(container, "No lesson reports yet", "Lesson reports will appear here once tutors begin recording completed sessions.");
     return;
   }
 
@@ -976,7 +991,7 @@ export function renderReportTimeline(
     .map((report) => {
       const student = report.student_id ? studentsById.get(String(report.student_id)) : undefined;
       return `
-        <article class="card-panel p-5 sm:p-6">
+        <article class="card-panel p-4 sm:p-5">
           <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">${escapeHtml(
@@ -1009,11 +1024,12 @@ export function renderReportTimeline(
 }
 
 export function renderParentStudentBundles(container: HTMLElement, bundles: StudentBundle[]) {
+  container.setAttribute("aria-busy", "false");
   if (bundles.length === 0) {
     renderEmptyState(
       container,
       "No linked students yet",
-      "Once a parent account is linked to a student, the reporting portal will populate automatically."
+      "Once FlyBridge links this parent account to a student, the reporting portal will populate automatically."
     );
     return;
   }

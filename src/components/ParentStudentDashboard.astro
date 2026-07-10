@@ -21,7 +21,7 @@ const { containerId } = Astro.props;
   <div class="surface-note-sky">
     Google Classroom continues to hold resources and lesson files. This portal is intentionally narrower in scope, giving parents the clearest summary view of progress after each lesson.
   </div>
-  <div class="dashboard-card-stack" id={containerId} data-parent-dashboard>
-    <article class="card-panel p-5 text-sm text-fb-ink-soft">Loading the latest lesson summaries, assessments and targets...</article>
+  <div class="dashboard-card-stack" id={containerId} data-parent-dashboard aria-busy="true">
+    <article class="card-panel p-4 text-sm text-fb-ink-soft sm:p-5" role="status" aria-live="polite">Loading the latest lesson summaries, assessments and targets...</article>
   </div>
 </section>

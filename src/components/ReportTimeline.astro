@@ -17,7 +17,7 @@ const {
     <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
     <p class="body-copy">{body}</p>
   </div>
-  <div class="dashboard-card-stack" id={containerId} data-admin-recent-reports>
-    <article class="card-panel p-4 text-sm text-fb-ink-soft sm:p-5">Loading recent reports...</article>
+  <div class="dashboard-card-stack" id={containerId} data-admin-recent-reports aria-busy="true">
+    <article class="card-panel p-4 text-sm text-fb-ink-soft sm:p-5" role="status" aria-live="polite">Loading recent reports...</article>
   </div>
 </section>

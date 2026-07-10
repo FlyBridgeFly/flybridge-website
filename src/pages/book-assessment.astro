@@ -56,13 +56,16 @@ const trustPoints = [
   />
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+    <div class="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
       <div class="space-y-4">
         <SectionHeading
           eyebrow="What the assessment covers"
           title="The free assessment gives parents clarity before any lessons begin."
           body="It is designed to reduce guesswork, explain the likely best format, and show how FlyBridge would approach support if you move forward."
         />
+        <div class="surface-note-sky">
+          This is the strongest first step if you already know your child needs subject-specific help and you want a tailored recommendation rather than a generic plan.
+        </div>
         <div class="grid gap-3">
           {assessmentFeatures.map((item) => (
             <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
@@ -71,10 +74,10 @@ const trustPoints = [
       </div>
       <FormShell
         title="Request an assessment slot"
-        body="Complete the form below and FlyBridge will open a pre-filled email draft with your preferred times, so arranging the assessment is still quick while the final calendar integration is being added."
+        body="Complete the form below and FlyBridge will open a pre-filled email draft with your preferred times, so arranging the assessment stays quick while the final calendar integration is being added."
         fields={fields}
         submitLabel="Request assessment"
-        helper="This page is intentionally structured so a Calendly embed or calendar booking tool can replace this form later without redesigning the overall page."
+        helper="This page is intentionally structured so a calendar tool can replace this form later without redesigning the overall experience."
         subject="FlyBridge free assessment request"
         recipientEmail={site.email}
         secondaryLabel="WhatsApp FlyBridge"

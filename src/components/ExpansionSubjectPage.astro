@@ -79,26 +79,26 @@ const schema = [
   />
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-6 lg:grid-cols-2">
-      <div class="space-y-6">
+    <div class="grid gap-5 lg:grid-cols-2">
+      <div class="space-y-5">
         <SectionHeading
           eyebrow="What support focuses on"
           title={subject.coverageHeading}
           body={subject.coverageBody}
         />
-        <div class="grid gap-4">
+        <div class="grid gap-3">
           {subject.coverage.map((item) => (
             <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
         </div>
       </div>
-      <div class="space-y-6">
+      <div class="space-y-5">
         <SectionHeading
           eyebrow="Lesson structure"
           title={subject.structureHeading}
           body={subject.structureBody}
         />
-        <div class="grid gap-4">
+        <div class="grid gap-3">
           {subject.structure.map((item) => (
             <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
@@ -114,8 +114,8 @@ const schema = [
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
-      <div class="space-y-6">
+    <div class="grid gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+      <div class="space-y-5">
         <SectionHeading
           eyebrow="Who it suits"
           title={subject.boardsHeading}

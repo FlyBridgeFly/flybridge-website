@@ -52,12 +52,12 @@ const schema = [
   path={`/${subject.slug}`}
   schema={schema}
 >
-  <section class="container-shell pb-6 pt-4 sm:pb-8 sm:pt-6">
-    <div class="card-panel hero-glow overflow-hidden p-5 sm:p-7 lg:p-8">
-      <div class="grid gap-6 lg:grid-cols-[1fr_0.92fr] lg:items-center lg:gap-8">
-        <div class="space-y-4">
+  <section class="container-shell pb-5 pt-4 sm:pb-7 sm:pt-5">
+    <div class="card-panel hero-glow overflow-hidden p-5 sm:p-6 lg:p-7">
+      <div class="grid gap-5 lg:grid-cols-[1fr_0.92fr] lg:items-center lg:gap-7">
+        <div class="space-y-3.5">
           <span class="eyebrow">{subject.navLabel}</span>
-          <h1 class="max-w-4xl text-balance text-[2.1rem] font-semibold tracking-tight text-fb-ink sm:text-[2.8rem] lg:text-[3.15rem] lg:leading-[1.04]">{subject.name} tuition with greater clarity, structure and exam confidence.</h1>
+          <h1 class="max-w-4xl text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.6rem] lg:text-[2.95rem] lg:leading-[1.05]">{subject.name} tuition with greater clarity, structure and exam confidence.</h1>
           <p class="max-w-2xl body-copy sm:text-base">{subject.hero}</p>
           <div class="grid gap-2 sm:grid-cols-3">
             <span class="mini-chip">Free assessment first</span>
@@ -73,12 +73,12 @@ const schema = [
           <img
             src={subject.image}
             alt={subject.imageAlt}
-            class="h-[220px] w-full object-cover sm:h-[280px] lg:h-[320px]"
+            class="h-[210px] w-full object-cover sm:h-[255px] lg:h-[300px]"
             loading="eager"
             decoding="async"
           />
           <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-fb-bg/88 via-fb-bg/30 to-transparent p-4 sm:p-5">
-            <div class="max-w-sm rounded-[1.15rem] border border-white/10 bg-fb-bg/78 px-4 py-3.5 text-white backdrop-blur">
+            <div class="max-w-sm rounded-[1.05rem] border border-white/10 bg-fb-bg/78 px-4 py-3.5 text-white backdrop-blur">
               <p class="text-xs font-semibold tracking-[0.2em] text-sky-200 uppercase">Ideal for</p>
               <p class="mt-2 text-sm font-semibold sm:text-base">Students who want stronger understanding, better exam answers and more consistent science performance.</p>
             </div>
@@ -89,26 +89,26 @@ const schema = [
   </section>
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-6 lg:grid-cols-2">
-      <div class="space-y-6">
+    <div class="grid gap-5 lg:grid-cols-2">
+      <div class="space-y-5">
         <SectionHeading
           eyebrow="What is covered"
           title={`What students cover in GCSE ${subject.name}`}
           body="Lessons are adapted to the student, but support typically includes the topics and exam demands most likely to unlock confident performance."
         />
-        <div class="grid gap-4">
+        <div class="grid gap-3">
           {subject.coverage.map((item) => (
             <div class="card-panel px-5 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
         </div>
       </div>
-      <div class="space-y-6">
+      <div class="space-y-5">
         <SectionHeading
           eyebrow="Online structure"
           title="How lessons are taught"
           body="Sessions are designed to feel academically rigorous without becoming overwhelming."
         />
-        <div class="grid gap-4">
+        <div class="grid gap-3">
           {subject.structure.map((item) => (
             <div class="card-panel px-5 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
@@ -124,7 +124,7 @@ const schema = [
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+    <div class="grid gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
       <div class="space-y-5">
         <SectionHeading
           eyebrow="Exam boards"
@@ -133,7 +133,7 @@ const schema = [
         />
         <div class="grid gap-3 sm:grid-cols-2">
           {examBoards.map((board) => (
-            <div class="rounded-[1.15rem] border border-slate-200 bg-white/80 px-4 py-3.5 text-sm font-medium text-fb-ink shadow-sm sm:text-base">
+            <div class="rounded-[1.05rem] border border-slate-200 bg-white/80 px-4 py-3.5 text-sm font-medium text-fb-ink shadow-sm sm:text-base">
               {board}
             </div>
           ))}

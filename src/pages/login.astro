@@ -6,14 +6,14 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "FlyBridge Portal Login",
-  description: "Sign in to the FlyBridge admin, tutor or parent reporting portal.",
+  description: "Sign in to the FlyBridge tutor or parent reporting portal.",
   url: new URL("/login", site.url).toString()
 };
 ---
 
 <BaseLayout
   title="Portal Login"
-  description="Sign in to the FlyBridge admin, tutor or parent reporting portal."
+  description="Sign in to the FlyBridge tutor or parent reporting portal."
   path="/login"
   schema={schema}
 >
@@ -82,6 +82,11 @@ const schema = {
         </div>
         <div class="surface-note mt-4">
           You can head directly to the Tutor or Parent Portal routes above. If you are not signed in yet, FlyBridge will route you back here safely.
+        </div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="mini-chip">Secure portal access</span>
+          <span class="mini-chip">Role-based routing</span>
+          <span class="mini-chip">Password reset available</span>
         </div>
       </form>
     </div>

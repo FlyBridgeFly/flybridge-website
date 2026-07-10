@@ -35,15 +35,15 @@ const schema = {
   />
 
   <section class="container-shell section-shell pt-0">
-    <div class="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
+    <div class="grid gap-5 lg:grid-cols-[0.78fr_1.22fr]">
       <SectionHeading
         eyebrow="Lesson journey"
         title="What the process looks like in practice."
         body="Each step is designed to reduce friction, make expectations clear and keep support aligned with the student's goals."
       />
-      <div class="space-y-4">
+      <div class="space-y-3">
         {lessonFlow.map((step, index) => (
-          <div class="card-panel relative p-5 sm:p-6">
+          <div class="card-panel relative p-4 sm:p-5">
             {index !== lessonFlow.length - 1 && <div class="absolute left-10 top-[4.1rem] h-[calc(100%-2rem)] w-px bg-slate-200"></div>}
             <div class="flex gap-4">
               <div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-fb-bg text-sm font-semibold text-white">{index + 1}</div>
@@ -59,14 +59,14 @@ const schema = {
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-8 lg:grid-cols-2">
+    <div class="grid gap-6 lg:grid-cols-2">
       <div>
         <SectionHeading
           eyebrow="What happens in the free assessment"
           title="A useful first conversation, not a sales pitch."
           body="The aim is to understand what is going on beneath the surface so next steps can be recommended with confidence."
         />
-        <div class="mt-6 grid gap-3">
+        <div class="mt-5 grid gap-3">
           {assessmentFeatures.map((item) => (
             <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
@@ -87,7 +87,7 @@ const schema = {
           title="How families stay informed"
           body="Progress tracking is woven into the service so support remains visible rather than vague."
         />
-        <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
           {progressTracking.map((item) => (
             <div class="card-panel px-4 py-4 text-sm leading-6 text-fb-ink sm:text-base">{item}</div>
           ))}
@@ -106,7 +106,7 @@ const schema = {
   </section>
 
   <section class="container-shell section-shell">
-    <div class="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+    <div class="grid gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
       <SectionHeading
         eyebrow="Student learning and parent visibility"
         title="Two spaces, each with a clear job."
@@ -114,7 +114,7 @@ const schema = {
       />
       <div class="grid gap-4 md:grid-cols-2">
         {platformSplit.map((item) => (
-          <div class="card-panel p-5 sm:p-6">
+          <div class="card-panel p-4 sm:p-5">
             <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{item.title}</h2>
             <p class="mt-2 body-copy">{item.body}</p>
           </div>

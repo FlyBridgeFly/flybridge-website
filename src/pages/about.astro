@@ -41,10 +41,10 @@ const schema = {
       title="Why FlyBridge teaches the way it does."
       body="Every part of the experience is designed to help students feel more capable while giving parents confidence that progress is being built with intention."
     />
-    <div class="surface-note-sky mt-6">
+    <div class="surface-note-sky mt-5">
       FlyBridge is built around two promises at once: students get calm, academically rigorous teaching, and parents get clearer visibility into progress through structured communication and reporting.
     </div>
-    <div class="mt-8 grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+    <div class="mt-6 grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
       <div class="image-panel">
         <img
           src={site.images.scienceIcons}
@@ -56,7 +56,7 @@ const schema = {
       </div>
       <div class="grid gap-4 md:grid-cols-2">
         {aboutSections.map((section) => (
-          <article class="card-panel p-5 sm:p-6">
+          <article class="card-panel p-4 sm:p-5">
             <h2 class="text-lg font-semibold text-fb-ink sm:text-xl">{section.title}</h2>
             <p class="mt-2 body-copy">{section.body}</p>
           </article>
