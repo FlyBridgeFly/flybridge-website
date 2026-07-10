@@ -7,10 +7,13 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "preview": "npm run build && wrangler dev",
+    "astro": "astro",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "12",
     "@astrojs/sitemap": "^3.6.0",
     "@supabase/supabase-js": "^2.56.0",
     "@tailwindcss/vite": "^4.1.11",
@@ -18,6 +21,7 @@
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "wrangler": "^4.110.0"
   }
 }
