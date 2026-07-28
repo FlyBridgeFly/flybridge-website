@@ -2,7 +2,7 @@
 interface Field {
   label: string;
   name: string;
-  type?: "text" | "email" | "tel" | "textarea" | "hidden";
+  type?: "text" | "email" | "tel" | "textarea" | "hidden" | "date" | "select";
   placeholder: string;
   helper?: string;
   required?: boolean;
@@ -10,9 +10,15 @@ interface Field {
   value?: string;
   readOnly?: boolean;
   span?: "full";
+  min?: string;
+  options?: readonly {
+    value: string;
+    label: string;
+  }[];
 }
 
 interface Props {
+  id?: string;
   title: string;
   body: string;
   fields: readonly Field[];
@@ -29,6 +35,7 @@ interface Props {
 }
 
 const {
+  id,
   title,
   body,
   fields,
@@ -42,7 +49,7 @@ const {
 } = Astro.props;
 ---
 
-<div class="form-panel">
+<div id={id} class="form-panel">
   <div class="min-w-0 space-y-3">
     <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
     <p class="max-w-2xl body-copy-compact">{body}</p>
@@ -88,6 +95,25 @@ const {
             >{field.value ?? ""}</textarea>
             {field.helper && <span class="helper-shell">{field.helper}</span>}
           </label>
+        ) : field.type === "select" ? (
+          <label class:list={[field.span === "full" && "md:col-span-2"]}>
+            <span class="label-shell">{field.label}</span>
+            <select
+              class="input-shell"
+              name={field.name}
+              data-label={field.label}
+              required={field.required}
+              autocomplete={field.autocomplete}
+            >
+              <option value="">{field.placeholder || "Select an option"}</option>
+              {field.options?.map((option) => (
+                <option value={option.value} selected={option.value === (field.value ?? "")}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {field.helper && <span class="helper-shell">{field.helper}</span>}
+          </label>
         ) : (
           <label class:list={[field.span === "full" && "md:col-span-2"]}>
             <span class="label-shell">{field.label}</span>
@@ -98,6 +124,7 @@ const {
               placeholder={field.placeholder}
               data-label={field.label}
               value={field.value ?? ""}
+              min={field.min}
               readonly={field.readOnly}
               required={field.required}
               autocomplete={field.autocomplete}
@@ -126,15 +153,28 @@ const {
     const recipient = form.dataset.formRecipient;
     const subject = form.dataset.formSubject ?? "FlyBridge enquiry";
 
+    const formatDateForEmail = (value) => {
+      if (!value) return value;
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return value;
+      return new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }).format(date);
+    };
+
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       if (!form.reportValidity()) return;
 
-      const lines = Array.from(form.querySelectorAll("input, textarea"))
-        .filter((field) => field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)
+      const lines = Array.from(form.querySelectorAll("input, textarea, select"))
+        .filter((field) => field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement)
         .map((field) => {
           const label = field.dataset.label ?? field.name;
-          const value = field.value.trim();
+          const rawValue = field.value.trim();
+          const value =
+            field instanceof HTMLInputElement && field.type === "date" ? formatDateForEmail(rawValue) : rawValue;
           return value ? `${label}: ${value}` : null;
         })
         .filter(Boolean)
@@ -150,12 +190,12 @@ const {
         return;
       }
 
-      if (feedback instanceof HTMLElement) {
-        feedback.classList.remove("hidden");
-        feedback.classList.remove("status-error", "status-success");
-        feedback.classList.add("status-info");
-        feedback.textContent = "Opening your email app with a pre-filled FlyBridge enquiry draft.";
-      }
+        if (feedback instanceof HTMLElement) {
+          feedback.classList.remove("hidden");
+          feedback.classList.remove("status-error", "status-success");
+          feedback.classList.add("status-info");
+          feedback.textContent = "Your email app is opening with a prepared FlyBridge enquiry draft. Please review it and press send.";
+        }
 
       const mailto = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines)}`;
       window.location.href = mailto;

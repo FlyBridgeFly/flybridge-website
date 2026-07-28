@@ -1,0 +1,16 @@
+---
+interface Props {
+  target: string;
+}
+
+const { target } = Astro.props;
+---
+
+<div class="hidden rounded-[1rem] border border-slate-200 bg-white px-4 py-3 shadow-sm" data-bulk-bar={target}>
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <p class="text-sm font-medium text-fb-ink">
+      <span data-bulk-count={target}>0</span> selected
+    </p>
+    <div class="flex flex-wrap gap-2" data-bulk-actions={target}></div>
+  </div>
+</div>

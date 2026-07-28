@@ -15,142 +15,159 @@ const activeKeyStages = keyStageNavigation.filter((group) =>
 const portalRoutePrefixes = ["/login", "/forgot-password", "/change-password", "/reset-password", "/parent-portal", "/tutor", "/admin"];
 const isPortalActive =
   portalRoutePrefixes.some((route) => normalisedPath === route) || portalNavigation.some((item) => item.href === normalisedPath);
+const announcementText =
+  "⭐ Book your free assessment today • Qualified teachers • Cambridge teaching methods • Personalised learning plans • Parent reporting after every lesson • GCSE & A Level specialists • Book your free assessment today";
 ---
 
-<header class="sticky top-0 z-50 px-3 pt-2 sm:px-5 sm:pt-2.5 lg:px-8">
-  <div id="site-header" class="mx-auto w-full max-w-7xl rounded-[1.15rem] border border-transparent px-3 py-2 transition duration-300 sm:px-4 sm:py-2.5">
-    <div class="flex items-center justify-between gap-3">
-      <div class="shrink-0">
-        <Logo />
+<header class="sticky top-0 z-50">
+  <div class="announcement-shell">
+    <div class="announcement-inner container-shell">
+      <div class="announcement-marquee" aria-label="FlyBridge announcement highlights">
+        <div class="announcement-track">
+          <span class="announcement-copy">{announcementText}</span>
+          <span class="announcement-copy" aria-hidden="true">{announcementText}</span>
+        </div>
       </div>
-      <nav class="hidden min-w-0 items-center gap-1 lg:flex xl:gap-1.5" aria-label="Primary">
-        {headerNavigation.map((item) => (
-          <a
-            class:list={[
-              "nav-link rounded-full px-3 py-2",
-              isHomeActive && item.href === "/" && "bg-white text-fb-ink shadow-sm"
-            ]}
-            aria-current={isHomeActive && item.href === "/" ? "page" : undefined}
-            href={item.href}
-          >
-            {item.label}
-          </a>
-        ))}
-        {keyStageNavigation.map((group) => (
+      <a class="announcement-cta" href={site.assessmentHref}>Book Free Assessment</a>
+    </div>
+  </div>
+
+  <div class="px-3 pt-2 sm:px-5 sm:pt-2.5 lg:px-8">
+    <div
+      id="site-header"
+      class="mx-auto w-full max-w-7xl rounded-[1.15rem] border border-transparent px-3 py-2.5 transition duration-300 sm:px-4 sm:py-3"
+    >
+      <div class="flex items-center justify-between gap-3 lg:grid lg:grid-cols-[minmax(14rem,16rem)_1fr_minmax(14rem,16rem)] lg:items-center">
+        <div class="shrink-0 lg:min-w-0">
+          <Logo />
+        </div>
+        <nav class="hidden min-w-0 items-center justify-center gap-0.5 lg:flex xl:gap-1" aria-label="Primary">
+          {headerNavigation.map((item) => (
+            <a
+              class:list={[
+                "nav-link rounded-full px-2.5 py-2 xl:px-3",
+                isHomeActive && item.href === "/" && "bg-white text-fb-ink shadow-sm"
+              ]}
+              aria-current={isHomeActive && item.href === "/" ? "page" : undefined}
+              href={item.href}
+            >
+              {item.label}
+            </a>
+          ))}
+          {keyStageNavigation.map((group) => (
+            <details class="group relative" data-header-dropdown>
+              <summary
+                class:list={[
+                  "nav-link focus-pill flex cursor-pointer list-none items-center gap-2 rounded-full px-2.5 py-2 xl:px-3",
+                  activeKeyStages.some((item) => item.label === group.label) && "bg-white text-fb-ink shadow-sm"
+                ]}
+                aria-haspopup="true"
+              >
+                {group.label}
+                <svg viewBox="0 0 20 20" class="h-4 w-4 transition group-open:rotate-180" fill="none" aria-hidden="true">
+                  <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </summary>
+              <div class="absolute left-1/2 top-[3rem] z-20 w-[min(21rem,calc(100vw-4rem))] -translate-x-1/2 rounded-[1.1rem] border border-white/70 bg-white/[0.97] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+                <div class="space-y-1">
+                  {group.items.map((item) => (
+                    <a
+                      class:list={[
+                        "block rounded-[0.9rem] px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink",
+                        item.href === normalisedPath && "bg-slate-100 text-fb-ink"
+                      ]}
+                      aria-current={item.href === normalisedPath ? "page" : undefined}
+                      href={item.href}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </details>
+          ))}
           <details class="group relative" data-header-dropdown>
             <summary
               class:list={[
-                "nav-link focus-pill flex cursor-pointer list-none items-center gap-2 rounded-full px-3 py-2",
-                activeKeyStages.some((item) => item.label === group.label) && "bg-white text-fb-ink shadow-sm"
+                "nav-link focus-pill flex cursor-pointer list-none items-center gap-2 rounded-full px-2.5 py-2 xl:px-3",
+                isPortalActive && "bg-white text-fb-ink shadow-sm"
               ]}
               aria-haspopup="true"
             >
-              {group.label}
+              Portal
               <svg viewBox="0 0 20 20" class="h-4 w-4 transition group-open:rotate-180" fill="none" aria-hidden="true">
                 <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </summary>
-            <div class="absolute left-1/2 top-[3rem] z-20 w-[min(21rem,calc(100vw-4rem))] -translate-x-1/2 rounded-[1.1rem] border border-white/70 bg-white/[0.97] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
-              <div class="space-y-1">
-                {group.items.map((item) => (
-                  <a
-                    class:list={[
-                      "block rounded-[0.9rem] px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink",
-                      item.href === normalisedPath && "bg-slate-100 text-fb-ink"
-                    ]}
-                    aria-current={item.href === normalisedPath ? "page" : undefined}
-                    href={item.href}
-                  >
-                    {item.label}
-                  </a>
-                ))}
+            <div class="absolute left-1/2 top-[3rem] z-20 w-72 -translate-x-1/2 rounded-[1.35rem] border border-white/70 bg-white/[0.97] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+              {portalNavigation.map((item) => (
+                <a
+                  class:list={[
+                    "block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink",
+                    item.href === normalisedPath && "bg-slate-100 text-fb-ink"
+                  ]}
+                  aria-current={item.href === normalisedPath ? "page" : undefined}
+                  href={item.href}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </details>
+        </nav>
+        <div class="flex shrink-0 items-center justify-end gap-2 lg:min-w-0">
+          <details class="group relative" data-header-dropdown>
+            <summary
+              class="focus-pill grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-slate-200 bg-white/80 text-fb-ink backdrop-blur"
+              aria-label="Open account menu"
+            >
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" aria-hidden="true">
+                <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="1.7"></path>
+                <path d="M4.5 21C5.54086 17.7161 8.47243 15.5 12 15.5C15.5276 15.5 18.4591 17.7161 19.5 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+              </svg>
+            </summary>
+            <div class="absolute right-0 top-[3rem] z-20 w-[min(16rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] rounded-[1.25rem] border border-white/70 bg-white/[0.97] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
+              <div class="space-y-1" data-account-signed-out>
+                <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/login?portal=parent">
+                  Parent login
+                </a>
+                <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/login?portal=tutor">
+                  Tutor login
+                </a>
+              </div>
+              <div class="hidden space-y-1" data-account-signed-in>
+                <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-dashboard href="/login">
+                  <span data-account-dashboard-label>Open dashboard</span>
+                </a>
+                <button class="block w-full rounded-[0.95rem] px-4 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-signout type="button">
+                  Sign out
+                </button>
               </div>
             </div>
           </details>
-        ))}
-        <details class="group relative" data-header-dropdown>
-          <summary
-            class:list={[
-              "nav-link focus-pill flex cursor-pointer list-none items-center gap-2 rounded-full px-3 py-2",
-              isPortalActive && "bg-white text-fb-ink shadow-sm"
-            ]}
-            aria-haspopup="true"
-          >
-            Portal
-            <svg viewBox="0 0 20 20" class="h-4 w-4 transition group-open:rotate-180" fill="none" aria-hidden="true">
-              <path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </summary>
-          <div class="absolute left-1/2 top-[3rem] z-20 w-72 -translate-x-1/2 rounded-[1.35rem] border border-white/70 bg-white/[0.97] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
-            {portalNavigation.map((item) => (
-              <a
-                class:list={[
-                  "block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink",
-                  item.href === normalisedPath && "bg-slate-100 text-fb-ink"
-                ]}
-                aria-current={item.href === normalisedPath ? "page" : undefined}
-                href={item.href}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </details>
-      </nav>
-      <div class="flex shrink-0 items-center gap-2">
-        <details class="group relative" data-header-dropdown>
-          <summary
-            class="focus-pill grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-slate-200 bg-white/80 text-fb-ink backdrop-blur"
-            aria-label="Open account menu"
-          >
-            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" aria-hidden="true">
-              <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="1.7"></path>
-              <path d="M4.5 21C5.54086 17.7161 8.47243 15.5 12 15.5C15.5276 15.5 18.4591 17.7161 19.5 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-            </svg>
-          </summary>
-          <div class="absolute right-0 top-[3rem] z-20 w-[min(16rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] rounded-[1.25rem] border border-white/70 bg-white/[0.97] p-3 shadow-xl shadow-slate-900/10 backdrop-blur-xl">
-            <div class="space-y-1" data-account-signed-out>
-              <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/login?portal=parent">
-                Parent login
-              </a>
-              <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" href="/login?portal=tutor">
-                Tutor login
-              </a>
-            </div>
-            <div class="hidden space-y-1" data-account-signed-in>
-              <a class="block rounded-[0.95rem] px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-dashboard href="/login">
-                Open dashboard
-              </a>
-              <button class="block w-full rounded-[0.95rem] px-4 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-signout type="button">
-                Sign out
-              </button>
-            </div>
-          </div>
-        </details>
-        <a class="cta-button shrink-0 px-3.5 py-2 text-sm sm:px-5 sm:py-2.5" href={site.assessmentHref}>
-          <span class="sm:hidden">Book</span>
-          <span class="hidden sm:inline">Book Assessment</span>
-        </a>
-        <details class="group lg:hidden" data-header-dropdown data-mobile-drawer>
-          <summary
-            class="focus-pill grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-slate-200 bg-white/80 text-fb-ink backdrop-blur"
-            aria-label="Open navigation"
-          >
-            <svg viewBox="0 0 24 24" class="h-5 w-5 group-open:hidden" fill="none" aria-hidden="true">
-              <path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-            </svg>
-            <svg viewBox="0 0 24 24" class="hidden h-5 w-5 group-open:block" fill="none" aria-hidden="true">
-              <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
-            </svg>
-          </summary>
-          <div class="fixed inset-0 z-40 hidden bg-slate-950/28 backdrop-blur-[2px] group-open:block" data-mobile-backdrop></div>
-          <nav
-            class="fixed inset-y-0 right-0 z-50 hidden w-[min(21rem,100vw)] flex-col overflow-x-hidden overflow-y-auto border-l border-white/70 bg-white/[0.98] p-4 shadow-2xl shadow-slate-900/15 backdrop-blur-xl group-open:flex"
-            aria-label="Mobile"
-            aria-modal="true"
-            role="dialog"
-            data-mobile-panel
-          >
+          <a class="cta-button hidden shrink-0 px-4 py-2.5 text-sm sm:inline-flex" href={site.assessmentHref}>
+            Book Assessment
+          </a>
+          <details class="group lg:hidden" data-header-dropdown data-mobile-drawer>
+            <summary
+              class="focus-pill grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-slate-200 bg-white/80 text-fb-ink backdrop-blur"
+              aria-label="Open navigation"
+            >
+              <svg viewBox="0 0 24 24" class="h-5 w-5 group-open:hidden" fill="none" aria-hidden="true">
+                <path d="M4 7H20M4 12H20M4 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+              </svg>
+              <svg viewBox="0 0 24 24" class="hidden h-5 w-5 group-open:block" fill="none" aria-hidden="true">
+                <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+              </svg>
+            </summary>
+            <div class="fixed inset-0 z-40 hidden bg-slate-950/28 backdrop-blur-[2px] group-open:block" data-mobile-backdrop></div>
+            <nav
+              class="fixed inset-y-0 right-0 z-50 hidden w-[min(21rem,100vw)] flex-col overflow-x-hidden overflow-y-auto border-l border-white/70 bg-white/[0.98] p-4 shadow-2xl shadow-slate-900/15 backdrop-blur-xl group-open:flex"
+              aria-label="Mobile"
+              aria-modal="true"
+              role="dialog"
+              data-mobile-panel
+            >
             <div class="flex items-start justify-between gap-4 border-b border-slate-200 pb-4">
               <div class="min-w-0">
                 <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">Navigate FlyBridge</p>
@@ -253,7 +270,7 @@ const isPortalActive =
                 </div>
                 <div class="hidden space-y-1 px-3 pb-3" data-account-signed-in>
                   <a class="block rounded-xl px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-dashboard href="/login">
-                    Open dashboard
+                    <span data-account-dashboard-label>Open dashboard</span>
                   </a>
                   <button class="block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 hover:text-fb-ink" data-account-signout type="button">
                     Sign out
@@ -270,8 +287,9 @@ const isPortalActive =
                 Email FlyBridge
               </a>
             </div>
-          </nav>
-        </details>
+            </nav>
+          </details>
+        </div>
       </div>
     </div>
   </div>
@@ -388,13 +406,17 @@ const isPortalActive =
   const signedOutSections = document.querySelectorAll<HTMLElement>("[data-account-signed-out]");
   const signedInSections = document.querySelectorAll<HTMLElement>("[data-account-signed-in]");
   const dashboardLinks = document.querySelectorAll<HTMLAnchorElement>("[data-account-dashboard]");
+  const dashboardLabels = document.querySelectorAll<HTMLElement>("[data-account-dashboard-label]");
   const signOutButtons = document.querySelectorAll<HTMLButtonElement>("[data-account-signout]");
 
-  const toggleAccountState = (signedIn: boolean, href = "/login") => {
+  const toggleAccountState = (signedIn: boolean, href = "/login", label = "Open dashboard") => {
     signedOutSections.forEach((node) => node.classList.toggle("hidden", signedIn));
     signedInSections.forEach((node) => node.classList.toggle("hidden", !signedIn));
     dashboardLinks.forEach((link) => {
       link.href = href;
+    });
+    dashboardLabels.forEach((node) => {
+      node.textContent = label;
     });
   };
 
@@ -415,7 +437,13 @@ const isPortalActive =
         return;
       }
       const href = getRoleHome(profile.role);
-      toggleAccountState(true, href);
+      const label =
+        profile.role === "admin"
+          ? "Admin dashboard"
+          : profile.role === "tutor"
+            ? "Tutor dashboard"
+            : "Parent dashboard";
+      toggleAccountState(true, href, label);
     } catch {
       toggleAccountState(false);
     }

@@ -1,13 +1,13 @@
 import {
   corsHeaders,
-  createAuthUser,
-  failureResponse,
+  failureFromError,
   generateTemporaryPassword,
   optionalString,
+  optionalStringArray,
   parseBody,
+  provisionPortalAccount,
   requireAdmin,
   requireString,
-  sendPortalCredentialsEmail,
   successResponse
 } from "../_shared/admin.ts";
 
@@ -17,37 +17,38 @@ Deno.serve(async (request) => {
   }
 
   try {
-    const { adminClient } = await requireAdmin(request);
+    const { adminClient, adminUser } = await requireAdmin(request);
     const body = await parseBody(request);
     const email = requireString(body, "email");
     const fullName = requireString(body, "fullName");
-    const password = optionalString(body, "password") ?? generateTemporaryPassword();
+    const password = generateTemporaryPassword();
+    const phone = optionalString(body, "phone");
+    const subjects = optionalStringArray(body, "subjects");
+    const keyStages = optionalStringArray(body, "keyStages");
+    const studentId = optionalString(body, "studentId");
 
-    const user = await createAuthUser(adminClient, {
-      email,
-      password,
-      fullName,
-      role: "tutor"
-    });
-    const emailResult = await sendPortalCredentialsEmail({
+    const result = await provisionPortalAccount({
+      adminClient,
+      adminUserId: adminUser.id,
       email,
       fullName,
       role: "tutor",
-      password
+      password,
+      phone,
+      subjects,
+      keyStages,
+      studentId
     });
-
-    return successResponse(
-      emailResult.sent
-        ? "Tutor account created successfully and login details were emailed."
-        : emailResult.message,
-      {
-        role: "tutor",
-        userId: user.id,
-        tutorId: user.id,
-        email
-      }
-    );
+    return successResponse(result.message, {
+      role: "tutor",
+      userId: result.userId,
+      tutorId: result.userId,
+      email: result.email,
+      emailSent: result.emailSent,
+      stage: result.stage,
+      warning: result.warning
+    });
   } catch (error) {
-    return failureResponse(400, error instanceof Error ? error.message : "Unable to create tutor.");
+    return failureFromError(error, "Unable to create tutor.");
   }
 });

@@ -1,0 +1,19 @@
+---
+interface Props {
+  title?: string;
+  body?: string;
+}
+
+const {
+  title = "Danger Zone",
+  body = "Archive is preferred. Permanent deletion should only be used when you are certain access must be removed completely."
+} = Astro.props;
+---
+
+<section class="rounded-[1rem] border border-rose-200 bg-rose-50/70 px-4 py-4">
+  <h3 class="text-base font-semibold text-rose-800">{title}</h3>
+  <p class="mt-2 text-sm leading-6 text-rose-700">{body}</p>
+  <div class="mt-4">
+    <slot />
+  </div>
+</section>

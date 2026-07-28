@@ -1,40 +1,32 @@
 ---
 import FormShell from "./FormShell.astro";
 import { site } from "../data/site";
+import { createCallbackFields } from "../lib/callback-form";
 
 interface Props {
   keyStage: string;
   subject: string;
+  sourcePage?: string;
 }
 
-const { keyStage, subject } = Astro.props;
+const { keyStage, subject, sourcePage = "/" } = Astro.props;
 
-const fields = [
-  { label: "Parent name", name: "parent-name", placeholder: "Your full name", required: true, autocomplete: "name" },
-  { label: "Student name", name: "student-name", placeholder: "Student's name", required: true },
-  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to call", required: true, autocomplete: "tel" },
-  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com", required: true, autocomplete: "email" },
-  { label: "Key stage", name: "key-stage", placeholder: "", value: keyStage, readOnly: true },
-  { label: "Subject", name: "subject", placeholder: "", value: subject, readOnly: true },
-  { label: "Preferred days", name: "preferred-days", placeholder: "Weekdays, Saturdays, or specific days", required: true },
-  { label: "Preferred hours", name: "preferred-hours", placeholder: "After 5pm, mornings, early evenings", required: true },
-  {
-    label: "Optional message",
-    name: "message",
-    type: "textarea" as const,
-    placeholder: "Share current attainment, confidence or timetable constraints if helpful.",
-    span: "full" as const
-  }
-] as const;
+const fields = createCallbackFields({
+  enquiryType: "subject-callback",
+  sourcePage,
+  keyStage,
+  subject,
+  messagePlaceholder: "Share current attainment, confidence or timetable constraints if helpful."
+});
 ---
 
 <FormShell
   title="Discuss your child’s next steps"
-  body="Request a callback to discuss the right subject, level and lesson format."
+  body="Tell FlyBridge about your child and choose a preferred callback time. The assessment or next step will be confirmed with you directly."
   fields={fields}
   submitLabel="Request callback"
-  helper="Submitting opens a pre-filled email draft so the enquiry can be sent with the right context."
-  subject={`FlyBridge callback request: ${keyStage} ${subject}`}
+  helper="Your preferred date and time help FlyBridge plan the callback. The prepared email still needs to be sent from your mail app."
+  subject={`FlyBridge callback request: ${subject} (${keyStage})`}
   recipientEmail={site.email}
   secondaryLabel="WhatsApp FlyBridge"
   secondaryHref={site.whatsappHref}

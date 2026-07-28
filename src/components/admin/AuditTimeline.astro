@@ -1,0 +1,23 @@
+---
+interface Props {
+  containerId: string;
+  title?: string;
+  body?: string;
+}
+
+const {
+  containerId,
+  title = "Recent activity",
+  body = "Important admin actions appear here."
+} = Astro.props;
+---
+
+<section class="dashboard-section">
+  <div class="dashboard-section-heading">
+    <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">{title}</h2>
+    <p class="body-copy-compact">{body}</p>
+  </div>
+  <div class="dashboard-card-stack mt-4" data-audit-timeline={containerId}>
+    <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+  </div>
+</section>

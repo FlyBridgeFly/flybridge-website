@@ -1,7 +1,10 @@
 import type { User } from "@supabase/supabase-js";
 import {
+  type AdminNoteRow,
+  type ArticleRow,
   createBrowserSupabaseClient,
   type AssessmentRow,
+  type AuditLogRow,
   type LessonRow,
   type LessonReportRow,
   type LinkRow,
@@ -28,7 +31,14 @@ export interface StudentBundle {
 export interface ParentInviteRow {
   id?: string;
   parent_id?: string | null;
+  profile_id?: string | null;
+  user_id?: string | null;
+  auth_user_id?: string | null;
+  invited_user_id?: string | null;
   student_id?: string | null;
+  email?: string | null;
+  parent_email?: string | null;
+  invited_email?: string | null;
   invite_code?: string | null;
   code?: string | null;
   status?: string | null;
@@ -42,11 +52,32 @@ export interface FunctionResponse {
   [key: string]: unknown;
 }
 
+export interface PortalAccountFunctionResponse extends FunctionResponse {
+  success: true;
+  userId: string;
+  email: string;
+  role: "parent" | "tutor";
+  emailSent: boolean;
+  stage?: "email_delivery" | "audit_log";
+  warning?: string;
+}
+
+interface FunctionErrorDetails {
+  message: string;
+  status?: number;
+  statusText?: string;
+  responseBody?: string;
+  payloadMessage?: string;
+}
+
 interface GuardOptions {
   adminRedirectHome?: string;
   adminRedirectMessage?: string;
   unauthorizedMessage?: string;
 }
+
+const parentInviteUserKeys = ["parent_id", "profile_id", "user_id", "auth_user_id", "invited_user_id"] as const;
+const parentInviteEmailKeys = ["email", "parent_email", "invited_email"] as const;
 
 async function extractErrorMessage(error: unknown) {
   const response = (error as { context?: unknown } | null)?.context;
@@ -77,12 +108,83 @@ async function extractErrorMessage(error: unknown) {
   return "";
 }
 
+async function extractFunctionErrorDetails(error: unknown): Promise<FunctionErrorDetails> {
+  const response = (error as { context?: unknown } | null)?.context;
+  const details: FunctionErrorDetails = {
+    message: error instanceof Error ? error.message.trim() : ""
+  };
+
+  if (response instanceof Response) {
+    details.status = response.status;
+    details.statusText = response.statusText;
+
+    try {
+      const cloned = response.clone();
+      const contentType = cloned.headers.get("content-type") ?? "";
+
+      if (contentType.includes("application/json")) {
+        const payload = (await cloned.json()) as Record<string, unknown>;
+        if (typeof payload.message === "string" && payload.message.trim()) {
+          details.payloadMessage = payload.message.trim();
+        }
+        details.responseBody = JSON.stringify(payload);
+      } else {
+        const text = (await cloned.text()).trim();
+        if (text) details.responseBody = text;
+      }
+    } catch {
+      // Ignore parsing issues and keep partial diagnostics only.
+    }
+  }
+
+  if (!details.message && details.payloadMessage) {
+    details.message = details.payloadMessage;
+  }
+
+  return details;
+}
+
 function mapFriendlyErrorMessage(message: string, fallback: string) {
   const normalised = message.toLowerCase();
 
   if (!message) return fallback;
+  if (normalised.includes("failed to send a request to the edge function")) {
+    return "The browser could not reach the account deletion service.";
+  }
+  if (normalised.includes("edge function returned a non-2xx status code")) {
+    return fallback;
+  }
+  if (normalised.includes("functions_fetch_error") || normalised.includes("failed to fetch")) {
+    return "The browser could not reach the account deletion service.";
+  }
+  if (normalised.includes("cors")) {
+    return "The browser could not reach the account deletion service.";
+  }
+  if (normalised.includes("404") && normalised.includes("function")) {
+    return "The account deletion service could not be found.";
+  }
+  if (normalised.includes("not found") && normalised.includes("delete-portal-user")) {
+    return "The account deletion service is not deployed yet.";
+  }
   if (normalised.includes("invalid login credentials")) {
     return "Those login details did not match a FlyBridge portal account. Please check the email and password and try again.";
+  }
+  if (
+    normalised.includes("401") ||
+    normalised.includes("jwt") ||
+    normalised.includes("missing bearer token") ||
+    normalised.includes("session expired")
+  ) {
+    return "Your session has expired. Sign in again.";
+  }
+  if (normalised.includes("403") || normalised.includes("forbidden")) {
+    return "You do not have permission to delete this account.";
+  }
+  if (normalised.includes("404")) {
+    return "The account deletion service could not be found.";
+  }
+  if (normalised.includes("500")) {
+    return "The account could not be deleted because of a server error.";
   }
   if (normalised.includes("session") && normalised.includes("missing bearer token")) {
     return "Your session has ended. Please sign in again and retry.";
@@ -116,16 +218,35 @@ function mapFriendlyErrorMessage(message: string, fallback: string) {
   if (normalised.includes("missing public_supabase_url") || normalised.includes("public_supabase_anon_key")) {
     return "Portal configuration is incomplete. Add the Supabase environment variables before using this feature.";
   }
-  if (normalised.includes("edge function returned a non-2xx status code")) {
-    return fallback;
-  }
-
   return message;
 }
 
 export async function getFriendlyErrorMessage(error: unknown, fallback = "Something went wrong. Please try again.") {
   const message = await extractErrorMessage(error);
   return mapFriendlyErrorMessage(message, fallback);
+}
+
+function parentInviteMatchesProfile(invite: ParentInviteRow, profile: ProfileRow) {
+  const profileId = String(profile.id ?? "").trim();
+  const profileEmail = String(profile.email ?? "")
+    .trim()
+    .toLowerCase();
+
+  if (!profileId && !profileEmail) return false;
+
+  if (
+    parentInviteUserKeys.some((key) => {
+      const value = invite[key];
+      return typeof value === "string" && value.trim() === profileId;
+    })
+  ) {
+    return true;
+  }
+
+  return parentInviteEmailKeys.some((key) => {
+    const value = invite[key];
+    return typeof value === "string" && value.trim().toLowerCase() === profileEmail;
+  });
 }
 
 function debugAuth(label: string, payload?: Record<string, unknown>) {
@@ -239,6 +360,36 @@ export function getRoleLabel(role?: ProfileRole | null) {
   if (role === "tutor") return "Tutor access";
   if (role === "parent") return "Parent access";
   return "Portal access";
+}
+
+export function getAccountStatusMeta(status?: string | null) {
+  const value = String(status ?? "active").toLowerCase();
+
+  if (value === "suspended") {
+    return {
+      label: "Suspended",
+      badgeClass: "border-rose-200 bg-rose-50 text-rose-700"
+    };
+  }
+
+  if (value === "inactive") {
+    return {
+      label: "Inactive",
+      badgeClass: "border-slate-300 bg-slate-100 text-slate-700"
+    };
+  }
+
+  if (value === "archived") {
+    return {
+      label: "Archived",
+      badgeClass: "border-slate-200 bg-slate-50 text-slate-500"
+    };
+  }
+
+  return {
+    label: "Active",
+    badgeClass: "border-emerald-200 bg-emerald-50 text-emerald-700"
+  };
 }
 
 function getProgressStatusMeta(status?: string | null) {
@@ -440,6 +591,19 @@ function clearStoredTemporaryPassword() {
   window.sessionStorage.removeItem("flybridge-temp-password");
 }
 
+function setFormDisabled(form: HTMLFormElement | null, disabled: boolean) {
+  if (!form) return;
+  form.querySelectorAll<HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement>(
+    "input, button, select, textarea"
+  ).forEach((field) => {
+    if (field.matches("[data-profile-sync-retry]")) {
+      field.disabled = disabled && !field.classList.contains("hidden");
+      return;
+    }
+    field.disabled = disabled;
+  });
+}
+
 function setFormPending(form: HTMLFormElement | null, pending: boolean, idleLabel?: string, busyLabel?: string) {
   if (!form) return;
   form.setAttribute("aria-busy", String(pending));
@@ -479,6 +643,15 @@ export async function guardPage(requiredRoles: ProfileRole[], options: GuardOpti
 
   const role = profile.role ?? "parent";
   const pathname = window.location.pathname;
+
+  if (String(profile.status ?? "active").toLowerCase() !== "active") {
+    await client.auth.signOut();
+    setGuardMessage("This FlyBridge portal account is not currently active. Please contact FlyBridge for support.");
+    showNode("[data-role-loading]", false);
+    setBusy("[data-role-loading]", false);
+    showNode("[data-role-error]", true);
+    throw new Error("Account is not active.");
+  }
 
   if (profile.must_change_password) {
     if (pathname !== "/change-password") {
@@ -568,6 +741,27 @@ export async function fetchTableRows(table: "tutor_student_links" | "parent_stud
   return data ?? [];
 }
 
+export async function fetchAdminNotes() {
+  const client = createBrowserSupabaseClient();
+  const { data, error } = await client.from("admin_notes").select("*").order("updated_at", { ascending: false });
+  if (error) throw error;
+  return (data as AdminNoteRow[]) ?? [];
+}
+
+export async function fetchAuditLogs(limit = 50) {
+  const client = createBrowserSupabaseClient();
+  const { data, error } = await client.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(limit);
+  if (error) throw error;
+  return (data as AuditLogRow[]) ?? [];
+}
+
+export async function fetchArticles() {
+  const client = createBrowserSupabaseClient();
+  const { data, error } = await client.from("articles").select("*").order("updated_at", { ascending: false });
+  if (error) throw error;
+  return (data as ArticleRow[]) ?? [];
+}
+
 export async function fetchStudentContent(studentIds: string[]) {
   if (studentIds.length === 0) {
     return {
@@ -642,6 +836,8 @@ export async function createStudentRecord(values: {
   yearGroup?: string;
   school?: string;
   notes?: string;
+  status?: string;
+  targetGrade?: string;
 }) {
   const [firstName = "", ...rest] = values.fullName.trim().split(" ");
   const lastName = rest.join(" ").trim();
@@ -651,20 +847,29 @@ export async function createStudentRecord(values: {
       full_name: values.fullName,
       year_group: values.yearGroup,
       school: values.school,
-      notes: values.notes
+      notes: values.notes,
+      status: values.status,
+      target_grade: values.targetGrade,
+      active: values.status === "inactive" || values.status === "archived" ? false : true
     },
     {
       first_name: firstName || values.fullName,
       last_name: lastName,
       year_group: values.yearGroup,
       school: values.school,
-      notes: values.notes
+      notes: values.notes,
+      status: values.status,
+      target_grade: values.targetGrade,
+      active: values.status === "inactive" || values.status === "archived" ? false : true
     },
     {
       name: values.fullName,
       year_group: values.yearGroup,
       school: values.school,
-      notes: values.notes
+      notes: values.notes,
+      status: values.status,
+      target_grade: values.targetGrade,
+      active: values.status === "inactive" || values.status === "archived" ? false : true
     }
   ]);
 }
@@ -675,6 +880,8 @@ export async function updateStudentRecord(values: {
   yearGroup?: string;
   school?: string;
   notes?: string;
+  status?: string;
+  targetGrade?: string;
 }) {
   const [firstName = "", ...rest] = values.fullName.trim().split(" ");
   const lastName = rest.join(" ").trim();
@@ -684,20 +891,29 @@ export async function updateStudentRecord(values: {
       full_name: values.fullName,
       year_group: values.yearGroup,
       school: values.school,
-      notes: values.notes
+      notes: values.notes,
+      status: values.status,
+      target_grade: values.targetGrade,
+      active: values.status === "inactive" || values.status === "archived" ? false : true
     },
     {
       first_name: firstName || values.fullName,
       last_name: lastName,
       year_group: values.yearGroup,
       school: values.school,
-      notes: values.notes
+      notes: values.notes,
+      status: values.status,
+      target_grade: values.targetGrade,
+      active: values.status === "inactive" || values.status === "archived" ? false : true
     },
     {
       name: values.fullName,
       year_group: values.yearGroup,
       school: values.school,
-      notes: values.notes
+      notes: values.notes,
+      status: values.status,
+      target_grade: values.targetGrade,
+      active: values.status === "inactive" || values.status === "archived" ? false : true
     }
   ]);
 }
@@ -743,6 +959,30 @@ export async function createLessonReport(values: {
   ]);
 }
 
+export async function createLessonRecord(values: {
+  studentId: string;
+  tutorId?: string;
+  lessonTitle?: string;
+  subject?: string;
+  lessonDate?: string;
+  startTime?: string;
+  durationMinutes?: string;
+  status?: string;
+}) {
+  await insertWithFallbacks("lessons", [
+    {
+      student_id: values.studentId,
+      tutor_id: values.tutorId,
+      lesson_title: values.lessonTitle,
+      subject: values.subject,
+      lesson_date: values.lessonDate,
+      start_time: values.startTime,
+      duration_minutes: values.durationMinutes ? Number(values.durationMinutes) : undefined,
+      status: values.status ?? "scheduled"
+    }
+  ]);
+}
+
 export async function createAssessmentRecord(values: {
   studentId: string;
   actorId: string;
@@ -770,6 +1010,26 @@ export async function createAssessmentRecord(values: {
       score: values.score ? Number(values.score) : undefined,
       max_score: values.maxScore ? Number(values.maxScore) : undefined,
       notes: values.notes
+    }
+  ]);
+}
+
+export async function createArticleRecord(values: {
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content?: string;
+  authorId?: string;
+  status?: string;
+}) {
+  await insertWithFallbacks("articles", [
+    {
+      title: values.title,
+      slug: values.slug,
+      excerpt: values.excerpt,
+      content: values.content,
+      author_id: values.authorId,
+      status: values.status ?? "draft"
     }
   ]);
 }
@@ -812,12 +1072,64 @@ export async function saveTargetRecord(values: {
 
 export async function invokeAdminFunction<T extends FunctionResponse>(name: string, payload: Record<string, unknown>) {
   const client = createBrowserSupabaseClient();
+  const {
+    data: { session }
+  } = await client.auth.getSession();
+
+  if (!session?.access_token) {
+    throw new Error("Your session has expired. Sign in again.");
+  }
+
+  if (import.meta.env.DEV) {
+    const hostname = import.meta.env.PUBLIC_SUPABASE_URL
+      ? new URL(import.meta.env.PUBLIC_SUPABASE_URL).hostname
+      : "missing-public-supabase-url";
+    console.info("[FlyBridge admin function] invoking", {
+      functionName: name,
+      hostname,
+      hasSession: Boolean(session),
+      authenticatedUserId: session.user.id,
+      payloadFields: Object.keys(payload)
+    });
+  }
+
   const { data, error } = await client.functions.invoke(name, {
     body: payload
   });
 
   if (error) {
-    throw new Error(await getFriendlyErrorMessage(error, "We could not complete that secure admin action just now."));
+    const details = await extractFunctionErrorDetails(error);
+
+    if (import.meta.env.DEV) {
+      console.info("[FlyBridge admin function] failed", {
+        functionName: name,
+        status: details.status ?? null,
+        statusText: details.statusText ?? null,
+        hasContextResponse: (error as { context?: unknown } | null)?.context instanceof Response,
+        payloadFields: Object.keys(payload),
+        errorMessage: details.message || null,
+        payloadMessage: details.payloadMessage ?? null,
+        responseBody: details.responseBody ?? null
+      });
+    }
+
+    const friendly =
+      details.status === 401
+        ? "Your session has expired. Sign in again."
+        : details.status === 403
+          ? "You do not have permission to delete this account."
+          : details.status === 404
+            ? "The account deletion service could not be found."
+            : details.status === 500
+              ? "The account could not be deleted because of a server error."
+              : await getFriendlyErrorMessage(error, "We could not complete that secure admin action just now.");
+
+    const devDetail =
+      import.meta.env.DEV && (details.message || details.payloadMessage || details.responseBody)
+        ? ` Technical detail: ${details.payloadMessage ?? details.message ?? details.responseBody}`
+        : "";
+
+    throw new Error(`${friendly}${devDetail}`);
   }
 
   if (!data) {
@@ -827,32 +1139,201 @@ export async function invokeAdminFunction<T extends FunctionResponse>(name: stri
   return data as T;
 }
 
+export async function updatePortalUser(values: {
+  userId: string;
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  status?: string;
+  subjects?: string[];
+  keyStages?: string[];
+}) {
+  return invokeAdminFunction("update-portal-user", values);
+}
+
+export async function setPortalUserStatus(values: {
+  userId: string;
+  status: "active" | "inactive" | "suspended" | "archived";
+}) {
+  return invokeAdminFunction("set-portal-user-status", values);
+}
+
+export async function archivePortalUser(values: {
+  userId: string;
+}) {
+  return invokeAdminFunction("archive-portal-user", values);
+}
+
+export async function restorePortalUser(values: {
+  userId: string;
+}) {
+  return invokeAdminFunction("restore-portal-user", values);
+}
+
+export async function archiveStudent(values: {
+  studentId: string;
+}) {
+  return invokeAdminFunction("archive-student", values);
+}
+
+export async function restoreStudent(values: {
+  studentId: string;
+}) {
+  return invokeAdminFunction("restore-student", values);
+}
+
+export async function deletePortalUser(values: {
+  userId: string;
+  email: string;
+  entityType: "parent" | "tutor";
+  confirmationEmail: string;
+}) {
+  const client = createBrowserSupabaseClient();
+  const {
+    data: { session }
+  } = await client.auth.getSession();
+
+  if (!session?.access_token) {
+    throw new Error("Your session has expired. Sign in again.");
+  }
+  if (!values.userId.trim()) {
+    throw new Error("The selected account is missing its user ID.");
+  }
+  if (!values.email.trim()) {
+    throw new Error("The selected account is missing its email address.");
+  }
+  if (values.entityType !== "parent" && values.entityType !== "tutor") {
+    throw new Error("Only parent and tutor accounts can be permanently deleted.");
+  }
+  if (values.confirmationEmail !== values.email) {
+    throw new Error("The confirmation email must match exactly before deletion.");
+  }
+
+  return invokeAdminFunction<{ message: string; success?: boolean; deletedUserId?: string }>("delete-portal-user", values);
+}
+
+export async function resendPortalWelcome(values: {
+  userId: string;
+  resetPassword?: boolean;
+}) {
+  return invokeAdminFunction("resend-portal-welcome", values);
+}
+
+export async function repairPortalUser(values: {
+  authUserId: string;
+  email?: string;
+  fullName: string;
+  role: "parent" | "tutor";
+  studentId?: string;
+}) {
+  return invokeAdminFunction<PortalAccountFunctionResponse>("repair-portal-user", values);
+}
+
+export async function unlinkParentFromStudent(values: {
+  parentId: string;
+  studentId: string;
+}) {
+  const client = createBrowserSupabaseClient();
+  const { error } = await client.from("parent_student_links").delete().match({
+    parent_id: values.parentId,
+    student_id: values.studentId
+  });
+  if (error) throw error;
+}
+
+export async function unlinkTutorFromStudent(values: {
+  tutorId: string;
+  studentId: string;
+}) {
+  const client = createBrowserSupabaseClient();
+  const { error } = await client.from("tutor_student_links").delete().match({
+    tutor_id: values.tutorId,
+    student_id: values.studentId
+  });
+  if (error) throw error;
+}
+
+export async function saveAdminNote(values: {
+  id?: string;
+  entityType: "student" | "parent" | "tutor";
+  entityId: string;
+  note: string;
+  actorId: string;
+}) {
+  const client = createBrowserSupabaseClient();
+  if (values.id) {
+    const { error } = await client
+      .from("admin_notes")
+      .update({
+        note: values.note,
+        updated_by: values.actorId,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", values.id);
+    if (error) throw error;
+    return;
+  }
+
+  const { error } = await client.from("admin_notes").insert({
+    entity_type: values.entityType,
+    entity_id: values.entityId,
+    note: values.note,
+    created_by: values.actorId,
+    updated_by: values.actorId
+  });
+  if (error) throw error;
+}
+
+export async function createAuditEntry(values: {
+  actorId: string;
+  action: string;
+  entityType: string;
+  entityId?: string;
+  metadata?: Record<string, unknown>;
+}) {
+  const client = createBrowserSupabaseClient();
+  const { error } = await client.from("audit_logs").insert({
+    actor_id: values.actorId,
+    action: values.action,
+    entity_type: values.entityType,
+    entity_id: values.entityId ?? null,
+    metadata: values.metadata ?? {}
+  });
+  if (error) throw error;
+}
+
 export async function createTutorAccount(values: {
   email: string;
   fullName: string;
-  password?: string;
+  phone?: string;
+  subjects?: string[];
+  keyStages?: string[];
+  studentId?: string;
 }) {
-  return invokeAdminFunction("create-tutor", values);
+  return invokeAdminFunction<PortalAccountFunctionResponse>("create-tutor", values);
 }
 
 export async function createParentAccount(values: {
   email: string;
   fullName: string;
-  password?: string;
+  phone?: string;
+  studentId?: string;
 }) {
-  return invokeAdminFunction("create-parent", values);
+  return invokeAdminFunction<PortalAccountFunctionResponse>("create-parent", values);
 }
 
 export async function linkTutorToStudent(values: {
   tutorId: string;
-  studentId: string;
+  studentId?: string;
+  studentIds?: string[];
 }) {
   return invokeAdminFunction("link-tutor-to-student", values);
 }
 
 export async function linkParentToStudent(values: {
   parentId: string;
-  studentId: string;
+  studentId?: string;
+  studentIds?: string[];
 }) {
   return invokeAdminFunction("link-parent-to-student", values);
 }
@@ -1021,9 +1502,10 @@ export function renderProfileCards(
         .map((link) => options.studentsById?.get(String(link.student_id ?? "")))
         .filter(Boolean)
         .map((student) => getStudentName(student as StudentRow));
-      const inviteCount = options.invites?.filter((invite) => invite.parent_id === profile.id).length ?? 0;
+      const matchingInvites = options.heading === "parent" ? options.invites?.filter((invite) => parentInviteMatchesProfile(invite, profile)) ?? [] : [];
+      const inviteCount = matchingInvites.length;
       const latestInvite = byRecentDate(
-        (options.invites?.filter((invite) => invite.parent_id === profile.id) ?? []) as Record<string, unknown>[],
+        matchingInvites as Record<string, unknown>[],
         "created_at",
         "expires_at"
       )[0] as ParentInviteRow | undefined;
@@ -1757,6 +2239,15 @@ export async function bootstrapLoginPage() {
       mustChangePassword: Boolean(profile.must_change_password),
       role: profile.role ?? "parent"
     });
+    if (String(profile.status ?? "active").toLowerCase() !== "active") {
+      await client.auth.signOut();
+      setStatusMessage(
+        feedback,
+        "error",
+        "This FlyBridge portal account is not currently active. Please contact FlyBridge if you need help."
+      );
+      return;
+    }
     redirectForProfile(profile);
     return;
   }
@@ -1808,6 +2299,17 @@ export async function bootstrapLoginPage() {
       mustChangePassword: Boolean(profile.must_change_password),
       role: profile.role ?? "parent"
     });
+
+    if (String(profile.status ?? "active").toLowerCase() !== "active") {
+      await client.auth.signOut();
+      setFormPending(form, false, "Sign in");
+      setStatusMessage(
+        feedback,
+        "error",
+        "This FlyBridge portal account is not currently active. Please contact FlyBridge if you need help."
+      );
+      return;
+    }
 
     if (!profile.must_change_password) {
       try {
@@ -1864,27 +2366,89 @@ export async function bootstrapForgotPasswordPage() {
   });
 }
 
+function hasRecoveryUrlIndicator(locationSearch = window.location.search, locationHash = window.location.hash) {
+  const combined = `${locationSearch}${locationHash}`;
+  return /(^|[?#&])type=recovery(?:&|$)/.test(combined) || combined.includes("token_hash=");
+}
+
+async function waitForRecoverySession(
+  client: ReturnType<typeof createBrowserSupabaseClient>,
+  recoveryIndicator: boolean,
+  timeoutMs = 2500
+) {
+  const {
+    data: { session: existingSession }
+  } = await client.auth.getSession();
+
+  if (existingSession?.user && recoveryIndicator) {
+    return existingSession;
+  }
+
+  return await new Promise<Awaited<ReturnType<typeof client.auth.getSession>>["data"]["session"]>((resolve) => {
+    let settled = false;
+    const finish = (session: Awaited<ReturnType<typeof client.auth.getSession>>["data"]["session"]) => {
+      if (settled) return;
+      settled = true;
+      subscription.unsubscribe();
+      window.clearTimeout(timeoutId);
+      resolve(session);
+    };
+
+    const {
+      data: { subscription }
+    } = client.auth.onAuthStateChange((event, nextSession) => {
+      debugAuth("Reset password auth event", {
+        event,
+        hasUser: Boolean(nextSession?.user)
+      });
+
+      if (!nextSession?.user) return;
+      if (event === "PASSWORD_RECOVERY" || (recoveryIndicator && event === "SIGNED_IN")) {
+        finish(nextSession);
+      }
+    });
+
+    const timeoutId = window.setTimeout(async () => {
+      const {
+        data: { session }
+      } = await client.auth.getSession();
+      finish(session?.user && recoveryIndicator ? session : null);
+    }, timeoutMs);
+  });
+}
+
 async function bootstrapPasswordUpdatePage(formSelector: string, feedbackSelector: string, successReason: string) {
+  const recoveryIndicator = hasRecoveryUrlIndicator();
   const client = createBrowserSupabaseClient();
   const form = document.querySelector<HTMLFormElement>(formSelector);
   const feedback = document.querySelector<HTMLElement>(feedbackSelector);
   const retryButton = document.querySelector<HTMLButtonElement>("[data-profile-sync-retry]");
+  const isResetFlow = successReason === "password-reset-complete";
 
-  const {
-    data: { session }
-  } = await client.auth.getSession();
+  if (!form) return;
+
+  const session = isResetFlow
+    ? await waitForRecoverySession(client, recoveryIndicator)
+    : (
+        await client.auth.getSession()
+      ).data.session;
 
   if (!session?.user) {
+    if (isResetFlow) {
+      setFormDisabled(form, true);
+      retryButton?.classList.add("hidden");
+      setStatusMessage(feedback, "error", "This password-reset link is invalid or has expired.");
+      return;
+    }
     redirectToLogin("auth-required");
     return;
   }
-
-  if (!form) return;
 
   let profile: ProfileRow;
   try {
     profile = await requireProfile(session.user.id);
   } catch {
+    setFormDisabled(form, true);
     setStatusMessage(
       feedback,
       "error",
@@ -1893,7 +2457,7 @@ async function bootstrapPasswordUpdatePage(formSelector: string, feedbackSelecto
     return;
   }
 
-  if (successReason === "password-changed" && !profile.must_change_password) {
+  if (!isResetFlow && !profile.must_change_password) {
     redirectForRole(profile.role ?? "parent", false);
     return;
   }
@@ -2017,22 +2581,16 @@ async function bootstrapPasswordUpdatePage(formSelector: string, feedbackSelecto
       setStatusMessage(
         feedback,
         "success",
-        successReason === "password-reset-complete"
-          ? "Password saved successfully. Redirecting you back to login..."
+        isResetFlow
+          ? "Password saved successfully. Redirecting you to your dashboard..."
           : "Password updated successfully. Redirecting you to your dashboard..."
       );
-      const nextRoute =
-        successReason === "password-reset-complete" ? "/login?reason=password-reset-complete" : getRoleHome(updatedProfile.role);
       debugAuth("Password flow redirect chosen", {
         userId: session.user.id,
         role: updatedProfile.role ?? "parent",
-        nextRoute
+        nextRoute: getRoleHome(updatedProfile.role)
       });
       window.setTimeout(() => {
-        if (successReason === "password-reset-complete") {
-          redirectToLogin(successReason);
-          return;
-        }
         redirectForRole(updatedProfile.role ?? profile.role ?? "parent", false);
       }, 1200);
     } catch (profileSyncError) {
@@ -2056,8 +2614,8 @@ async function bootstrapPasswordUpdatePage(formSelector: string, feedbackSelecto
   retryButton?.addEventListener("click", async () => {
     if (!retryState) return;
     setFormPending(form, true, successReason === "password-reset-complete" ? "Save new password" : "Update password", "Retrying sync...");
-    retryButton.classList.add("hidden");
-    setStatusMessage(feedback, "info", "Retrying portal setup...");
+      retryButton.classList.add("hidden");
+      setStatusMessage(feedback, "info", "Retrying portal setup...");
     try {
       const updatedProfile = await syncProfileAfterPasswordChange(retryState.loginTime);
       setStatusMessage(feedback, "success", "Portal setup completed. Redirecting now...");

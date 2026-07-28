@@ -1,0 +1,37 @@
+---
+interface Props {
+  dialogId: string;
+}
+
+const { dialogId } = Astro.props;
+---
+
+<div class="dialog-shell" data-confirmation-dialog={dialogId} data-open="false" aria-hidden="true">
+  <form class="dialog-panel" data-confirm-form={dialogId} role="dialog" aria-modal="true" aria-labelledby={`${dialogId}-title`}>
+    <div class="flex items-start justify-between gap-4">
+      <div class="min-w-0">
+        <p class="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">Please confirm</p>
+        <h2 class="mt-2 text-2xl font-semibold tracking-tight text-fb-ink" id={`${dialogId}-title`} data-confirm-title={dialogId}>Confirm action</h2>
+        <p class="mt-2 text-sm leading-6 text-fb-ink-soft" data-confirm-body={dialogId}></p>
+      </div>
+      <button class="ghost-button px-4" data-confirm-close={dialogId} type="button">Close</button>
+    </div>
+    <div class="surface-note-sky mt-5 hidden" data-confirm-entity={dialogId}></div>
+    <div class="mt-5 hidden" data-confirm-input-wrap={dialogId}>
+      <label>
+        <span class="label-shell" data-confirm-label={dialogId}>Type to confirm</span>
+        <input class="input-shell" data-confirm-input={dialogId} type="text" autocomplete="off" spellcheck="false" />
+      </label>
+      <p class="helper-shell" data-confirm-helper={dialogId}></p>
+    </div>
+    <div class="mt-5 hidden" data-confirm-devhint={dialogId}></div>
+    <div class="mt-4 hidden" data-confirm-actions={dialogId}>
+      <button class="ghost-button px-4 py-2 text-sm" data-confirm-retry={dialogId} type="button">Retry</button>
+    </div>
+    <p class="status-message mt-4 hidden" data-confirm-status={dialogId} role="status" aria-live="polite"></p>
+    <div class="form-actions">
+      <button class="ghost-button w-full sm:w-auto" data-confirm-cancel={dialogId} type="button">Cancel</button>
+      <button class="cta-button w-full sm:w-auto" data-confirm-submit={dialogId} type="submit" disabled>Confirm</button>
+    </div>
+  </form>
+</div>

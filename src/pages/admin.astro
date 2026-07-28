@@ -1,130 +1,503 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Logo from "../components/Logo.astro";
 import RoleGuard from "../components/RoleGuard.astro";
 import LessonReportForm from "../components/LessonReportForm.astro";
 import AssessmentForm from "../components/AssessmentForm.astro";
 import TargetForm from "../components/TargetForm.astro";
-import ReportTimeline from "../components/ReportTimeline.astro";
-import EmptyState from "../components/EmptyState.astro";
 import StudentCard from "../components/StudentCard.astro";
+import AdminDataTable from "../components/admin/AdminDataTable.astro";
+import AdminFilters from "../components/admin/AdminFilters.astro";
+import BulkActionBar from "../components/admin/BulkActionBar.astro";
+import AdminSidebar from "../components/admin/AdminSidebar.astro";
+import AdminDirectoryPanel from "../components/admin/AdminDirectoryPanel.astro";
+import AdminDrawer from "../components/admin/AdminDrawer.astro";
+import ConfirmationDialog from "../components/admin/ConfirmationDialog.astro";
+import DangerZone from "../components/admin/DangerZone.astro";
+import AuditTimeline from "../components/admin/AuditTimeline.astro";
 import { site } from "../data/site";
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "FlyBridge Admin Dashboard",
-  description: "Admin portal for FlyBridge reporting, student setup and secure parent and tutor account management.",
+  description: "Admin control centre for FlyBridge student, tutor, parent and portal management.",
   url: new URL("/admin", site.url).toString()
 };
 ---
 
 <BaseLayout
   title="Admin Dashboard"
-  description="Admin portal for FlyBridge reporting, student setup and secure parent and tutor account management."
+  description="Admin control centre for FlyBridge student, tutor, parent and portal management."
   path="/admin"
   schema={schema}
   noindex={true}
   showHeader={false}
   showFooter={false}
 >
+  <header class="px-3 pt-2 sm:px-5 sm:pt-2.5 lg:px-8">
+    <div class="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-3 rounded-[1.15rem] border border-white/70 bg-white/[0.94] px-3 py-2 shadow-fb backdrop-blur-xl sm:px-4 sm:py-2.5">
+      <div class="flex min-w-0 items-center gap-3">
+        <button class="admin-mobile-trigger" data-admin-drawer-open type="button" aria-label="Open admin navigation">
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" aria-hidden="true">
+            <path d="M4.75 7.5h14.5M4.75 12h14.5M4.75 16.5h14.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </button>
+        <Logo />
+        <div class="min-w-0">
+          <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">FlyBridge Admin</p>
+          <p class="mt-1 text-sm text-fb-ink-soft">Private control centre</p>
+        </div>
+      </div>
+      <div class="admin-topbar-search">
+        <label class="block">
+          <span class="sr-only">Global search</span>
+          <input class="input-shell" data-admin-global-search type="search" placeholder="Search students, tutors, parents, lessons or reports" />
+        </label>
+      </div>
+      <div class="flex shrink-0 items-center gap-2">
+        <button class="admin-sidebar-toggle" data-sidebar-toggle type="button" aria-label="Collapse admin sidebar">
+          <svg viewBox="0 0 24 24" class="h-4.5 w-4.5" fill="none" aria-hidden="true">
+            <path d="M9.5 6.75 4.75 12l4.75 5.25M19.25 5.5v13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <button class="cta-button gap-2 px-4 py-2 text-sm" data-quick-add-open type="button">
+          <span class="text-base leading-none">+</span>
+          <span>Add</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
   <section class="dashboard-wide-shell pb-8 pt-3 sm:pb-10 sm:pt-5">
     <RoleGuard title="Checking admin access" body="We are loading your FlyBridge admin workspace and confirming account permissions.">
-      <div class="admin-app-grid">
-        <section class="dashboard-section">
-          <div class="admin-toolbar">
-            <div class="min-w-0">
-              <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">FlyBridge Admin</p>
-              <h1 class="mt-2 text-[1.75rem] font-semibold tracking-tight text-fb-ink sm:text-[2.1rem]">FlyBridge Admin</h1>
-              <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Student records, parent access and tutor access in one private workspace.</p>
-            </div>
-            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-              <div class="rounded-[1.1rem] border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm">
-                <p class="font-semibold text-fb-ink" data-session-name>Loading...</p>
-                <p class="mt-1 break-words text-fb-ink-soft" data-session-email></p>
+      <div class="admin-shell" data-admin-shell data-sidebar-collapsed="false">
+        <AdminSidebar />
+
+        <div class="admin-content-shell">
+          <section class="dashboard-section">
+            <div class="admin-toolbar">
+              <div class="min-w-0">
+                <p class="text-xs font-semibold tracking-[0.22em] text-slate-500 uppercase">FlyBridge Admin</p>
+                <h1 class="mt-2 text-[1.75rem] font-semibold tracking-tight text-fb-ink sm:text-[2rem]">Education management</h1>
+                <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Students, tutors, parents, lessons, account access and reporting in one private workspace.</p>
               </div>
               <span class="mini-chip self-start sm:self-auto" data-session-role>Checking access</span>
-              <button class="ghost-button" data-logout type="button">Log out</button>
-              <button class="cta-button gap-2" data-quick-add-open type="button">
-                <span class="text-base leading-none">+</span>
-                <span>Add</span>
-              </button>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section class="dashboard-metric-grid">
-          <StudentCard title="Students" subtitle="Current student records inside the portal workspace." meta="Overview">
-            <p class="mt-4 text-3xl font-semibold text-fb-ink" data-student-count>0</p>
-          </StudentCard>
-          <StudentCard title="Parent accounts" subtitle="Parents linked or ready to link into reporting access." meta="Parent Portals">
-            <p class="mt-4 text-3xl font-semibold text-fb-ink" data-parent-count>0</p>
-          </StudentCard>
-          <StudentCard title="Tutor accounts" subtitle="Tutors available for reporting and assigned student work." meta="Tutor Portals">
-            <p class="mt-4 text-3xl font-semibold text-fb-ink" data-tutor-count>0</p>
-          </StudentCard>
-          <StudentCard title="Recent reports" subtitle="Latest lesson reporting activity across the dashboard." meta="Reporting">
-            <p class="mt-4 text-3xl font-semibold text-fb-ink" data-report-count>0</p>
-          </StudentCard>
-        </section>
+          <section class="space-y-6" data-admin-panel data-panel="overview">
+          <section class="dashboard-metric-grid">
+            <StudentCard title="Active students" subtitle="Student records currently marked active." meta="Overview">
+              <p class="mt-4 text-3xl font-semibold text-fb-ink" data-overview-active-students>0</p>
+            </StudentCard>
+            <StudentCard title="Active tutors" subtitle="Tutor portal accounts currently able to sign in." meta="Overview">
+              <p class="mt-4 text-3xl font-semibold text-fb-ink" data-overview-active-tutors>0</p>
+            </StudentCard>
+            <StudentCard title="Parent accounts" subtitle="Parent portal profiles currently in the system." meta="Overview">
+              <p class="mt-4 text-3xl font-semibold text-fb-ink" data-overview-parents>0</p>
+            </StudentCard>
+            <StudentCard title="Upcoming lessons" subtitle="Scheduled lessons across all linked students." meta="Overview">
+              <p class="mt-4 text-3xl font-semibold text-fb-ink" data-overview-upcoming-lessons>0</p>
+            </StudentCard>
+            <StudentCard title="Reports awaiting review" subtitle="Recent reports needing an admin glance." meta="Overview">
+              <p class="mt-4 text-3xl font-semibold text-fb-ink" data-overview-reports-review>0</p>
+            </StudentCard>
+            <StudentCard title="Assessments this month" subtitle="Assessments recorded in the current calendar month." meta="Overview">
+              <p class="mt-4 text-3xl font-semibold text-fb-ink" data-overview-assessments-month>0</p>
+            </StudentCard>
+            <StudentCard title="Inactive accounts" subtitle="Parent and tutor accounts not currently active." meta="Overview">
+              <p class="mt-4 text-3xl font-semibold text-fb-ink" data-overview-inactive-accounts>0</p>
+            </StudentCard>
+          </section>
 
-        <section class="dashboard-section">
-          <div class="dashboard-section-heading">
-            <h2 class="text-xl font-semibold text-fb-ink">Workspace areas</h2>
-            <p class="body-copy-compact">Keep the current task in view without leaving the dashboard.</p>
-          </div>
-          <div class="tab-switcher mt-4" role="tablist" aria-label="Admin dashboard sections">
-            <button class="tab-button" data-admin-tab data-tab="students" type="button">
-              <span class="block text-sm font-semibold">Students</span>
-              <span class="mt-1 block text-xs font-medium leading-5 opacity-70">Records, assessments, reports and targets</span>
-            </button>
-            <button class="tab-button" data-admin-tab data-tab="parents" type="button">
-              <span class="block text-sm font-semibold">Parent Portals</span>
-              <span class="mt-1 block text-xs font-medium leading-5 opacity-70">Accounts, links, invites and access resets</span>
-            </button>
-            <button class="tab-button" data-admin-tab data-tab="tutors" type="button">
-              <span class="block text-sm font-semibold">Tutor Portals</span>
-              <span class="mt-1 block text-xs font-medium leading-5 opacity-70">Accounts, assignments and access resets</span>
-            </button>
-          </div>
-        </section>
-
-        <section class="space-y-6" data-admin-panel data-panel="students">
-          <div class="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+          <div class="grid gap-4 xl:grid-cols-2">
             <section class="dashboard-section">
               <div class="admin-toolbar">
                 <div class="dashboard-section-heading">
-                  <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Student directory</h2>
-                  <p class="body-copy-compact">Search, filter and jump straight into the next action for each student record.</p>
+                  <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Upcoming lessons</h2>
                 </div>
-                <div class="mini-chip">Search and filter</div>
+                <button class="ghost-button px-4 py-2 text-sm" data-overview-view="lessons" type="button">View all</button>
               </div>
-              <div class="admin-filter-grid mt-4">
-                <label>
-                  <span class="label-shell">Search students</span>
-                  <input class="input-shell" data-student-search type="search" placeholder="Search by student name or school" />
-                </label>
-                <label>
-                  <span class="label-shell">Status</span>
-                  <select class="input-shell" data-student-status-filter>
-                    <option value="all">All students</option>
-                    <option value="active">Active only</option>
-                    <option value="inactive">Inactive only</option>
-                  </select>
-                </label>
-              </div>
-              <div class="dashboard-card-grid mt-4" data-admin-students>
-                <EmptyState title="Loading students" body="Student records are being loaded for the FlyBridge dashboard." />
-              </div>
-              <div class="hidden rounded-[1rem] border border-dashed border-slate-200 bg-white px-4 py-4 text-sm text-fb-ink-soft" data-student-filter-empty>
-                No students match the current search or status filter.
+              <div class="dashboard-card-stack mt-4" data-overview-upcoming-list>
+                <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
               </div>
             </section>
+            <section class="dashboard-section">
+              <div class="admin-toolbar">
+                <div class="dashboard-section-heading">
+                  <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Recently added students</h2>
+                </div>
+                <button class="ghost-button px-4 py-2 text-sm" data-overview-view="students" type="button">View all</button>
+              </div>
+              <div class="dashboard-card-stack mt-4" data-overview-recent-students>
+                <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+              </div>
+            </section>
+            <section class="dashboard-section">
+              <div class="admin-toolbar">
+                <div class="dashboard-section-heading">
+                  <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Recent tutor reports</h2>
+                </div>
+                <button class="ghost-button px-4 py-2 text-sm" data-overview-view="reports" type="button">View all</button>
+              </div>
+              <div class="dashboard-card-stack mt-4" data-overview-recent-reports>
+                <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+              </div>
+            </section>
+            <section class="dashboard-section">
+              <div class="admin-toolbar">
+                <div class="dashboard-section-heading">
+                  <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Accounts requiring attention</h2>
+                </div>
+                <button class="ghost-button px-4 py-2 text-sm" data-overview-view="settings" type="button">View all</button>
+              </div>
+              <div class="dashboard-card-stack mt-4" data-overview-attention>
+                <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+              </div>
+            </section>
+            <section class="dashboard-section">
+              <div class="admin-toolbar">
+                <div class="dashboard-section-heading">
+                  <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Unlinked parents</h2>
+                </div>
+                <button class="ghost-button px-4 py-2 text-sm" data-overview-view="parents" type="button">View all</button>
+              </div>
+              <div class="dashboard-card-stack mt-4" data-overview-unlinked-parents>
+                <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+              </div>
+            </section>
+            <section class="dashboard-section">
+              <div class="admin-toolbar">
+                <div class="dashboard-section-heading">
+                  <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Students without an assigned tutor</h2>
+                </div>
+                <button class="ghost-button px-4 py-2 text-sm" data-overview-view="students" type="button">View all</button>
+              </div>
+              <div class="dashboard-card-stack mt-4" data-overview-unassigned-students>
+                <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+              </div>
+            </section>
+          </div>
 
-            <div class="grid gap-4">
+          <AuditTimeline containerId="overview-audit" title="Recent activity" body="Sensitive account-management actions are recorded here." />
+        </section>
+
+        <section class="hidden" data-admin-panel data-panel="students">
+          <AdminDirectoryPanel panel="students" title="Student management">
+            <BulkActionBar target="students" />
+            <AdminFilters containerId="students">
+              <label>
+                <span class="label-shell">Search students</span>
+                <input class="input-shell" data-student-search type="search" placeholder="Search by student name or school" />
+              </label>
+              <label>
+                <span class="label-shell">Status</span>
+                <select class="input-shell" data-student-status-filter>
+                  <option value="all">All statuses</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </label>
+              <label>
+                <span class="label-shell">Assigned tutor</span>
+                <select class="input-shell" data-student-tutor-filter>
+                  <option value="all">All students</option>
+                  <option value="assigned">Assigned only</option>
+                  <option value="unassigned">Unassigned only</option>
+                </select>
+              </label>
+              <label>
+                <span class="label-shell">Sort by</span>
+                <select class="input-shell" data-student-sort>
+                  <option value="name">Name</option>
+                  <option value="created">Date created</option>
+                  <option value="next_lesson">Next lesson</option>
+                </select>
+              </label>
+            </AdminFilters>
+            <AdminDataTable title="Student management" body="Student records, progress state, linked parents and assigned tutors." tableId="students">
+              <Fragment slot="actions">
+                <button class="cta-button px-4 py-2 text-sm" data-quick-add-target="student" type="button">Add student</button>
+              </Fragment>
+            </AdminDataTable>
+          </AdminDirectoryPanel>
+        </section>
+
+        <section class="hidden" data-admin-panel data-panel="tutors">
+          <AdminDirectoryPanel panel="tutors" title="Tutor management">
+            <BulkActionBar target="tutors" />
+            <AdminFilters containerId="tutors">
+            <label>
+              <span class="label-shell">Search tutors</span>
+              <input class="input-shell" data-tutor-search type="search" placeholder="Search by tutor name or email" />
+            </label>
+            <label>
+              <span class="label-shell">Status</span>
+              <select class="input-shell" data-tutor-status-filter>
+                <option value="all">All statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="suspended">Suspended</option>
+                <option value="archived">Archived</option>
+              </select>
+            </label>
+            <label>
+              <span class="label-shell">Subject</span>
+              <select class="input-shell" data-tutor-subject-filter>
+                <option value="all">All subjects</option>
+              </select>
+            </label>
+            <label>
+              <span class="label-shell">Key stage</span>
+              <select class="input-shell" data-tutor-keystage-filter>
+                <option value="all">All key stages</option>
+              </select>
+            </label>
+            <label>
+              <span class="label-shell">Sort by</span>
+              <select class="input-shell" data-tutor-sort>
+                <option value="name">Name</option>
+                <option value="created">Date created</option>
+                <option value="last_login">Last login</option>
+              </select>
+            </label>
+            </AdminFilters>
+            <AdminDataTable title="Tutor management" body="Status, subjects, key stages, linked students and secure account actions." tableId="tutors">
+              <Fragment slot="actions">
+                <button class="cta-button px-4 py-2 text-sm" data-quick-add-target="tutor" type="button">Add tutor</button>
+              </Fragment>
+            </AdminDataTable>
+          </AdminDirectoryPanel>
+        </section>
+
+        <section class="hidden" data-admin-panel data-panel="parents">
+          <AdminDirectoryPanel panel="parents" title="Parent management">
+            <BulkActionBar target="parents" />
+            <AdminFilters containerId="parents">
+            <label>
+              <span class="label-shell">Search parents</span>
+              <input class="input-shell" data-parent-search type="search" placeholder="Search by parent name or email" />
+            </label>
+            <label>
+              <span class="label-shell">Status</span>
+              <select class="input-shell" data-parent-status-filter>
+                <option value="all">All statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="suspended">Suspended</option>
+                <option value="archived">Archived</option>
+              </select>
+            </label>
+            <label>
+              <span class="label-shell">Linked students</span>
+              <select class="input-shell" data-parent-link-filter>
+                <option value="all">All parents</option>
+                <option value="linked">Linked only</option>
+                <option value="unlinked">No linked student</option>
+              </select>
+            </label>
+            <label>
+              <span class="label-shell">Sort by</span>
+              <select class="input-shell" data-parent-sort>
+                <option value="name">Name</option>
+                <option value="created">Date created</option>
+                <option value="last_login">Last login</option>
+              </select>
+            </label>
+            </AdminFilters>
+            <AdminDataTable title="Parent management" body="Portal setup state, linked students, password state and secure account actions." tableId="parents">
+              <Fragment slot="actions">
+                <button class="cta-button px-4 py-2 text-sm" data-quick-add-target="parent" type="button">Add parent</button>
+              </Fragment>
+            </AdminDataTable>
+          </AdminDirectoryPanel>
+        </section>
+
+        <section class="hidden space-y-6" data-admin-panel data-panel="lessons">
+          <section class="dashboard-section">
+            <div class="admin-toolbar">
+              <div class="dashboard-section-heading">
+                <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Lesson activity</h2>
+                <p class="body-copy-compact">Scheduled lessons and completed tuition activity across FlyBridge.</p>
+              </div>
+              <button class="cta-button px-4 py-2 text-sm" data-quick-add-target="lesson" type="button">Add lesson</button>
+            </div>
+            <div class="dashboard-card-stack mt-4" data-admin-lessons>
+              <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+            </div>
+          </section>
+          <form class="form-panel" data-lesson-form>
+            <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Add lesson</h2>
+            <div class="form-grid">
+              <label>
+                <span class="label-shell">Student</span>
+                <select class="input-shell" name="student-id" data-student-select required></select>
+              </label>
+              <label>
+                <span class="label-shell">Tutor</span>
+                <select class="input-shell" name="tutor-id" data-tutor-select></select>
+              </label>
+              <label class="sm:col-span-2">
+                <span class="label-shell">Lesson title</span>
+                <input class="input-shell" name="lesson-title" type="text" placeholder="Weekly Biology lesson" />
+              </label>
+              <label>
+                <span class="label-shell">Subject</span>
+                <input class="input-shell" name="subject" type="text" placeholder="Biology" />
+              </label>
+              <label>
+                <span class="label-shell">Status</span>
+                <select class="input-shell" name="status">
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="missed">Missed</option>
+                </select>
+              </label>
+              <label>
+                <span class="label-shell">Lesson date</span>
+                <input class="input-shell" name="lesson-date" type="date" />
+              </label>
+              <label>
+                <span class="label-shell">Start time</span>
+                <input class="input-shell" name="start-time" type="time" />
+              </label>
+              <label>
+                <span class="label-shell">Duration minutes</span>
+                <input class="input-shell" name="duration-minutes" type="number" min="15" step="15" value="60" />
+              </label>
+            </div>
+            <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+            <div class="form-actions">
+              <button class="cta-button w-full sm:w-auto" type="submit">Save lesson</button>
+            </div>
+          </form>
+          <LessonReportForm formId="admin-report-form" title="Add lesson report" />
+        </section>
+
+        <section class="hidden space-y-6" data-admin-panel data-panel="reports">
+          <AuditTimeline containerId="admin-report-activity" title="Recent tutor reports" body="Latest lesson summaries recorded for linked students." />
+        </section>
+
+        <section class="hidden space-y-6" data-admin-panel data-panel="assessments">
+          <section class="dashboard-section">
+            <div class="dashboard-section-heading">
+              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Assessment records</h2>
+              <p class="body-copy-compact">Assessment history, score movement and target updates.</p>
+            </div>
+            <div class="dashboard-card-stack mt-4" data-admin-assessments>
+              <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+            </div>
+          </section>
+          <div class="grid gap-4 2xl:grid-cols-2">
+            <AssessmentForm formId="admin-assessment-form" />
+            <TargetForm formId="admin-target-form" />
+          </div>
+        </section>
+
+        <section class="hidden space-y-6" data-admin-panel data-panel="articles">
+          <section class="dashboard-section">
+            <div class="admin-toolbar">
+              <div class="dashboard-section-heading">
+                <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Articles</h2>
+                <p class="body-copy-compact">Draft and published articles available through the public articles page.</p>
+              </div>
+              <button class="cta-button px-4 py-2 text-sm" data-quick-add-target="article" type="button">Add article</button>
+            </div>
+            <div class="dashboard-card-grid mt-4" data-admin-articles>
+              <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+            </div>
+          </section>
+          <form class="form-panel" data-article-form>
+            <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Create article</h2>
+            <div class="form-grid">
+              <label class="sm:col-span-2">
+                <span class="label-shell">Title</span>
+                <input class="input-shell" name="title" type="text" placeholder="Article title" required />
+              </label>
+              <label>
+                <span class="label-shell">Slug</span>
+                <input class="input-shell" name="slug" type="text" placeholder="article-slug" required />
+              </label>
+              <label>
+                <span class="label-shell">Status</span>
+                <select class="input-shell" name="status">
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
+              </label>
+              <label class="sm:col-span-2">
+                <span class="label-shell">Excerpt</span>
+                <textarea class="input-shell min-h-24 resize-y" name="excerpt" placeholder="Short article summary"></textarea>
+              </label>
+              <label class="sm:col-span-2">
+                <span class="label-shell">Content</span>
+                <textarea class="input-shell min-h-40 resize-y" name="content" placeholder="Article content"></textarea>
+              </label>
+            </div>
+            <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+            <div class="form-actions">
+              <button class="cta-button w-full sm:w-auto" type="submit">Save article</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="hidden space-y-6" data-admin-panel data-panel="archived">
+          <section class="dashboard-section">
+            <div class="dashboard-section-heading">
+              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Archived records</h2>
+              <p class="body-copy-compact">Archived parents, tutors and students stay preserved here until they are restored or permanently removed.</p>
+            </div>
+            <div class="tab-switcher mt-4" role="tablist" aria-label="Archived record types">
+              <button class="tab-button" data-archived-tab="parents" type="button" role="tab" aria-selected="true">Parents</button>
+              <button class="tab-button" data-archived-tab="tutors" type="button" role="tab" aria-selected="false">Tutors</button>
+              <button class="tab-button" data-archived-tab="students" type="button" role="tab" aria-selected="false">Students</button>
+            </div>
+          </section>
+
+          <section class="dashboard-section" data-archived-panel="parents">
+            <div class="dashboard-section-heading">
+              <h3 class="text-lg font-semibold text-fb-ink">Archived parents</h3>
+              <p class="body-copy-compact">Restore archived parent access or permanently remove the account after review.</p>
+            </div>
+            <div class="dashboard-card-stack mt-4" data-admin-archived-list="parents">
+              <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+            </div>
+          </section>
+
+          <section class="hidden dashboard-section" data-archived-panel="tutors">
+            <div class="dashboard-section-heading">
+              <h3 class="text-lg font-semibold text-fb-ink">Archived tutors</h3>
+              <p class="body-copy-compact">Restore archived tutor access or permanently remove the account after review.</p>
+            </div>
+            <div class="dashboard-card-stack mt-4" data-admin-archived-list="tutors">
+              <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+            </div>
+          </section>
+
+          <section class="hidden dashboard-section" data-archived-panel="students">
+            <div class="dashboard-section-heading">
+              <h3 class="text-lg font-semibold text-fb-ink">Archived students</h3>
+              <p class="body-copy-compact">Restore archived student records while preserving lesson, report, assessment and target history.</p>
+            </div>
+            <div class="dashboard-card-stack mt-4" data-admin-archived-list="students">
+              <article class="dashboard-list-item text-sm text-fb-ink-soft">Loading…</article>
+            </div>
+          </section>
+        </section>
+
+        <section class="hidden space-y-6" data-admin-panel data-panel="settings">
+          <section class="dashboard-section">
+            <div class="dashboard-section-heading">
+              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Account tools</h2>
+              <p class="body-copy-compact">Create records, link accounts, and manage secure portal access.</p>
+            </div>
+            <div class="grid gap-4 xl:grid-cols-2 mt-4">
               <form class="form-panel" data-student-form>
                 <input name="student-id" type="hidden" value="" />
-                <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Create or edit student</h2>
-                <p class="mt-2 body-copy-compact">Use one compact form for new records and quick profile updates.</p>
+                <h3 class="text-lg font-semibold text-fb-ink">Create or edit student</h3>
                 <div class="form-grid">
                   <label class="sm:col-span-2">
                     <span class="label-shell">Student full name</span>
@@ -138,6 +511,18 @@ const schema = {
                     <span class="label-shell">School</span>
                     <input class="input-shell" name="school" type="text" placeholder="School name" />
                   </label>
+                  <label>
+                    <span class="label-shell">Target grade</span>
+                    <input class="input-shell" name="target-grade" type="text" placeholder="7" />
+                  </label>
+                  <label>
+                    <span class="label-shell">Status</span>
+                    <select class="input-shell" name="status">
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                  </label>
                   <label class="sm:col-span-2">
                     <span class="label-shell">Notes</span>
                     <textarea class="input-shell min-h-24 resize-y" name="notes" placeholder="Optional internal notes"></textarea>
@@ -149,254 +534,260 @@ const schema = {
                   <button class="ghost-button w-full sm:w-auto" data-student-reset type="button">Clear form</button>
                 </div>
               </form>
-            </div>
-          </div>
 
-          <div class="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
-            <section class="dashboard-section">
-              <div class="dashboard-section-heading">
-                <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Assessment records</h2>
-                <p class="body-copy-compact">Recent checkpoints across the whole student list.</p>
-              </div>
-              <div class="dashboard-card-stack mt-4" data-admin-assessments>
-                <EmptyState title="Loading assessments" body="Assessment records are being loaded for the FlyBridge dashboard." />
-              </div>
-            </section>
+              <form class="form-panel" data-tutor-account-form>
+                <h3 class="text-lg font-semibold text-fb-ink">Create tutor account</h3>
+                <div class="form-grid">
+                  <label class="sm:col-span-2">
+                    <span class="label-shell">Tutor full name</span>
+                    <input class="input-shell" name="full-name" type="text" placeholder="Tutor full name" required />
+                  </label>
+                  <label>
+                    <span class="label-shell">Email</span>
+                    <input class="input-shell" name="email" type="email" placeholder="tutor@example.com" required />
+                  </label>
+                  <label>
+                    <span class="label-shell">Phone</span>
+                    <input class="input-shell" name="phone" type="tel" placeholder="07..." />
+                  </label>
+                  <label>
+                    <span class="label-shell">Subjects</span>
+                    <input class="input-shell" name="subjects" type="text" placeholder="Biology, Chemistry" />
+                  </label>
+                  <label>
+                    <span class="label-shell">Key stages</span>
+                    <input class="input-shell" name="key-stages" type="text" placeholder="KS3, KS4" />
+                  </label>
+                  <label class="sm:col-span-2">
+                    <span class="label-shell">Link a student now (optional)</span>
+                    <select class="input-shell" name="student-id" data-student-select>
+                      <option value="">Create the tutor first and assign later</option>
+                    </select>
+                  </label>
+                </div>
+                <p class="helper-shell mt-3">FlyBridge will generate a secure temporary password server-side and send it only by email.</p>
+                <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+                <div class="form-actions">
+                  <button class="cta-button w-full sm:w-auto" type="submit">Create tutor account</button>
+                  <button class="ghost-button hidden w-full sm:w-auto" data-form-resend-welcome type="button">Resend welcome email</button>
+                </div>
+              </form>
 
-            <section class="dashboard-section">
-              <div class="dashboard-section-heading">
-                <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Targets</h2>
-                <p class="body-copy-compact">Choose a target to load it into the edit form below.</p>
-              </div>
-              <div class="dashboard-card-stack mt-4" data-target-editor>
-                <EmptyState title="Loading targets" body="Targets are being loaded for the FlyBridge dashboard." />
-              </div>
-            </section>
-          </div>
+              <form class="form-panel" data-parent-account-form>
+                <h3 class="text-lg font-semibold text-fb-ink">Create parent account</h3>
+                <div class="form-grid">
+                  <label class="sm:col-span-2">
+                    <span class="label-shell">Parent full name</span>
+                    <input class="input-shell" name="full-name" type="text" placeholder="Parent full name" required />
+                  </label>
+                  <label>
+                    <span class="label-shell">Email</span>
+                    <input class="input-shell" name="email" type="email" placeholder="parent@example.com" required />
+                  </label>
+                  <label>
+                    <span class="label-shell">Phone</span>
+                    <input class="input-shell" name="phone" type="tel" placeholder="07..." />
+                  </label>
+                  <label class="sm:col-span-2">
+                    <span class="label-shell">Link a student now (optional)</span>
+                    <select class="input-shell" name="student-id" data-student-select>
+                      <option value="">Create the parent first and link later</option>
+                    </select>
+                  </label>
+                </div>
+                <p class="helper-shell mt-3">FlyBridge will generate a secure temporary password server-side and send it only by email.</p>
+                <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+                <div class="form-actions">
+                  <button class="cta-button w-full sm:w-auto" type="submit">Create parent account</button>
+                  <button class="ghost-button hidden w-full sm:w-auto" data-form-resend-welcome type="button">Resend welcome email</button>
+                </div>
+              </form>
 
-          <div class="grid gap-4 2xl:grid-cols-3">
-            <LessonReportForm formId="admin-report-form" title="Add lesson report" />
-            <AssessmentForm formId="admin-assessment-form" />
-            <TargetForm formId="admin-target-form" />
-          </div>
+              <form class="form-panel" data-parent-link-form>
+                <h3 class="text-lg font-semibold text-fb-ink">Link parent to student</h3>
+                <div class="form-grid !grid-cols-1">
+                  <label>
+                    <span class="label-shell">Parent profile</span>
+                    <select class="input-shell" name="parent-id" data-parent-select required></select>
+                  </label>
+                  <label>
+                    <span class="label-shell">Student</span>
+                    <select class="input-shell" name="student-id" data-student-select required></select>
+                  </label>
+                </div>
+                <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+                <div class="form-actions">
+                  <button class="cta-button w-full sm:w-auto" type="submit">Link parent</button>
+                </div>
+              </form>
 
-          <div class="grid gap-4 xl:grid-cols-[0.88fr_1.12fr]">
-            <section class="dashboard-section">
-              <div class="dashboard-section-heading">
-                <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Upcoming lessons</h2>
-                <p class="body-copy-compact">Scheduled lessons across the portal.</p>
-              </div>
-              <div class="dashboard-card-stack mt-4" data-admin-lessons>
-                <EmptyState title="Loading lessons" body="Scheduled lessons are being loaded for the FlyBridge dashboard." />
-              </div>
-            </section>
+              <form class="form-panel" data-tutor-link-form>
+                <h3 class="text-lg font-semibold text-fb-ink">Link tutor to student</h3>
+                <div class="form-grid !grid-cols-1">
+                  <label>
+                    <span class="label-shell">Tutor profile</span>
+                    <select class="input-shell" name="tutor-id" data-tutor-select required></select>
+                  </label>
+                  <label>
+                    <span class="label-shell">Student</span>
+                    <select class="input-shell" name="student-id" data-student-select required></select>
+                  </label>
+                </div>
+                <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+                <div class="form-actions">
+                  <button class="cta-button w-full sm:w-auto" type="submit">Link tutor</button>
+                </div>
+              </form>
 
-            <section class="dashboard-section">
-              <ReportTimeline
-                containerId="admin-report-timeline"
-                title="Recent reports"
-                body="The latest lesson summaries and follow-up notes added across the dashboard."
-              />
-            </section>
-          </div>
-        </section>
+              <form class="form-panel" data-parent-invite-form>
+                <h3 class="text-lg font-semibold text-fb-ink">Generate parent invite</h3>
+                <div class="form-grid !grid-cols-1">
+                  <label>
+                    <span class="label-shell">Parent profile</span>
+                    <select class="input-shell" name="parent-id" data-parent-select required></select>
+                  </label>
+                  <label>
+                    <span class="label-shell">Student</span>
+                    <select class="input-shell" name="student-id" data-student-select required></select>
+                  </label>
+                </div>
+                <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+                <div class="surface-note mt-4" data-parent-invite-preview>The next generated invite code will appear here.</div>
+                <div class="form-actions">
+                  <button class="cta-button w-full sm:w-auto" type="submit">Generate invite code</button>
+                </div>
+              </form>
 
-        <section class="hidden space-y-6" data-admin-panel data-panel="parents">
-          <div class="grid gap-4 xl:grid-cols-2">
-            <form class="form-panel" data-parent-account-form>
-              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Create parent account</h2>
-              <p class="mt-3 body-copy">Set up portal access for a family contact, then link the right student.</p>
-              <div class="surface-note-sky mt-4">
-                Leave the password blank if you want FlyBridge to generate a temporary password server-side.
-              </div>
-              <div class="form-grid !grid-cols-1">
-                <label>
-                  <span class="label-shell">Parent full name</span>
-                  <input class="input-shell" name="full-name" type="text" placeholder="Parent full name" required />
-                </label>
-                <label>
-                  <span class="label-shell">Email</span>
-                  <input class="input-shell" name="email" type="email" placeholder="parent@example.com" required />
-                </label>
-                <label>
-                  <span class="label-shell">Temporary password (optional)</span>
-                  <input class="input-shell" name="password" type="password" placeholder="Leave blank to auto-generate" />
-                </label>
-              </div>
-              <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
-              <div class="form-actions">
-                <button class="cta-button w-full sm:w-auto" type="submit">Create parent account</button>
-              </div>
-            </form>
+              <form class="form-panel" data-parent-reset-form>
+                <h3 class="text-lg font-semibold text-fb-ink">Reset parent password</h3>
+                <div class="form-grid !grid-cols-1">
+                  <label>
+                    <span class="label-shell">Parent profile</span>
+                    <select class="input-shell" name="user-id" data-parent-select required></select>
+                  </label>
+                </div>
+                <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+                <div class="form-actions">
+                  <button class="cta-button w-full sm:w-auto" type="submit">Reset parent password</button>
+                </div>
+              </form>
 
-            <form class="form-panel" data-parent-link-form>
-              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Link parent to student</h2>
-              <p class="mt-3 body-copy">Choose the family contact and student so portal reporting appears in the right account.</p>
-              <div class="form-grid !grid-cols-1">
-                <label>
-                  <span class="label-shell">Parent profile</span>
-                  <select class="input-shell" name="parent-id" data-parent-select required></select>
-                </label>
-                <label>
-                  <span class="label-shell">Student</span>
-                  <select class="input-shell" name="student-id" data-student-select required></select>
-                </label>
-              </div>
-              <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
-              <div class="form-actions">
-                <button class="cta-button w-full sm:w-auto" type="submit">Link parent</button>
-              </div>
-            </form>
-          </div>
-
-          <div class="grid gap-4 xl:grid-cols-2">
-            <form class="form-panel" data-parent-invite-form>
-              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Generate invite code</h2>
-              <p class="mt-3 body-copy">Issue a fresh invite code when a family needs portal access confirmed again.</p>
-              <div class="form-grid !grid-cols-1">
-                <label>
-                  <span class="label-shell">Parent profile</span>
-                  <select class="input-shell" name="parent-id" data-parent-select required></select>
-                </label>
-                <label>
-                  <span class="label-shell">Student</span>
-                  <select class="input-shell" name="student-id" data-student-select required></select>
-                </label>
-              </div>
-              <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
-              <div class="surface-note mt-4" data-parent-invite-preview>The next generated invite code will appear here.</div>
-              <div class="form-actions">
-                <button class="cta-button w-full sm:w-auto" type="submit">Generate invite code</button>
-              </div>
-            </form>
-
-            <form class="form-panel" data-parent-reset-form>
-              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Reset parent access</h2>
-              <p class="mt-3 body-copy">Send a parent back through a clean password-reset flow when they lose access.</p>
-              <div class="form-grid !grid-cols-1">
-                <label>
-                  <span class="label-shell">Parent profile</span>
-                  <select class="input-shell" name="user-id" data-parent-select required></select>
-                </label>
-              </div>
-              <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
-              <div class="form-actions">
-                <button class="cta-button w-full sm:w-auto" type="submit">Reset parent password</button>
-              </div>
-            </form>
-          </div>
-
-          <section class="dashboard-section">
-            <div class="dashboard-section-heading">
-              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Parent accounts and access status</h2>
-              <p class="body-copy">Review linked students, invite history and the current access state for each family account.</p>
-            </div>
-            <div class="dashboard-card-stack mt-4" data-parent-profiles>
-              <EmptyState title="Loading parents" body="Parent portal accounts are being loaded for the FlyBridge dashboard." />
+              <form class="form-panel" data-tutor-reset-form>
+                <h3 class="text-lg font-semibold text-fb-ink">Reset tutor password</h3>
+                <div class="form-grid !grid-cols-1">
+                  <label>
+                    <span class="label-shell">Tutor profile</span>
+                    <select class="input-shell" name="user-id" data-tutor-select required></select>
+                  </label>
+                </div>
+                <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
+                <div class="form-actions">
+                  <button class="cta-button w-full sm:w-auto" type="submit">Reset tutor password</button>
+                </div>
+              </form>
             </div>
           </section>
+
+          <DangerZone>
+            <p class="text-sm leading-6 text-rose-700">Permanent deletion is handled from each member detail view and requires typed confirmation. Archive is the recommended action.</p>
+          </DangerZone>
         </section>
-
-        <section class="hidden space-y-6" data-admin-panel data-panel="tutors">
-          <div class="grid gap-4 xl:grid-cols-2">
-            <form class="form-panel" data-tutor-account-form>
-              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Create tutor account</h2>
-              <p class="mt-3 body-copy">Create a tutor portal account and then connect it to the right students.</p>
-              <div class="surface-note-sky mt-4">
-                Leave the password blank if you want FlyBridge to generate a temporary password server-side.
-              </div>
-              <div class="form-grid !grid-cols-1">
-                <label>
-                  <span class="label-shell">Tutor full name</span>
-                  <input class="input-shell" name="full-name" type="text" placeholder="Tutor full name" required />
-                </label>
-                <label>
-                  <span class="label-shell">Email</span>
-                  <input class="input-shell" name="email" type="email" placeholder="tutor@example.com" required />
-                </label>
-                <label>
-                  <span class="label-shell">Temporary password (optional)</span>
-                  <input class="input-shell" name="password" type="password" placeholder="Leave blank to auto-generate" />
-                </label>
-              </div>
-              <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
-              <div class="form-actions">
-                <button class="cta-button w-full sm:w-auto" type="submit">Create tutor account</button>
-              </div>
-            </form>
-
-            <form class="form-panel" data-tutor-link-form>
-              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Link tutor to student</h2>
-              <p class="mt-3 body-copy">Assign students carefully so each tutor dashboard stays accurate and uncluttered.</p>
-              <div class="form-grid !grid-cols-1">
-                <label>
-                  <span class="label-shell">Tutor profile</span>
-                  <select class="input-shell" name="tutor-id" data-tutor-select required></select>
-                </label>
-                <label>
-                  <span class="label-shell">Student</span>
-                  <select class="input-shell" name="student-id" data-student-select required></select>
-                </label>
-              </div>
-              <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
-              <div class="form-actions">
-                <button class="cta-button w-full sm:w-auto" type="submit">Link tutor</button>
-              </div>
-            </form>
-          </div>
-
-          <div class="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
-            <form class="form-panel" data-tutor-reset-form>
-              <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Reset tutor access</h2>
-              <p class="mt-3 body-copy">Use this when a tutor needs a new temporary password.</p>
-              <div class="form-grid !grid-cols-1">
-                <label>
-                  <span class="label-shell">Tutor profile</span>
-                  <select class="input-shell" name="user-id" data-tutor-select required></select>
-                </label>
-              </div>
-              <p class="status-message mt-4 hidden" data-form-status role="status" aria-live="polite"></p>
-              <div class="form-actions">
-                <button class="cta-button w-full sm:w-auto" type="submit">Reset tutor password</button>
-              </div>
-            </form>
-
-            <section class="dashboard-section">
-              <div class="dashboard-section-heading">
-                <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Tutors and assigned students</h2>
-                <p class="body-copy">See tutor account status and the students currently assigned to each profile.</p>
-              </div>
-              <div class="dashboard-card-grid mt-4" data-tutor-profiles>
-                <EmptyState title="Loading tutors" body="Tutor portal accounts are being loaded for the FlyBridge dashboard." />
-              </div>
-            </section>
-          </div>
-        </section>
+        </div>
       </div>
     </RoleGuard>
   </section>
+
+  <div class="admin-drawer-backdrop" data-admin-drawer-backdrop="mobile-nav"></div>
+  <AdminSidebar drawer={true} />
+  <div class="directory-backdrop" data-directory-backdrop data-open="false"></div>
+  <AdminDrawer drawerId="member-detail" title="Member detail" />
+  <ConfirmationDialog dialogId="member-action" />
 
   <div class="dialog-shell" data-quick-add-dialog data-open="false" aria-hidden="true">
     <div class="dialog-panel">
       <div class="flex items-start justify-between gap-4">
         <div class="min-w-0">
           <p class="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">Quick add</p>
-          <h2 class="mt-2 text-2xl font-semibold tracking-tight text-fb-ink">Choose the next action</h2>
-          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Open the right tab and jump straight to the relevant form.</p>
+          <h2 class="mt-2 text-2xl font-semibold tracking-tight text-fb-ink">Add something new</h2>
+          <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Jump straight to the task you need most often.</p>
         </div>
         <button class="ghost-button px-4" data-quick-add-close type="button">Close</button>
       </div>
-      <div class="mt-5 grid gap-3 sm:grid-cols-2">
-        <button class="quick-add-chip" data-quick-add-target="student" type="button">Add Student</button>
-        <button class="quick-add-chip" data-quick-add-target="tutor" type="button">Add Tutor</button>
-        <button class="quick-add-chip" data-quick-add-target="parent" type="button">Add Parent</button>
-        <button class="quick-add-chip" data-quick-add-target="lesson" type="button">Add Lesson</button>
-        <button class="quick-add-chip" data-quick-add-target="report" type="button">Add Report</button>
-        <button class="quick-add-chip" data-quick-add-target="assessment" type="button">Add Assessment</button>
-        <button class="quick-add-chip" data-quick-add-target="target" type="button">Add Target</button>
+      <div class="quick-add-grid">
+        <button class="quick-add-item" data-quick-add-target="student" type="button">
+          <span class="quick-add-item-icon">S</span>
+          <span>
+            <span class="quick-add-item-title">Add student</span>
+            <span class="quick-add-item-body">Create a new student record and set their learning status.</span>
+          </span>
+        </button>
+        <button class="quick-add-item" data-quick-add-target="tutor" type="button">
+          <span class="quick-add-item-icon">T</span>
+          <span>
+            <span class="quick-add-item-title">Add tutor</span>
+            <span class="quick-add-item-body">Create portal access and teaching profile details.</span>
+          </span>
+        </button>
+        <button class="quick-add-item" data-quick-add-target="parent" type="button">
+          <span class="quick-add-item-icon">P</span>
+          <span>
+            <span class="quick-add-item-title">Add parent</span>
+            <span class="quick-add-item-body">Create parent portal access and link to students later.</span>
+          </span>
+        </button>
+        <button class="quick-add-item" data-quick-add-target="lesson" type="button">
+          <span class="quick-add-item-icon">L</span>
+          <span>
+            <span class="quick-add-item-title">Add lesson</span>
+            <span class="quick-add-item-body">Schedule or log a lesson against a student record.</span>
+          </span>
+        </button>
+      </div>
+      <p class="quick-add-subheading">More actions</p>
+      <div class="quick-add-grid">
+        <button class="quick-add-item" data-quick-add-target="report" type="button">
+          <span class="quick-add-item-icon">R</span>
+          <span>
+            <span class="quick-add-item-title">Add report</span>
+            <span class="quick-add-item-body">Capture tutor feedback and next steps.</span>
+          </span>
+        </button>
+        <button class="quick-add-item" data-quick-add-target="assessment" type="button">
+          <span class="quick-add-item-icon">A</span>
+          <span>
+            <span class="quick-add-item-title">Add assessment</span>
+            <span class="quick-add-item-body">Record a checkpoint score or test result.</span>
+          </span>
+        </button>
+        <button class="quick-add-item" data-quick-add-target="target" type="button">
+          <span class="quick-add-item-icon">T</span>
+          <span>
+            <span class="quick-add-item-title">Add target</span>
+            <span class="quick-add-item-body">Set a new academic target or revision milestone.</span>
+          </span>
+        </button>
+        <button class="quick-add-item" data-quick-add-target="article" type="button">
+          <span class="quick-add-item-icon">AR</span>
+          <span>
+            <span class="quick-add-item-title">Add article</span>
+            <span class="quick-add-item-body">Create a draft article for the public site.</span>
+          </span>
+        </button>
       </div>
     </div>
   </div>
+
+  <footer class="border-t border-slate-200/80 px-3 py-6 sm:px-5 lg:px-8">
+    <div class="mx-auto flex w-full max-w-[1600px] flex-col gap-3 text-sm text-fb-ink-soft sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-wrap gap-4">
+        <a class="footer-link !text-fb-ink-soft hover:!text-fb-ink" href="/">Home</a>
+        <a class="footer-link !text-fb-ink-soft hover:!text-fb-ink" href={site.contactHref}>Contact</a>
+        <a class="footer-link !text-fb-ink-soft hover:!text-fb-ink" href="/privacy">Privacy</a>
+        <a class="footer-link !text-fb-ink-soft hover:!text-fb-ink" href="/terms">Terms</a>
+      </div>
+      <p>Private FlyBridge admin workspace.</p>
+    </div>
+  </footer>
 
   <script>
     import { bootstrapAdminDashboard } from "../lib/admin-dashboard";

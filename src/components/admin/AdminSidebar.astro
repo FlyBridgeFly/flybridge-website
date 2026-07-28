@@ -1,0 +1,102 @@
+---
+interface NavItem {
+  key: string;
+  label: string;
+  icon: string;
+}
+
+interface Props {
+  drawer?: boolean;
+}
+
+const { drawer = false } = Astro.props;
+
+const navItems: NavItem[] = [
+  { key: "overview", label: "Overview", icon: "home" },
+  { key: "students", label: "Students", icon: "users" },
+  { key: "tutors", label: "Tutors", icon: "graduation" },
+  { key: "parents", label: "Parents", icon: "family" },
+  { key: "lessons", label: "Lessons", icon: "calendar" },
+  { key: "reports", label: "Reports", icon: "document" },
+  { key: "assessments", label: "Assessments", icon: "chart" },
+  { key: "articles", label: "Articles", icon: "newspaper" },
+  { key: "archived", label: "Archived", icon: "archive" },
+  { key: "settings", label: "Settings", icon: "settings" }
+];
+
+function iconMarkup(icon: string) {
+  if (icon === "home") {
+    return `<path d="M4.75 10.5 12 4.75l7.25 5.75v8.25a.75.75 0 0 1-.75.75h-4.5v-5h-4v5H5.5a.75.75 0 0 1-.75-.75z" />`;
+  }
+  if (icon === "users") {
+    return `<path d="M9 11.25a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5Zm6 1.5a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5ZM3.75 18.5a5.25 5.25 0 0 1 10.5 0M13.25 18.5c.22-1.98 1.9-3.5 3.92-3.5 2.02 0 3.7 1.52 3.92 3.5" />`;
+  }
+  if (icon === "graduation") {
+    return `<path d="M3.75 8.5 12 4.75 20.25 8.5 12 12.25 3.75 8.5Zm3 2.15v3.1c0 1.7 2.34 3.08 5.25 3.08s5.25-1.38 5.25-3.08v-3.1" /><path d="M20.25 9v5.5" />`;
+  }
+  if (icon === "family") {
+    return `<path d="M7.75 10.75a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5Zm8.5 0a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5ZM2.75 18.75a5 5 0 0 1 10 0M11.25 18.75a5 5 0 0 1 10 0" />`;
+  }
+  if (icon === "calendar") {
+    return `<path d="M6.25 3.75v3M17.75 3.75v3M4.75 8.25h14.5M5.5 5.25h13a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-13a.75.75 0 0 1-.75-.75V6a.75.75 0 0 1 .75-.75Z" />`;
+  }
+  if (icon === "document") {
+    return `<path d="M7 4.75h6.5l3.75 3.75v10.75a.75.75 0 0 1-.75.75H7a.75.75 0 0 1-.75-.75V5.5A.75.75 0 0 1 7 4.75Z" /><path d="M13.5 4.75V8.5h3.75M9 11.25h6M9 14.25h6M9 17.25h4" />`;
+  }
+  if (icon === "chart") {
+    return `<path d="M5.25 18.75V9.5M12 18.75V5.25M18.75 18.75v-7.5M4.5 18.75h15" />`;
+  }
+  if (icon === "newspaper") {
+    return `<path d="M6 5.25h11.25a.75.75 0 0 1 .75.75v12a2 2 0 0 1-2 2H7.75a2.5 2.5 0 0 1-2.5-2.5V6a.75.75 0 0 1 .75-.75Z" /><path d="M8.75 8.5h5.5M8.75 11.5h6.5M8.75 14.5h6.5M8.75 17.5h4.5" />`;
+  }
+  if (icon === "archive") {
+    return `<path d="M4.75 6.25h14.5v3.5H4.75z" /><path d="M6.25 9.75v8.5a.75.75 0 0 0 .75.75h10a.75.75 0 0 0 .75-.75v-8.5" /><path d="M9.25 13.25h5.5" />`;
+  }
+  return `<path d="M12 8.25a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5Zm8.25 3.75-.94.54a7.82 7.82 0 0 1-.3 1.27l.68.86a.75.75 0 0 1-.07 1l-1 1a.75.75 0 0 1-1 .07l-.86-.68c-.4.16-.82.27-1.26.34l-.55.93a.75.75 0 0 1-.89.34l-1.33-.33a.75.75 0 0 1-.56-.72V16c-.44-.07-.86-.18-1.26-.34l-.86.68a.75.75 0 0 1-1-.07l-1-1a.75.75 0 0 1-.07-1l.68-.86a7.82 7.82 0 0 1-.3-1.27L3.75 12a.75.75 0 0 1-.34-.89l.33-1.33a.75.75 0 0 1 .72-.56H5c.07-.44.18-.86.34-1.26l-.68-.86a.75.75 0 0 1 .07-1l1-1a.75.75 0 0 1 1-.07l.86.68c.4-.16.82-.27 1.26-.34l.55-.93a.75.75 0 0 1 .89-.34l1.33.33a.75.75 0 0 1 .56.72V5c.44.07.86.18 1.26.34l.86-.68a.75.75 0 0 1 1 .07l1 1a.75.75 0 0 1 .07 1l-.68.86c.16.4.27.82.34 1.26H19.5a.75.75 0 0 1 .72.56l.33 1.33a.75.75 0 0 1-.34.89Z" />`;
+}
+---
+
+<nav
+  class:list={[
+    "admin-sidebar",
+    drawer ? "admin-sidebar admin-sidebar-drawer" : "admin-sidebar admin-sidebar-desktop"
+  ]}
+  aria-label="Admin navigation"
+  data-admin-sidebar={drawer ? "drawer" : "desktop"}
+  data-open={drawer ? "false" : undefined}
+>
+  <div class="admin-sidebar-scroll">
+    <div class="admin-sidebar-brand">
+      <div class="min-w-0">
+        <p class="admin-sidebar-eyebrow">FlyBridge Admin</p>
+        <p class="admin-sidebar-muted">Education management workspace</p>
+      </div>
+    </div>
+
+    <div class="admin-sidebar-nav" role="tablist" aria-label="Admin sections">
+      {navItems.map((item) =>
+        drawer ? (
+          <button class="admin-sidebar-link" data-admin-drawer-tab={item.key} data-tab={item.key} type="button" role="tab">
+            <span class="admin-sidebar-icon" aria-hidden="true" set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${iconMarkup(item.icon)}</svg>`} />
+            <span class="admin-sidebar-label">{item.label}</span>
+          </button>
+        ) : (
+          <button class="admin-sidebar-link" data-admin-tab data-tab={item.key} type="button" role="tab">
+            <span class="admin-sidebar-icon" aria-hidden="true" set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${iconMarkup(item.icon)}</svg>`} />
+            <span class="admin-sidebar-label">{item.label}</span>
+          </button>
+        )
+      )}
+    </div>
+  </div>
+
+  <div class="admin-sidebar-footer">
+    <a class="admin-sidebar-secondary" href="/">View website</a>
+    <div class="admin-sidebar-account">
+      <p class="admin-sidebar-account-name" data-session-name>Loading…</p>
+      <p class="admin-sidebar-account-meta" data-session-role>Checking access</p>
+      <p class="admin-sidebar-account-meta break-all" data-session-email></p>
+    </div>
+    <button class="admin-sidebar-signout" data-logout type="button">Sign out</button>
+  </div>
+</nav>

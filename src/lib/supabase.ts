@@ -7,10 +7,17 @@ export interface ProfileRow {
   email?: string | null;
   full_name?: string | null;
   role?: ProfileRole | null;
+  phone?: string | null;
+  subjects?: string[] | null;
+  key_stages?: string[] | null;
   must_change_password?: boolean | null;
   temporary_password_created_at?: string | null;
   last_login_at?: string | null;
   status?: string | null;
+  archived_at?: string | null;
+  archived_by?: string | null;
+  archive_reason?: string | null;
+  previous_status?: string | null;
   created_at?: string | null;
   [key: string]: unknown;
 }
@@ -26,6 +33,12 @@ export interface StudentRow {
   progress_status?: string | null;
   progress_status_note?: string | null;
   recall_average?: number | string | null;
+  target_grade?: string | null;
+  status?: string | null;
+  archived_at?: string | null;
+  archived_by?: string | null;
+  archive_reason?: string | null;
+  previous_status?: string | null;
   active?: boolean | null;
   created_at?: string | null;
   [key: string]: unknown;
@@ -93,6 +106,43 @@ export interface TargetRow {
   due_date?: string | null;
   created_by?: string | null;
   updated_at?: string | null;
+  created_at?: string | null;
+  [key: string]: unknown;
+}
+
+export interface ArticleRow {
+  id: string;
+  title?: string | null;
+  slug?: string | null;
+  excerpt?: string | null;
+  content?: string | null;
+  author_id?: string | null;
+  status?: string | null;
+  published_at?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  [key: string]: unknown;
+}
+
+export interface AdminNoteRow {
+  id: string;
+  entity_type?: string | null;
+  entity_id?: string | null;
+  note?: string | null;
+  created_by?: string | null;
+  updated_by?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  [key: string]: unknown;
+}
+
+export interface AuditLogRow {
+  id: string;
+  actor_id?: string | null;
+  action?: string | null;
+  entity_type?: string | null;
+  entity_id?: string | null;
+  metadata?: Record<string, unknown> | null;
   created_at?: string | null;
   [key: string]: unknown;
 }

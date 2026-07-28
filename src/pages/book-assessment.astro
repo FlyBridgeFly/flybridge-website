@@ -2,59 +2,64 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FormShell from "../components/FormShell.astro";
 import { site } from "../data/site";
+import { createCallbackFields } from "../lib/callback-form";
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Book a Free Assessment",
-  description: "Book a free assessment with FlyBridge Education.",
+  description: "Request a free assessment callback with FlyBridge Education.",
   url: new URL("/book-assessment", site.url).toString()
 };
 
-const fields = [
-  { label: "Parent name", name: "parent-name", placeholder: "Your full name", required: true, autocomplete: "name" },
-  { label: "Student name", name: "student-name", placeholder: "Student's name", required: true },
-  { label: "Year group", name: "year-group", placeholder: "For example: Year 10", required: true },
-  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com", required: true, autocomplete: "email" },
-  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to reach you", autocomplete: "tel" },
-  { label: "Preferred assessment time", name: "preferred-time", placeholder: "Weekday evenings, Saturday morning, etc.", required: true },
-  { label: "Focus areas", name: "focus-areas", type: "textarea" as const, placeholder: "Share current grades, topics of concern or anything important before the assessment.", span: "full" as const }
-] as const;
+const fields = createCallbackFields({
+  enquiryType: "assessment-callback",
+  sourcePage: "/book-assessment",
+  subject: "Assessment enquiry",
+  yearGroupPlaceholder: "For example: Year 10 or KS4",
+  messagePlaceholder: "Share current understanding, knowledge gaps, concerns or anything important before the callback."
+});
 ---
 
 <BaseLayout
   title="Book a Free Assessment"
-  description="Book a free assessment with FlyBridge Education."
+  description="Request a free assessment callback with FlyBridge Education."
   path="/book-assessment"
   schema={schema}
 >
   <section class="container-shell section-shell-tight">
-    <div class="grid gap-5 lg:grid-cols-[0.86fr_1.14fr]">
+    <div class="grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
       <div class="space-y-4">
         <span class="eyebrow">Book assessment</span>
-        <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.5rem]">Book a free assessment.</h1>
-        <p class="max-w-2xl body-copy-compact">Use the form to request an assessment slot while calendar integration is still being finalised.</p>
-        <div class="dashboard-list">
-          <div class="dashboard-list-item">
+        <h1 class="text-balance text-[2rem] font-semibold tracking-tight text-fb-ink sm:text-[2.5rem]">Book a free assessment</h1>
+        <p class="max-w-2xl body-copy-compact">Tell us about your child and choose a preferred callback time. FlyBridge will contact you to discuss their needs and arrange the assessment.</p>
+        <a class="ghost-button w-full sm:w-auto" href="#assessment-callback-form">Request a callback</a>
+        <div class="stack-divider rounded-[1.2rem] border border-slate-200 bg-white/80 p-4 sm:p-5">
+          <div>
             <p class="text-sm font-semibold text-fb-ink">What the assessment covers</p>
-            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Current attainment, confidence, exam board, weak areas and the most useful lesson format.</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Current understanding, confidence, curriculum fit and the gaps most worth addressing first.</p>
           </div>
-          <div class="dashboard-list-item">
+          <div>
+            <p class="text-sm font-semibold text-fb-ink">What FlyBridge reviews</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Knowledge gaps, likely misconceptions, suitable lesson format and the right level of support.</p>
+          </div>
+          <div>
             <p class="text-sm font-semibold text-fb-ink">What happens next</p>
-            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">FlyBridge reviews the request and follows up using the details and preferred times you provide.</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Your selected date and hour are a preference, not a confirmed appointment. FlyBridge will confirm the assessment arrangement with you directly.</p>
           </div>
         </div>
       </div>
       <FormShell
-        title="Assessment request"
-        body="Submitting opens a pre-filled email draft so the assessment request can be sent immediately."
+        title="Request an assessment callback"
+        body="Choose a preferred callback date and hour so FlyBridge can get in touch and confirm the assessment arrangement."
         fields={fields}
-        submitLabel="Request assessment"
-        helper="This placeholder booking flow is structured so Calendly or Google Calendar can replace it later."
-        subject="FlyBridge free assessment request"
+        submitLabel="Request assessment callback"
+        helper="A prepared email draft will open with your details. Please review it and press send."
+        subject="FlyBridge assessment callback request"
         recipientEmail={site.email}
         secondaryLabel="WhatsApp FlyBridge"
         secondaryHref={site.whatsappHref}
+        id="assessment-callback-form"
       />
     </div>
   </section>

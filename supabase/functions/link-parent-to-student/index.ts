@@ -1,4 +1,4 @@
-import { corsHeaders, ensureLink, jsonResponse, parseBody, requireAdmin, requireString } from "../_shared/admin.ts";
+import { corsHeaders, ensureLink, failureResponse, parseBody, recordAuditLog, requireAdmin, requireString, successResponse } from "../_shared/admin.ts";
 
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") {
@@ -6,24 +6,34 @@ Deno.serve(async (request) => {
   }
 
   try {
-    const { adminClient } = await requireAdmin(request);
+    const { adminClient, adminUser } = await requireAdmin(request);
     const body = await parseBody(request);
     const parentId = requireString(body, "parentId");
-    const studentId = requireString(body, "studentId");
+    const studentIds = Array.isArray(body.studentIds)
+      ? body.studentIds.filter((item): item is string => typeof item === "string" && item.trim()).map((item) => item.trim())
+      : [requireString(body, "studentId")];
 
-    await ensureLink(adminClient, "parent_student_links", {
-      parent_id: parentId,
-      student_id: studentId
-    });
+    for (const studentId of studentIds) {
+      await ensureLink(adminClient, "parent_student_links", {
+        parent_id: parentId,
+        student_id: studentId
+      });
+      await recordAuditLog(adminClient, {
+        actorId: adminUser.id,
+        action: "parent_linked_to_student",
+        entityType: "parent",
+        entityId: parentId,
+        metadata: {
+          studentId
+        }
+      });
+    }
 
-    return jsonResponse(200, {
-      message: "Parent linked to student successfully.",
+    return successResponse("Parent link updated successfully.", {
       parentId,
-      studentId
+      studentIds
     });
   } catch (error) {
-    return jsonResponse(400, {
-      message: error instanceof Error ? error.message : "Unable to link parent to student."
-    });
+    return failureResponse(400, error instanceof Error ? error.message : "Unable to link parent to student.");
   }
 });

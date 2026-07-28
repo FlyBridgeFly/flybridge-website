@@ -38,6 +38,19 @@
 8. [ ] Parent signs in with new password
 9. [ ] Parent goes directly to `/parent-portal`
 
+## Password reset security diagnostic
+
+1. [ ] Open `/forgot-password`
+2. [ ] Submit a parent or tutor email address
+3. [ ] Confirm the UI shows: `If an account exists for that email, a reset link has been sent.`
+4. [ ] Confirm the email button links to `https://flybridgeeducation.co.uk/login`
+5. [ ] Confirm the reset email does not include `email=` or `password=` in any link
+6. [ ] Open the Supabase recovery link
+7. [ ] Confirm `/reset-password` loads instead of localhost
+8. [ ] Save a new password successfully
+9. [ ] Confirm `profiles.must_change_password` is `false` after sync
+10. [ ] Confirm the user lands on the correct dashboard for their role
+
 ### Login
 
 - [ ] Parent login

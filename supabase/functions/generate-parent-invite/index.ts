@@ -1,4 +1,4 @@
-import { corsHeaders, jsonResponse, parseBody, requireAdmin, requireString } from "../_shared/admin.ts";
+import { corsHeaders, failureResponse, parseBody, recordAuditLog, requireAdmin, requireString, successResponse } from "../_shared/admin.ts";
 
 function createInviteCode() {
   return crypto.randomUUID().replaceAll("-", "").slice(0, 10).toUpperCase();
@@ -48,15 +48,23 @@ Deno.serve(async (request) => {
       throw lastError ?? new Error("Unable to create the parent invite.");
     }
 
-    return jsonResponse(200, {
-      message: "Parent invite generated successfully.",
+    await recordAuditLog(adminClient, {
+      actorId: adminUser.id,
+      action: "parent_invite_generated",
+      entityType: "parent",
+      entityId: parentId,
+      metadata: {
+        studentId,
+        inviteCode
+      }
+    });
+
+    return successResponse("Parent invite generated successfully.", {
       inviteCode,
       parentId,
       studentId
     });
   } catch (error) {
-    return jsonResponse(400, {
-      message: error instanceof Error ? error.message : "Unable to generate invite."
-    });
+    return failureResponse(400, error instanceof Error ? error.message : "Unable to generate invite.");
   }
 });

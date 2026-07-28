@@ -2,6 +2,7 @@ import {
   corsHeaders,
   failureResponse,
   generateTemporaryPassword,
+  recordAuditLog,
   parseBody,
   requireAdmin,
   requireString,
@@ -16,7 +17,7 @@ Deno.serve(async (request) => {
   }
 
   try {
-    const { adminClient } = await requireAdmin(request);
+    const { adminClient, adminUser } = await requireAdmin(request);
     const body = await parseBody(request);
     const userId = requireString(body, "userId");
 
@@ -34,6 +35,16 @@ Deno.serve(async (request) => {
     await updatePortalPassword(adminClient, {
       userId,
       password
+    });
+
+    await recordAuditLog(adminClient, {
+      actorId: adminUser.id,
+      action: "password_reset_initiated",
+      entityType: profile.role,
+      entityId: userId,
+      metadata: {
+        email: profile.email ?? null
+      }
     });
 
     const emailResult = profile.email

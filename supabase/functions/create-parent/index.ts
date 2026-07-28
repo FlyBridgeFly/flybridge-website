@@ -1,13 +1,12 @@
 import {
   corsHeaders,
-  createAuthUser,
-  failureResponse,
+  failureFromError,
   generateTemporaryPassword,
   optionalString,
   parseBody,
+  provisionPortalAccount,
   requireAdmin,
   requireString,
-  sendPortalCredentialsEmail,
   successResponse
 } from "../_shared/admin.ts";
 
@@ -17,37 +16,34 @@ Deno.serve(async (request) => {
   }
 
   try {
-    const { adminClient } = await requireAdmin(request);
+    const { adminClient, adminUser } = await requireAdmin(request);
     const body = await parseBody(request);
     const email = requireString(body, "email");
     const fullName = requireString(body, "fullName");
-    const password = optionalString(body, "password") ?? generateTemporaryPassword();
+    const password = generateTemporaryPassword();
+    const phone = optionalString(body, "phone");
+    const studentId = optionalString(body, "studentId");
 
-    const user = await createAuthUser(adminClient, {
-      email,
-      password,
-      fullName,
-      role: "parent"
-    });
-    const emailResult = await sendPortalCredentialsEmail({
+    const result = await provisionPortalAccount({
+      adminClient,
+      adminUserId: adminUser.id,
       email,
       fullName,
       role: "parent",
-      password
+      password,
+      phone,
+      studentId
     });
-
-    return successResponse(
-      emailResult.sent
-        ? "Parent account created successfully and login details were emailed."
-        : emailResult.message,
-      {
-        role: "parent",
-        userId: user.id,
-        parentId: user.id,
-        email
-      }
-    );
+    return successResponse(result.message, {
+      role: "parent",
+      userId: result.userId,
+      parentId: result.userId,
+      email: result.email,
+      emailSent: result.emailSent,
+      stage: result.stage,
+      warning: result.warning
+    });
   } catch (error) {
-    return failureResponse(400, error instanceof Error ? error.message : "Unable to create parent.");
+    return failureFromError(error, "Unable to create parent.");
   }
 });

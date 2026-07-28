@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import FormShell from "../components/FormShell.astro";
 import ContactMethods from "../components/ContactMethods.astro";
 import { site } from "../data/site";
+import { createCallbackFields } from "../lib/callback-form";
 
 const schema = {
   "@context": "https://schema.org",
@@ -12,23 +13,13 @@ const schema = {
   url: new URL("/request-callback", site.url).toString()
 };
 
-const fields = [
-  { label: "Parent name", name: "parent-name", placeholder: "Your full name", required: true, autocomplete: "name" },
-  { label: "Student name", name: "student-name", placeholder: "Student's name", required: true },
-  { label: "School", name: "school", placeholder: "Current school" },
-  { label: "Year group", name: "year-group", placeholder: "For example: Year 9" },
-  { label: "Phone number", name: "phone", type: "tel" as const, placeholder: "Best number to call", required: true, autocomplete: "tel" },
-  { label: "Email", name: "email", type: "email" as const, placeholder: "you@example.com", required: true, autocomplete: "email" },
-  { label: "Preferred days", name: "preferred-days", placeholder: "Weekdays, Saturdays, or specific days", required: true },
-  { label: "Preferred hours", name: "preferred-hours", placeholder: "After 5pm, mornings, early evenings", required: true },
-  {
-    label: "Optional message",
-    name: "message",
-    type: "textarea" as const,
-    placeholder: "Share subject, confidence, attainment or timetable context if helpful.",
-    span: "full" as const
-  }
-] as const;
+const fields = createCallbackFields({
+  enquiryType: "callback-request",
+  sourcePage: "/request-callback",
+  includeSchool: true,
+  yearGroupPlaceholder: "For example: Year 9 or KS3",
+  messagePlaceholder: "Share subject, confidence, attainment or timetable context if helpful."
+});
 
 const methods = [
   { label: "WhatsApp", value: site.phone, href: site.whatsappHref, hint: "Quickest route for a fast reply" },
@@ -53,10 +44,10 @@ const methods = [
       </div>
       <FormShell
         title="Callback request"
-        body="Share the essentials and FlyBridge will open a pre-filled email draft with the right context."
+        body="Share the essentials and choose a preferred callback time. FlyBridge will use your details to confirm the arrangement."
         fields={fields}
         submitLabel="Request callback"
-        helper="This keeps the site static while still giving you a real submission route."
+        helper="A prepared email draft will open with the details below. Please review it and press send."
         subject="FlyBridge callback request"
         recipientEmail={site.email}
         secondaryLabel="WhatsApp FlyBridge"
