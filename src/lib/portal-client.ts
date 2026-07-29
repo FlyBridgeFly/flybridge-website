@@ -148,6 +148,12 @@ function mapFriendlyErrorMessage(message: string, fallback: string) {
   const normalised = message.toLowerCase();
 
   if (!message) return fallback;
+  if (
+    normalised.includes("pgrst204") ||
+    (normalised.includes("schema cache") && normalised.includes("column"))
+  ) {
+    return "The report couldn’t be saved because the application is trying to write to a database column that doesn’t exist. See browser console for details.";
+  }
   if (normalised.includes("failed to send a request to the edge function")) {
     return "The browser could not reach the account deletion service.";
   }
@@ -317,6 +323,17 @@ function formatHours(totalMinutes: number) {
     return `${hours} hour${hours === 1 ? "" : "s"}`;
   }
   return `${hours.toFixed(1)} hours`;
+}
+
+function combineLessonReportNextSteps(homework?: string, nextSteps?: string) {
+  const homeworkValue = String(homework ?? "").trim();
+  const nextStepValue = String(nextSteps ?? "").trim();
+
+  if (homeworkValue && nextStepValue) {
+    return `Homework / next step:\n${homeworkValue}\n\nAreas to improve / next teaching focus:\n${nextStepValue}`;
+  }
+
+  return homeworkValue || nextStepValue || undefined;
 }
 
 function getStringField(source: Record<string, unknown> | null | undefined, keys: string[]) {
@@ -513,10 +530,16 @@ async function insertWithFallbacks(
   const client = createBrowserSupabaseClient();
   let lastError: Error | null = null;
 
-  for (const payload of payloads) {
+  for (const [attempt, payload] of payloads.entries()) {
     const cleaned = stripEmpty(payload);
     const { error } = await client.from(table).insert(cleaned);
     if (!error) return;
+    console.error(`[FlyBridge data] Insert failed for ${table}`, {
+      table,
+      attempt: attempt + 1,
+      payload: cleaned,
+      error
+    });
     lastError = error;
   }
 
@@ -928,6 +951,8 @@ export async function createLessonReport(values: {
   homework?: string;
   nextSteps?: string;
 }) {
+  const mergedNextSteps = combineLessonReportNextSteps(values.homework, values.nextSteps);
+
   await insertWithFallbacks("lesson_reports", [
     {
       student_id: values.studentId,
@@ -936,8 +961,7 @@ export async function createLessonReport(values: {
       topic: values.topic,
       summary: values.summary,
       strengths: values.strengths,
-      homework: values.homework,
-      next_steps: values.nextSteps
+      next_steps: mergedNextSteps
     },
     {
       student_id: values.studentId,
@@ -946,15 +970,13 @@ export async function createLessonReport(values: {
       title: values.topic,
       summary: values.summary,
       strengths: values.strengths,
-      homework: values.homework,
-      next_steps: values.nextSteps
+      next_steps: mergedNextSteps
     },
     {
       student_id: values.studentId,
       lesson_date: values.lessonDate,
       summary: values.summary,
-      homework: values.homework,
-      next_steps: values.nextSteps
+      next_steps: mergedNextSteps
     }
   ]);
 }
