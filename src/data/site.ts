@@ -92,6 +92,11 @@ export const portalNavigation = [
   { label: "Student Hub", href: "/student-hub" }
 ] as const;
 
+export const teacherPortalNavigation = [
+  { label: "Dashboard", href: "/tutor" },
+  { label: "Getting Started", href: "/tutor/getting-started" }
+] as const;
+
 export const footerKeyStageLinks = [
   { label: "KS2", href: "/ks2" },
   { label: "KS3", href: "/ks3" },

@@ -1,0 +1,249 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DashboardLayout from "../../components/DashboardLayout.astro";
+import RoleGuard from "../../components/RoleGuard.astro";
+import { site, teacherPortalNavigation } from "../../data/site";
+import { teacherOnboardingSteps } from "../../lib/teacher-onboarding";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "FlyBridge Teacher Getting Started",
+  description: "Protected onboarding guide for FlyBridge teachers setting up email, Google Classroom and core teaching access.",
+  url: new URL("/tutor/getting-started", site.url).toString()
+};
+
+function iconMarkup(id: string) {
+  if (id === "receive-credentials") {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7.5h16v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9Z"/><path d="m4 8 8 6 8-6"/><path d="M8 5.5h8"/></svg>`;
+  }
+  if (id === "sign-into-purelymail") {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 10h8"/><path d="M8 14h5"/></svg>`;
+  }
+  if (id === "create-google-account") {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 19a6.5 6.5 0 0 1 13 0"/><path d="M18 6v4"/><path d="M16 8h4"/></svg>`;
+  }
+  if (id === "verify-email") {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v8"/><path d="m8.5 7 3.5 4 3.5-4"/><rect x="4" y="13" width="16" height="7" rx="2"/></svg>`;
+  }
+  if (id === "complete-phone-verification") {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10 5.5h4"/><circle cx="12" cy="18" r="0.8"/></svg>`;
+  }
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 7.5h14"/><path d="M7 4.5h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z"/><path d="m9 12 2 2 4-4"/></svg>`;
+}
+---
+
+<BaseLayout
+  title="Teacher Getting Started"
+  description="Protected onboarding guide for FlyBridge teachers setting up their FlyBridge email, Google account and Classroom access."
+  path="/tutor/getting-started"
+  schema={schema}
+  noindex={true}
+>
+  <DashboardLayout
+    title="Teacher workspace"
+    description="Use this setup guide to complete the core teaching accounts you will need before your first lesson."
+    active="tutor"
+    navItems={teacherPortalNavigation}
+    currentPath={Astro.url.pathname}
+  >
+    <RoleGuard title="Checking teacher access" body="We are confirming your secure FlyBridge teacher access before loading the setup guide.">
+      <section class="dashboard-section">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div class="min-w-0">
+            <p class="eyebrow">Teacher onboarding</p>
+            <h1 class="mt-3 text-2xl font-semibold tracking-tight text-fb-ink sm:text-3xl">Getting Started</h1>
+            <p class="mt-3 max-w-3xl body-copy">Complete these six steps before your first lesson.</p>
+          </div>
+          <div class="teacher-welcome-panel">
+            <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">Welcome to FlyBridge</p>
+            <p class="mt-2 text-sm font-medium text-fb-ink">Complete these steps to start teaching.</p>
+          </div>
+        </div>
+
+        <div class="teacher-progress-shell mt-5">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-fb-ink">Setup progress</p>
+              <p class="mt-1 text-sm text-fb-ink-soft" aria-live="polite" data-onboarding-progress-status>0 of 6 setup steps complete.</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="mini-chip" data-onboarding-count>0 / 6 complete</span>
+              <span class="text-lg font-semibold text-fb-ink" data-onboarding-percentage>0%</span>
+            </div>
+          </div>
+          <label class="sr-only" for="teacher-onboarding-progress">Teacher onboarding progress</label>
+          <progress class="teacher-progress-bar mt-4" id="teacher-onboarding-progress" data-onboarding-progress max="6" value="0">0%</progress>
+        </div>
+      </section>
+
+      <section class="dashboard-card-stack">
+        {
+          teacherOnboardingSteps.map((step) => (
+            <article class="teacher-step-card" data-onboarding-card={step.id} data-completed="false">
+              <details class="teacher-step-details" data-onboarding-details data-step-id={step.id} open={step.number === 1}>
+                <summary class="teacher-step-summary">
+                  <div class="teacher-step-summary-main">
+                    <span class="teacher-step-icon" set:html={iconMarkup(step.id)} />
+                    <div class="min-w-0">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <span class="teacher-step-indicator" data-step-indicator data-state="pending">Step {step.number}</span>
+                        <span class="mini-chip">{step.estimate}</span>
+                      </div>
+                      <h2 class="mt-2 text-lg font-semibold tracking-tight text-fb-ink sm:text-xl">{step.title}</h2>
+                    </div>
+                  </div>
+                  <div class="teacher-step-summary-side">
+                    <span class="teacher-step-status" data-step-status data-state="pending">Mark as complete</span>
+                    <span class="teacher-step-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5.5 7.5 4.5 5 4.5-5"/></svg>
+                    </span>
+                  </div>
+                </summary>
+
+                <div class="teacher-step-panel">
+                  {step.id === "receive-credentials" ? (
+                    <>
+                      <p class="body-copy-compact">You will receive your FlyBridge email address together with your temporary password.</p>
+                      <div class="teacher-example-card mt-4">
+                        <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Example assigned email</p>
+                        <p class="mt-2 break-all text-base font-semibold text-fb-ink">yabbasi@teach.flybridgeeducation.co.uk</p>
+                      </div>
+                      <ul class="teacher-step-list mt-4">
+                        <li>Do not change your email address.</li>
+                        <li>Keep these details somewhere safe.</li>
+                        <li>Never share your temporary password with anyone.</li>
+                      </ul>
+                    </>
+                  ) : null}
+
+                  {step.id === "sign-into-purelymail" ? (
+                    <>
+                      <p class="body-copy-compact">Sign in using your FlyBridge email address and temporary password.</p>
+                      <p class="mt-3 body-copy-compact">If this is your first login, make sure you can open your inbox before continuing.</p>
+                      <div class="form-actions mt-4">
+                        <a class="cta-button" href="https://purelymail.com/webmail" target="_blank" rel="noopener noreferrer">Open Purelymail</a>
+                      </div>
+                    </>
+                  ) : null}
+
+                  {step.id === "create-google-account" ? (
+                    <>
+                      <p class="body-copy-compact">FlyBridge uses Google Classroom and Google Drive.</p>
+                      <p class="mt-3 body-copy-compact">You will create a Google Account using your FlyBridge email address.</p>
+                      <p class="mt-3 body-copy-compact">This is not a Gmail address. Your FlyBridge email remains hosted by Purelymail.</p>
+                      <div class="teacher-instruction-banner mt-4">
+                        <p class="text-sm font-semibold text-fb-ink">Choose: “Use my current email address instead”</p>
+                        <p class="mt-1 text-sm text-fb-ink-soft">Do not choose: “Create a Gmail address”</p>
+                      </div>
+                      <div class="teacher-compare-grid mt-4">
+                        <div class="teacher-compare-card is-correct">
+                          <p class="text-xs font-semibold tracking-[0.16em] uppercase text-emerald-700">Correct</p>
+                          <p class="mt-2 break-all text-sm font-semibold text-fb-ink">yabbasi@teach.flybridgeeducation.co.uk</p>
+                        </div>
+                        <div class="teacher-compare-card is-wrong">
+                          <p class="text-xs font-semibold tracking-[0.16em] uppercase text-rose-700">Not</p>
+                          <p class="mt-2 break-all text-sm font-semibold text-fb-ink">yabbasi@gmail.com</p>
+                        </div>
+                      </div>
+                      <div class="form-actions mt-4">
+                        <a class="cta-button" href="https://accounts.google.com/signup" target="_blank" rel="noopener noreferrer">Create Google Account</a>
+                      </div>
+                    </>
+                  ) : null}
+
+                  {step.id === "verify-email" ? (
+                    <>
+                      <p class="body-copy-compact">Google will send a verification code to your FlyBridge inbox.</p>
+                      <ol class="teacher-step-list mt-4 list-decimal">
+                        <li>Return to your Purelymail inbox.</li>
+                        <li>Open the verification email from Google.</li>
+                        <li>Copy the verification code.</li>
+                        <li>Paste it into Google’s verification page.</li>
+                      </ol>
+                      <div class="form-actions mt-4">
+                        <a class="ghost-button" href="https://purelymail.com/webmail" target="_blank" rel="noopener noreferrer">Open Purelymail</a>
+                      </div>
+                    </>
+                  ) : null}
+
+                  {step.id === "complete-phone-verification" ? (
+                    <>
+                      <p class="body-copy-compact">Google may ask you to verify your phone number.</p>
+                      <p class="mt-3 body-copy-compact">This is a standard Google security check. Not every teacher will see this screen.</p>
+                      <ul class="teacher-step-list mt-4">
+                        <li>Enter your own mobile number.</li>
+                        <li>Google uses the number to confirm that a real person is creating the account.</li>
+                        <li>The request normally appears only during account creation.</li>
+                        <li>Once completed, you should not usually need to repeat it.</li>
+                      </ul>
+                      <div class="surface-note-sky mt-4">
+                        <p class="font-semibold text-fb-ink">Why is Google asking?</p>
+                        <p class="mt-2 text-sm leading-6 text-fb-ink-soft">Google occasionally requests SMS verification to reduce spam and fake account creation. This is normal.</p>
+                      </div>
+                    </>
+                  ) : null}
+
+                  {step.id === "join-flybridge-classroom" ? (
+                    <>
+                      <p class="body-copy-compact">Once your Google Account has been created:</p>
+                      <ol class="teacher-step-list mt-4 list-decimal">
+                        <li>Sign into Google Classroom using your FlyBridge email address.</li>
+                        <li>Look for invitations from the FlyBridge admin team.</li>
+                        <li>Accept each class invitation.</li>
+                        <li>Confirm that the correct classes appear on your Classroom homepage.</li>
+                      </ol>
+                      <p class="mt-4 text-sm font-semibold text-fb-ink">You’re ready to teach.</p>
+                      <div class="form-actions mt-4">
+                        <a class="cta-button" href="https://classroom.google.com" target="_blank" rel="noopener noreferrer">Open Google Classroom</a>
+                      </div>
+                    </>
+                  ) : null}
+
+                  <div class="form-actions mt-5">
+                    <button class="ghost-button" data-complete-toggle data-step-id={step.id} type="button">Mark as complete</button>
+                  </div>
+                </div>
+              </details>
+            </article>
+          ))
+        }
+      </section>
+
+      <section class="dashboard-section hidden" data-onboarding-success>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <p class="text-xs font-semibold tracking-[0.18em] text-emerald-700 uppercase">Setup complete</p>
+            <h2 class="mt-2 text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">You have completed the essential account setup for teaching with FlyBridge.</h2>
+          </div>
+          <button class="ghost-button" data-reset-onboarding type="button">Reset checklist</button>
+        </div>
+      </section>
+
+      <section class="dashboard-section">
+        <div class="dashboard-section-heading">
+          <h2 class="text-xl font-semibold tracking-tight text-fb-ink sm:text-2xl">Need help?</h2>
+          <p class="body-copy-compact">If you become stuck at any point, contact FlyBridge Support.</p>
+        </div>
+        <div class="teacher-support-card mt-4">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-fb-ink">support@flybridgeeducation.co.uk</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">We can help if your FlyBridge email, Google setup, or Classroom access does not behave as expected.</p>
+          </div>
+          <a
+            class="cta-button"
+            href="mailto:support@flybridgeeducation.co.uk?subject=Teacher%20onboarding%20support&body=Hello%20FlyBridge%20Support%2C%0A%0AI%20need%20help%20with%20teacher%20onboarding.%0A%0APlease%20describe%20the%20step%20you%20are%20stuck%20on%20and%20what%20you%20have%20already%20tried."
+          >
+            Contact Support
+          </a>
+        </div>
+      </section>
+    </RoleGuard>
+  </DashboardLayout>
+
+  <script>
+    import { bootstrapTeacherOnboarding, handleTeacherOnboardingError } from "../../lib/teacher-onboarding";
+
+    bootstrapTeacherOnboarding().catch(handleTeacherOnboardingError);
+  </script>
+</BaseLayout>

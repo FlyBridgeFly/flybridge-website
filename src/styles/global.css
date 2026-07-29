@@ -359,6 +359,138 @@ summary::-webkit-details-marker {
     @apply grid gap-4 xl:grid-cols-[1.05fr_0.95fr];
   }
 
+  .dashboard-portal-link {
+    @apply inline-flex min-h-11 items-center justify-center rounded-[0.95rem] border border-slate-200 bg-white/88 px-4 py-2.5 text-sm font-semibold text-fb-ink transition hover:border-slate-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-sky-200 focus:ring-offset-2 xl:justify-start;
+  }
+
+  .dashboard-portal-link.is-active {
+    @apply border-fb-bg bg-fb-bg text-white shadow-sm;
+  }
+
+  .teacher-welcome-panel {
+    @apply rounded-[1.1rem] border border-slate-200 bg-slate-50/90 px-4 py-3 shadow-sm;
+  }
+
+  .teacher-progress-shell {
+    @apply rounded-[1.2rem] border border-slate-200 bg-slate-50/80 p-4 sm:p-5;
+  }
+
+  .teacher-progress-bar {
+    @apply block h-3 w-full overflow-hidden rounded-full border border-slate-200 bg-white;
+  }
+
+  .teacher-progress-bar::-webkit-progress-bar {
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  .teacher-progress-bar::-webkit-progress-value {
+    background: linear-gradient(90deg, #0d1b2a, #4da2ff);
+    border-radius: 999px;
+    transition: width 180ms ease;
+  }
+
+  .teacher-progress-bar::-moz-progress-bar {
+    background: linear-gradient(90deg, #0d1b2a, #4da2ff);
+    border-radius: 999px;
+    transition: width 180ms ease;
+  }
+
+  .teacher-step-card {
+    @apply rounded-[1.25rem] border border-white/70 bg-white/[0.9] shadow-fb backdrop-blur-xl transition;
+  }
+
+  .teacher-step-card[data-completed="true"] {
+    @apply border-emerald-200 bg-emerald-50/55;
+  }
+
+  .teacher-step-details {
+    @apply overflow-hidden rounded-[1.25rem];
+  }
+
+  .teacher-step-summary {
+    @apply flex cursor-pointer list-none flex-col gap-4 p-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-200 focus-visible:ring-offset-2 sm:p-5 md:flex-row md:items-center md:justify-between;
+  }
+
+  .teacher-step-summary-main {
+    @apply flex min-w-0 items-start gap-3;
+  }
+
+  .teacher-step-summary-side {
+    @apply flex items-center justify-between gap-3 md:justify-end;
+  }
+
+  .teacher-step-icon {
+    @apply grid h-11 w-11 shrink-0 place-items-center rounded-[1rem] border border-slate-200 bg-slate-50 text-fb-ink;
+  }
+
+  .teacher-step-icon svg {
+    @apply h-5 w-5;
+  }
+
+  .teacher-step-indicator {
+    @apply inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-slate-600 uppercase;
+  }
+
+  .teacher-step-indicator[data-state="complete"] {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-700;
+  }
+
+  .teacher-step-status {
+    @apply inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-slate-600 uppercase;
+  }
+
+  .teacher-step-status[data-state="complete"] {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-700;
+  }
+
+  .teacher-step-chevron {
+    @apply grid h-10 w-10 place-items-center rounded-full border border-slate-200 bg-white text-slate-500 transition;
+  }
+
+  .teacher-step-chevron svg {
+    @apply h-4 w-4;
+  }
+
+  .teacher-step-details[open] .teacher-step-chevron {
+    transform: rotate(180deg);
+  }
+
+  .teacher-step-panel {
+    @apply border-t border-slate-200 px-4 pb-4 pt-4 sm:px-5 sm:pb-5;
+  }
+
+  .teacher-step-list {
+    @apply ml-5 space-y-2 text-sm leading-6 text-fb-ink-soft;
+  }
+
+  .teacher-example-card {
+    @apply rounded-[1.05rem] border border-slate-200 bg-white px-4 py-3;
+  }
+
+  .teacher-instruction-banner {
+    @apply rounded-[1.05rem] border border-sky-100 bg-sky-50/90 px-4 py-3;
+  }
+
+  .teacher-compare-grid {
+    @apply grid gap-3 md:grid-cols-2;
+  }
+
+  .teacher-compare-card {
+    @apply rounded-[1rem] border bg-white px-4 py-3;
+  }
+
+  .teacher-compare-card.is-correct {
+    @apply border-emerald-200 bg-emerald-50/60;
+  }
+
+  .teacher-compare-card.is-wrong {
+    @apply border-rose-200 bg-rose-50/60;
+  }
+
+  .teacher-support-card {
+    @apply flex flex-col gap-4 rounded-[1.15rem] border border-slate-200 bg-slate-50/75 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5;
+  }
+
   .dashboard-list {
     @apply grid gap-2.5;
   }
@@ -613,6 +745,15 @@ summary::-webkit-details-marker {
   inset: 0;
   pointer-events: none;
   background: linear-gradient(90deg, rgba(6, 17, 31, 0.22), transparent 18%, transparent 82%, rgba(6, 17, 31, 0.22));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .teacher-progress-bar::-webkit-progress-value,
+  .teacher-progress-bar::-moz-progress-bar,
+  .teacher-step-card,
+  .teacher-step-chevron {
+    transition: none;
+  }
 }
 
 .announcement-inner {

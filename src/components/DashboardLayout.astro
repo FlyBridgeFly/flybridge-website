@@ -5,9 +5,23 @@ interface Props {
   title: string;
   description: string;
   active: "admin" | "tutor" | "parent";
+  navItems?: Array<{
+    label: string;
+    href: string;
+    match?: "exact" | "startsWith";
+  }>;
+  currentPath?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, navItems = [], currentPath = Astro.url.pathname } = Astro.props;
+
+function isActiveLink(item: { href: string; match?: "exact" | "startsWith" }) {
+  if (item.match === "startsWith") {
+    return currentPath === item.href || currentPath.startsWith(`${item.href}/`);
+  }
+
+  return currentPath === item.href;
+}
 ---
 
 <section class="container-shell pb-7 pt-2 sm:pb-9 sm:pt-3">
@@ -39,6 +53,28 @@ const { title, description } = Astro.props;
           Use this workspace for your current FlyBridge responsibilities, with reporting and follow-up tools kept in one place.
         </div>
       </div>
+
+      {
+        navItems.length ? (
+          <nav class="dashboard-divider mt-4" aria-label="Teacher portal">
+            <p class="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">Teacher portal</p>
+            <div class="dashboard-nav-scroll mt-3" data-teacher-portal-nav>
+              {navItems.map((item) => (
+                <a
+                  class:list={[
+                    "dashboard-portal-link",
+                    isActiveLink(item) && "is-active"
+                  ]}
+                  href={item.href}
+                  aria-current={isActiveLink(item) ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </nav>
+        ) : null
+      }
 
       <div class="mt-4 flex flex-col gap-2.5 sm:flex-row xl:flex-col">
         <a class="ghost-button justify-center xl:justify-start" href={site.contactHref}>Contact FlyBridge</a>
