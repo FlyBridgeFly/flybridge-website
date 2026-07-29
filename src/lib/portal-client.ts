@@ -325,15 +325,20 @@ function formatHours(totalMinutes: number) {
   return `${hours.toFixed(1)} hours`;
 }
 
-function combineLessonReportNextSteps(homework?: string, nextSteps?: string) {
-  const homeworkValue = String(homework ?? "").trim();
-  const nextStepValue = String(nextSteps ?? "").trim();
+function getLessonReportHeading(report: LessonReportRow) {
+  return getStringField(report, ["topic_covered", "topic", "title"]) || "Lesson summary";
+}
 
-  if (homeworkValue && nextStepValue) {
-    return `Homework / next step:\n${homeworkValue}\n\nAreas to improve / next teaching focus:\n${nextStepValue}`;
-  }
+function getLessonReportSummary(report: LessonReportRow) {
+  return getStringField(report, ["next_steps", "summary"]) || "No summary recorded.";
+}
 
-  return homeworkValue || nextStepValue || undefined;
+function getLessonReportImprovement(report: LessonReportRow) {
+  return getStringField(report, ["areas_to_improve", "next_steps"]) || "No improvement area recorded yet.";
+}
+
+function getLessonReportHomework(report: LessonReportRow) {
+  return getStringField(report, ["homework_set", "homework"]) || "No homework has been recorded for the latest lesson.";
 }
 
 function getStringField(source: Record<string, unknown> | null | undefined, keys: string[]) {
@@ -951,34 +956,29 @@ export async function createLessonReport(values: {
   homework?: string;
   nextSteps?: string;
 }) {
-  const mergedNextSteps = combineLessonReportNextSteps(values.homework, values.nextSteps);
+  const client = createBrowserSupabaseClient();
+  const payload = stripEmpty({
+    student_id: values.studentId,
+    tutor_id: values.tutorId,
+    lesson_date: values.lessonDate,
+    report_type: "lesson",
+    topic_covered: values.topic,
+    strengths: values.strengths,
+    areas_to_improve: values.nextSteps,
+    homework_set: values.homework,
+    next_steps: values.summary,
+    parent_visible: true
+  });
 
-  await insertWithFallbacks("lesson_reports", [
-    {
-      student_id: values.studentId,
-      tutor_id: values.tutorId,
-      lesson_date: values.lessonDate,
-      topic: values.topic,
-      summary: values.summary,
-      strengths: values.strengths,
-      next_steps: mergedNextSteps
-    },
-    {
-      student_id: values.studentId,
-      created_by: values.tutorId,
-      lesson_date: values.lessonDate,
-      title: values.topic,
-      summary: values.summary,
-      strengths: values.strengths,
-      next_steps: mergedNextSteps
-    },
-    {
-      student_id: values.studentId,
-      lesson_date: values.lessonDate,
-      summary: values.summary,
-      next_steps: mergedNextSteps
-    }
-  ]);
+  const { error } = await client.from("lesson_reports").insert(payload);
+  if (error) {
+    console.error("[FlyBridge data] Insert failed for lesson_reports", {
+      table: "lesson_reports",
+      payload,
+      error
+    });
+    throw error;
+  }
 }
 
 export async function createLessonRecord(values: {
@@ -1677,9 +1677,7 @@ export function renderReportTimeline(
               <p class="text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase">${escapeHtml(
                 student ? getStudentName(student) : "Lesson report"
               )}</p>
-              <h3 class="mt-2 text-lg font-semibold text-fb-ink sm:text-xl">${escapeHtml(
-                report.topic ?? report.title ?? "Lesson summary"
-              )}</h3>
+              <h3 class="mt-2 text-lg font-semibold text-fb-ink sm:text-xl">${escapeHtml(getLessonReportHeading(report))}</h3>
             </div>
             <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold tracking-[0.14em] text-slate-500 uppercase">
               ${escapeHtml(formatDate(report.lesson_date ?? report.created_at))}
@@ -1688,13 +1686,11 @@ export function renderReportTimeline(
           <div class="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
               <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Summary</p>
-              <p class="mt-2 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(report.summary ?? "No summary recorded.")}</p>
+              <p class="mt-2 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(getLessonReportSummary(report))}</p>
             </div>
             <div>
               <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Homework / Next steps</p>
-              <p class="mt-2 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(
-                report.homework ?? report.next_steps ?? "No follow-up recorded."
-              )}</p>
+              <p class="mt-2 break-words text-sm leading-6 text-fb-ink-soft">${escapeHtml(getLessonReportHomework(report))}</p>
             </div>
           </div>
         </article>
@@ -1914,7 +1910,7 @@ export function renderParentStudentBundles(
           <div class="min-w-0">
             <p class="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Latest lesson</p>
             <h3 class="mt-2 break-words text-xl font-semibold text-fb-ink">${escapeHtml(
-              latestReport.topic ?? latestReport.title ?? latestCompletedLesson?.lesson_title ?? "Lesson update"
+              latestReport ? getLessonReportHeading(latestReport) : latestCompletedLesson?.lesson_title ?? "Lesson update"
             )}</h3>
             <p class="mt-2 text-sm text-fb-ink-soft">${escapeHtml(formatDate(latestReport.lesson_date ?? latestReport.created_at))}</p>
           </div>
@@ -1927,7 +1923,7 @@ export function renderParentStudentBundles(
         <div class="dashboard-list mt-4">
           <div class="dashboard-list-item">
             <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Tutor summary</p>
-            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(latestReport.summary ?? "No summary recorded.")}</p>
+            <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(getLessonReportSummary(latestReport))}</p>
           </div>
           <div class="dashboard-compact-grid">
             <div class="dashboard-list-item">
@@ -1936,7 +1932,7 @@ export function renderParentStudentBundles(
             </div>
             <div class="dashboard-list-item">
               <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Area to improve</p>
-              <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(latestReport.next_steps ?? "No improvement area recorded yet.")}</p>
+              <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(getLessonReportImprovement(latestReport))}</p>
             </div>
           </div>
         </div>
@@ -1955,13 +1951,13 @@ export function renderParentStudentBundles(
         <div class="dashboard-list-item">
           <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Current homework</p>
           <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(
-            latestReport?.homework ?? "No homework has been recorded for the latest lesson."
+            latestReport ? getLessonReportHomework(latestReport) : "No homework has been recorded for the latest lesson."
           )}</p>
         </div>
         <div class="dashboard-list-item">
-          <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Tutor next step</p>
+          <p class="text-xs font-semibold tracking-[0.14em] text-slate-500 uppercase">Lesson summary</p>
           <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(
-            latestReport?.next_steps ?? "No next teaching step has been recorded yet."
+            latestReport ? getLessonReportSummary(latestReport) : "No summary has been recorded for the latest lesson."
           )}</p>
         </div>
         <div class="dashboard-list">
@@ -2012,7 +2008,7 @@ export function renderParentStudentBundles(
                   const keyGap = getStringField(assessment, ["key_gap", "gap", "notes"]) || "No specific gap recorded.";
                   const recommendedAction =
                     getStringField(assessment, ["recommended_action", "action"]) ||
-                    getStringField(latestReport, ["next_steps"]) ||
+                    getStringField(latestReport, ["areas_to_improve", "next_steps"]) ||
                     "No action recorded yet.";
 
                   return `
@@ -2084,11 +2080,11 @@ export function renderParentStudentBundles(
                     <article class="dashboard-list-item">
                       <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                         <div class="min-w-0">
-                          <p class="text-sm font-semibold text-fb-ink">${escapeHtml(report.topic ?? report.title ?? "Lesson update")}</p>
+                          <p class="text-sm font-semibold text-fb-ink">${escapeHtml(getLessonReportHeading(report))}</p>
                           <p class="mt-1 text-xs text-slate-500">${escapeHtml(formatDate(report.lesson_date ?? report.created_at))}</p>
                         </div>
                       </div>
-                      <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(report.summary ?? "No summary recorded.")}</p>
+                      <p class="mt-2 text-sm leading-6 text-fb-ink-soft">${escapeHtml(getLessonReportSummary(report))}</p>
                     </article>
                   `
                 )

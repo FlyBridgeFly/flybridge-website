@@ -57,6 +57,15 @@ export interface LessonReportRow {
   id: string;
   student_id?: string | null;
   tutor_id?: string | null;
+  report_type?: string | null;
+  topic_covered?: string | null;
+  areas_to_improve?: string | null;
+  homework_set?: string | null;
+  engagement_rating?: number | string | null;
+  confidence_rating?: number | string | null;
+  effort_rating?: number | string | null;
+  parent_visible?: boolean | null;
+  updated_at?: string | null;
   title?: string | null;
   topic?: string | null;
   lesson_date?: string | null;

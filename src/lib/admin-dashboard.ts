@@ -1241,7 +1241,7 @@ function studentTimelineMarkup(studentId: string) {
       )}
       ${renderSection(
         "Reports",
-        reportItems.map((report) => htmlListItem(report.topic ?? "Lesson report", formatDate(report.lesson_date ?? report.created_at ?? "")))
+        reportItems.map((report) => htmlListItem(report.topic_covered ?? report.topic ?? "Lesson report", formatDate(report.lesson_date ?? report.created_at ?? "")))
       )}
       ${renderSection(
         "Assessments",
