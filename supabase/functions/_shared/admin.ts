@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.56.0";
+import { buildAuthAccessUpdate, buildProfileStatusUpdate, sanitizeUpdatePayload } from "./profile-archive.ts";
 
 type PortalRole = "parent" | "tutor";
 type PortalAccountFailureStage = "validation" | "auth_creation" | "profile_creation" | "student_link" | "email_delivery" | "audit_log";
@@ -279,13 +280,36 @@ export async function getProfileById(adminClient: ReturnType<typeof createClient
 }
 
 export async function upsertProfile(adminClient: ReturnType<typeof createClient>, payload: Record<string, unknown>) {
-  const cleaned = Object.fromEntries(Object.entries(payload).filter(([, value]) => value !== undefined && value !== null));
+  const cleaned = sanitizeUpdatePayload(payload);
   const { error } = await adminClient.from("profiles").upsert(cleaned, {
     onConflict: "id"
   });
 
   if (error) {
     throw new Error(error.message);
+  }
+}
+
+export async function updateProfileRecord(
+  adminClient: ReturnType<typeof createClient>,
+  userId: string,
+  payload: Record<string, unknown>,
+  options: {
+    stage: StatusStage | PortalAccountFailureStage;
+    errorMessage: string;
+  }
+) {
+  const cleaned = sanitizeUpdatePayload(payload);
+  if (!Object.keys(cleaned).length) return;
+
+  const { error } = await adminClient.from("profiles").update(cleaned).eq("id", userId);
+
+  if (error) {
+    throw new PortalFunctionError(options.errorMessage, {
+      stage: options.stage,
+      recoverable: true,
+      detail: error.message
+    });
   }
 }
 
@@ -415,12 +439,19 @@ export async function updatePortalPassword(
     throw new Error(error.message);
   }
 
-  await upsertProfile(adminClient, {
-    id: values.userId,
+  await updateProfileRecord(
+    adminClient,
+    values.userId,
+    {
     must_change_password: true,
     temporary_password_created_at: new Date().toISOString(),
     status: "active"
-  });
+    },
+    {
+      stage: "validation",
+      errorMessage: "The portal profile could not be updated after resetting the password."
+    }
+  );
 }
 
 export async function updatePortalUserProfile(
@@ -444,7 +475,7 @@ export async function updatePortalUserProfile(
     });
   }
 
-  const profilePayload: Record<string, unknown> = { id: values.userId };
+  const profilePayload: Record<string, unknown> = {};
   if (values.fullName !== undefined) profilePayload.full_name = values.fullName;
   if (values.email !== undefined) profilePayload.email = values.email;
   if (values.phone !== undefined) profilePayload.phone = values.phone;
@@ -452,7 +483,10 @@ export async function updatePortalUserProfile(
   if (values.keyStages !== undefined) profilePayload.key_stages = values.keyStages;
   if (values.status !== undefined) profilePayload.status = values.status;
 
-  await upsertProfile(adminClient, profilePayload);
+  await updateProfileRecord(adminClient, values.userId, profilePayload, {
+    stage: "validation",
+    errorMessage: "The portal profile could not be updated."
+  });
 }
 
 export async function setPortalUserStatus(
@@ -466,16 +500,39 @@ export async function setPortalUserStatus(
 ) {
   const currentProfile = await getProfileById(adminClient, values.userId);
   const nextStatus = values.status;
-  const currentStatus = String(currentProfile.status ?? "active").toLowerCase();
-
-  await upsertProfile(adminClient, {
-    id: values.userId,
+  const timestamp = new Date().toISOString();
+  const patch = buildProfileStatusUpdate(currentProfile, {
     status: nextStatus,
-    previous_status: nextStatus === "archived" ? currentStatus : currentProfile.previous_status ?? currentStatus,
-    archived_at: nextStatus === "archived" ? new Date().toISOString() : null,
-    archived_by: nextStatus === "archived" ? values.actorId ?? null : null,
-    archive_reason: nextStatus === "archived" ? values.archiveReason ?? null : null
+    actorId: values.actorId ?? null,
+    archiveReason: values.archiveReason ?? null,
+    timestamp
   });
+
+  await updateProfileRecord(adminClient, values.userId, patch, {
+    stage: nextStatus === "archived" ? "archive" : "restore",
+    errorMessage: `Unable to update the selected portal user to ${nextStatus}.`
+  });
+}
+
+export async function setPortalAuthAccess(
+  adminClient: ReturnType<typeof createClient>,
+  values: {
+    userId: string;
+    disabled: boolean;
+  }
+) {
+  const { error } = await adminClient.auth.admin.updateUserById(values.userId, buildAuthAccessUpdate(values.disabled));
+
+  if (error) {
+    throw new PortalFunctionError(
+      values.disabled ? "The portal login could not be disabled after archiving the account." : "The portal login could not be re-enabled during restore.",
+      {
+        stage: values.disabled ? "archive" : "restore",
+        recoverable: true,
+        detail: error.message
+      }
+    );
+  }
 }
 
 export async function getStudentById(adminClient: ReturnType<typeof createClient>, studentId: string) {

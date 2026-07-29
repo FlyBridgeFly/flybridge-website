@@ -7,6 +7,7 @@ import {
   recordAuditLog,
   requireAdmin,
   requireString,
+  setPortalAuthAccess,
   setPortalUserStatus,
   successResponse
 } from "../_shared/admin.ts";
@@ -38,6 +39,18 @@ Deno.serve(async (request) => {
       status: status as "active" | "inactive" | "suspended" | "archived",
       actorId: adminUser.id
     });
+    if (status === "archived") {
+      await setPortalAuthAccess(adminClient, {
+        userId,
+        disabled: true
+      });
+    }
+    if (status === "active") {
+      await setPortalAuthAccess(adminClient, {
+        userId,
+        disabled: false
+      });
+    }
 
     await recordAuditLog(adminClient, {
       actorId: adminUser.id,
